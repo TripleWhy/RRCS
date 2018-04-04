@@ -119,6 +119,8 @@
 
 		public void OnPointerDown(PointerEventData eventData)
 		{
+			if (eventData.button != 0)
+				return;
 			Vector2 n_originalLocalPointerPosition;
 			RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out n_originalLocalPointerPosition);
 			pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) - rectTransform.InverseTransformPoint(new Vector3());
@@ -130,6 +132,8 @@
 
 		public void OnBeginDrag(PointerEventData eventData)
 		{
+			if (eventData.button != 0)
+				return;
 			if (draggingInstance != null)
 				return;
 			if (canvas.tag != "Sidebar")
@@ -144,6 +148,8 @@
 
 		public void OnDrag(PointerEventData eventData)
 		{
+			if (eventData.button != 0)
+				return;
 			ChipUi chip = draggingInstance ?? this;
 
 			if (chip.rectTransform == null || chip.canvasRectTransform == null)
@@ -162,6 +168,8 @@
 
 		public void OnEndDrag(PointerEventData eventData)
 		{
+			if (eventData.button != 0)
+				return;
 			if (draggingInstance == null)
 				return;
 
