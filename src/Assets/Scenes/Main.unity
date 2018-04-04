@@ -632,7 +632,7 @@ Prefab:
     - target: {fileID: 224618041854802358, guid: 4148f0ea5af457d42bb3c086645eae9e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -142
+      value: -51
       objectReference: {fileID: 0}
     - target: {fileID: 224618041854802358, guid: 4148f0ea5af457d42bb3c086645eae9e,
         type: 2}
@@ -2207,7 +2207,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8693e865aa146504e80d71a8e5473b3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
   inverseZoom: 0.5
 --- !u!1001 &1736220961
 Prefab:
