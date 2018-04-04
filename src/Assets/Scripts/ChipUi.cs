@@ -71,14 +71,14 @@
 					RectTransform rectTr = (RectTransform)transform;
 					rectTr.sizeDelta = new Vector2(rectTr.sizeDelta.x, ((3 * maxTotalPortCount - 1) * tr0.sizeDelta.y) / 2);
 				}
-				setupPorts(inPortCount, useCompactFormat, ref in0, ref inR, ref inPorts);
-				setupPorts(outPortCount, useCompactFormat, ref out0, ref outR, ref outPorts);
+				SetupPorts(inPortCount, useCompactFormat, ref in0, ref inR, ref inPorts);
+				SetupPorts(outPortCount, useCompactFormat, ref out0, ref outR, ref outPorts);
 				if (sprite != null)
 					icon.sprite = sprite;
 			}
 		}
 
-		private void setupPorts(int portCount, bool useCompactFormat, ref GameObject port0, ref GameObject resetPort, ref GameObject[] ports)
+		private void SetupPorts(int portCount, bool useCompactFormat, ref GameObject port0, ref GameObject resetPort, ref GameObject[] ports)
 		{
 			int totalPortCount = portCount + (hasReset ? 1 : 0);
 			ports = new GameObject[totalPortCount];
