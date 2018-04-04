@@ -38,11 +38,23 @@
 		private Vector3 pointerWorldOffset;
 		private RectTransform rectTransform;
 		private Canvas canvas;
+		private static Canvas worldCanvas;
 		private RectTransform canvasRectTransform;
 		private ChipUi draggingInstance;
 
 		void Awake ()
 		{
+			if (worldCanvas == null)
+			{
+				foreach (Canvas c in FindObjectsOfType<Canvas>())
+				{
+					if (c.tag == "WorldUi")
+					{
+						worldCanvas = c;
+						break;
+					}
+				}
+			}
 			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
@@ -123,6 +135,7 @@
 			if (canvas.tag != "Sidebar")
 				return;
 			draggingInstance = Instantiate(this, canvasRectTransform);
+			draggingInstance.GetComponent<Image>().raycastTarget = false;
 		}
 
 		#endregion
@@ -149,11 +162,35 @@
 
 		public void OnEndDrag(PointerEventData eventData)
 		{
-			if (draggingInstance != null)
+			if (draggingInstance == null)
+				return;
+
+			bool isWorldPos = (eventData.hovered.Count == 0);
+			if (!isWorldPos)
+			{
+				foreach (GameObject h in eventData.hovered)
+				{
+					if (object.ReferenceEquals(h, worldCanvas.gameObject))
+					{
+						isWorldPos = true;
+						break;
+					}
+				}
+			}
+			if (!isWorldPos)
 			{
 				Destroy(draggingInstance.gameObject);
-				draggingInstance = null;
 			}
+			else
+			{
+				Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
+				draggingInstance.GetComponent<Image>().raycastTarget = true;
+				draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
+				draggingInstance.rectTransform.position = newPos;
+				draggingInstance.canvas = worldCanvas;
+				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
+			}
+			draggingInstance = null;
 		}
 
 		#endregion
