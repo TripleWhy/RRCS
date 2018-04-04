@@ -126,7 +126,6 @@ GameObject:
   - component: {fileID: 224355939164817298}
   - component: {fileID: 222996414468535892}
   - component: {fileID: 114020298033513574}
-  - component: {fileID: 114440147475163894}
   m_Layer: 5
   m_Name: icon
   m_TagString: Untagged
@@ -257,7 +256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -318,17 +317,7 @@ MonoBehaviour:
   inPortCount: 1
   outPortCount: 1
   hasReset: 1
---- !u!114 &114440147475163894
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1801088972467778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9da76d0f9e2e6354fbe78e81c7d12540, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  skipSetup: 0
 --- !u!114 &114494897088145796
 MonoBehaviour:
   m_ObjectHideFlags: 1
