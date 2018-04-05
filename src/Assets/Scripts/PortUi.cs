@@ -5,6 +5,8 @@
 
 	public class PortUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
+		public bool isInput;
+
 		#region IPointerDownHandler implementation
 		public void OnPointerDown(PointerEventData eventData)
 		{
