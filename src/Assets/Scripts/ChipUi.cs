@@ -19,10 +19,10 @@
 				new Color(0.06F, 0.15F, 0.18F, 1.00F),
 			};
 
-		public GameObject in0;
-		public GameObject inR;
-		public GameObject out0;
-		public GameObject outR;
+		public PortUi in0;
+		public PortUi inR;
+		public PortUi out0;
+		public PortUi outR;
 		public Image icon;
 		public Sprite sprite;
 
@@ -32,8 +32,8 @@
 		[HideInInspector]
 		public bool skipSetup = false;
 
-		private GameObject[] inPorts;
-		private GameObject[] outPorts;
+		private PortUi[] inPorts;
+		private PortUi[] outPorts;
 
 		private Vector3 pointerWorldOffset;
 		private RectTransform rectTransform;
@@ -41,6 +41,8 @@
 		private static Canvas worldCanvas;
 		private RectTransform canvasRectTransform;
 		private ChipUi draggingInstance;
+
+		public bool IsSidebarChip{ get; private set; }
 
 		void Awake ()
 		{
@@ -58,6 +60,7 @@
 			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
+			IsSidebarChip = (canvas.tag == "Sidebar");
 
 			if (!skipSetup)
 			{
@@ -67,9 +70,7 @@
 				if (maxTotalPortCount >= 4)
 				{
 					useCompactFormat = true;
-					RectTransform tr0 = (RectTransform)in0.transform;
-					RectTransform rectTr = (RectTransform)transform;
-					rectTr.sizeDelta = new Vector2(rectTr.sizeDelta.x, ((3 * maxTotalPortCount - 1) * tr0.sizeDelta.y) / 2);
+					rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, ((3 * maxTotalPortCount - 1) * in0.RectTransform.sizeDelta.y) / 2);
 				}
 				SetupPorts(inPortCount, useCompactFormat, ref in0, ref inR, ref inPorts);
 				SetupPorts(outPortCount, useCompactFormat, ref out0, ref outR, ref outPorts);
@@ -78,37 +79,40 @@
 			}
 		}
 
-		private void SetupPorts(int portCount, bool useCompactFormat, ref GameObject port0, ref GameObject resetPort, ref GameObject[] ports)
+		private void SetupPorts(int portCount, bool useCompactFormat, ref PortUi port0, ref PortUi resetPort, ref PortUi[] ports)
 		{
 			int totalPortCount = portCount + (hasReset ? 1 : 0);
-			ports = new GameObject[totalPortCount];
+			ports = new PortUi[totalPortCount];
 
 			if (portCount <= 0)
 				Destroy(port0);
 			else
 			{
 				ports[0] = port0;
-				RectTransform tr0 = (RectTransform)port0.transform;
+				port0.chipUi = this;
+				RectTransform tr0 = port0.RectTransform;
 				
 				if (useCompactFormat)
 				{
-					tr0.anchoredPosition = new Vector2(tr0.anchoredPosition.x, 0);
-					((RectTransform)resetPort.transform).anchoredPosition = new Vector2();
+					tr0.anchoredPosition = new Vector2(tr0.anchoredPosition.x, -tr0.sizeDelta.y / 2);
+					((RectTransform)resetPort.transform).anchoredPosition = new Vector2(0, tr0.sizeDelta.y / 2);
 				}
 				
 				Vector2 offset = new Vector2(0, tr0.sizeDelta.y * -3 / 2);
 				for (int i = 1; i < portCount; i++)
 				{
-					GameObject port = Instantiate<GameObject>(port0, transform);
-					var tr = port.transform.transform as RectTransform;
-					tr.anchoredPosition = tr0.anchoredPosition + i * offset;
-
-					Image image = port.GetComponent<Image>();
-					image.color = portColors[i % portColors.Length];
+					PortUi port = Instantiate<PortUi>(port0, transform);
+					ports[i] = port;
+					port.chipUi = this;
+					port.RectTransform.anchoredPosition = tr0.anchoredPosition + i * offset;
+					port.Image.color = portColors[i % portColors.Length];
 				}
 			}
 			if (hasReset)
+			{
 				ports[portCount] = resetPort;
+				resetPort.chipUi = this;
+			}
 			else
 				Destroy(resetPort);
 			port0 = null;
@@ -136,7 +140,7 @@
 				return;
 			if (draggingInstance != null)
 				return;
-			if (canvas.tag != "Sidebar")
+			if (!IsSidebarChip)
 				return;
 			draggingInstance = Instantiate(this, canvasRectTransform);
 			draggingInstance.GetComponent<Image>().raycastTarget = false;
@@ -197,6 +201,7 @@
 				draggingInstance.rectTransform.position = newPos;
 				draggingInstance.canvas = worldCanvas;
 				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
+				draggingInstance.IsSidebarChip = false;
 			}
 			draggingInstance = null;
 		}
