@@ -195,6 +195,8 @@
 			}
 			else
 			{
+				//This is _way_ too complicated, and totally misplaced here. Is there a better way?
+
 				Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
 				draggingInstance.GetComponent<Image>().raycastTarget = true;
 				draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
@@ -202,6 +204,19 @@
 				draggingInstance.canvas = worldCanvas;
 				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
 				draggingInstance.IsSidebarChip = false;
+
+				draggingInstance.inPorts = new PortUi[inPorts.Length];
+				for (int i = 0; i < inPorts.Length; i++)
+				{
+					draggingInstance.inPorts[i] = draggingInstance.transform.GetChild(inPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
+					draggingInstance.inPorts[i].chipUi = draggingInstance;
+				}
+				draggingInstance.outPorts = new PortUi[outPorts.Length];
+				for (int i = 0; i < outPorts.Length; i++)
+				{
+					draggingInstance.outPorts[i] = draggingInstance.transform.GetChild(outPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
+					draggingInstance.outPorts[i].chipUi = draggingInstance;
+				}
 			}
 			draggingInstance = null;
 		}

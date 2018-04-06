@@ -3,8 +3,9 @@
 	using UnityEngine;
 	using UnityEngine.UI;
 	using UnityEngine.EventSystems;
+	using System.Collections.Generic;
 
-	public class PortUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+	public class PortUi : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
 		public bool isInput;
 		public LineRenderer linePrefab;
@@ -13,6 +14,7 @@
 		public RectTransform RectTransform { get; private set; }
 		public Image Image { get; private set; }
 		private LineRenderer draggingLine;
+		private List<LineRenderer> connectedLines = new List<LineRenderer>();
 		internal ChipUi chipUi;
 
 		void Awake()
@@ -36,7 +38,7 @@
 		{
 			get
 			{
-				return isInput ? 0 : 1;
+				return LineUseStart ? 0 : 1;
 			}
 		}
 
@@ -44,7 +46,15 @@
 		{
 			get
 			{
-				return isInput ? 1 : 0;
+				return LineUseStart ? 1 : 0;
+			}
+		}
+
+		private bool LineUseStart
+		{
+			get
+			{
+				return isInput;
 			}
 		}
 
@@ -55,15 +65,6 @@
 				return RectTransform.position;
 			}
 		}
-
-		#region IPointerDownHandler implementation
-		public void OnPointerDown(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			print("PortUi.OnPointerDown");
-		}
-		#endregion
 
 		#region IBeginDragHandler implementation
 
@@ -100,11 +101,35 @@
 		{
 			if (draggingLine == null)
 				return;
-			print("PortUi.OnEndDrag");
-			Destroy(draggingLine.gameObject);
+			PortUi dstPort = null;
+			foreach (GameObject go in eventData.hovered)
+			{
+				dstPort = go.GetComponent<PortUi>();
+				if (dstPort != null)
+					break;
+			}
+			if (dstPort == null || dstPort.isInput == isInput || dstPort.chipUi.IsSidebarChip || (isInput && connectedLines.Count != 0) || (dstPort.isInput && dstPort.connectedLines.Count != 0))
+				Destroy(draggingLine.gameObject);
+			else
+			{
+				if (LineUseStart)
+					draggingLine.endColor = dstPort.Image.color;
+				else
+					draggingLine.startColor = dstPort.Image.color;
+				connectedLines.Add(draggingLine);
+				dstPort.connectedLines.Add(draggingLine);
+			}
 			draggingLine = null;
 		}
 
 		#endregion
+
+		void Update()
+		{
+			foreach (LineRenderer line in connectedLines)
+			{
+				line.SetPosition(LinePositionIndex, Center);
+			}
+		}
 	}
 }
