@@ -44,7 +44,7 @@
 
 		public bool IsSidebarChip{ get; private set; }
 
-		void Awake ()
+		void Start()
 		{
 			if (worldCanvas == null)
 			{
