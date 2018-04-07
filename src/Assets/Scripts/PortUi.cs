@@ -118,17 +118,21 @@
 					draggingLine.startColor = dstPort.Image.color;
 				connectedLines.Add(draggingLine);
 				dstPort.connectedLines.Add(draggingLine);
+				draggingLine.SetPosition(LinePositionOtherIndex, dstPort.Center);
 			}
 			draggingLine = null;
 		}
 
 		#endregion
 
+		private Vector3 lastPos;
 		void Update()
 		{
-			foreach (LineRenderer line in connectedLines)
+			if (RectTransform.position != lastPos)
 			{
-				line.SetPosition(LinePositionIndex, Center);
+				lastPos = RectTransform.position;
+				foreach (LineRenderer line in connectedLines)
+					line.SetPosition(LinePositionIndex, Center);
 			}
 		}
 	}
