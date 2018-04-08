@@ -5,10 +5,10 @@
 	public abstract class Port
 	{
 		public delegate void ConnectionEventHandler(Port sender, Port other);
-		event ConnectionEventHandler Connected = delegate {};
-		event ConnectionEventHandler Disconnected = delegate {};
+		public event ConnectionEventHandler Connected = delegate {};
+		public event ConnectionEventHandler Disconnected = delegate {};
 
-		protected List<Port> connectedPorts = new List<Port>();
+		public readonly List<Port> connectedPorts = new List<Port>();
 		public readonly CircuitNode node;
 		public readonly bool isReset;
 

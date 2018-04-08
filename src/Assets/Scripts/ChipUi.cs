@@ -39,7 +39,7 @@
 		public PortUi outR;
 		public Image icon;
 
-		private Chip chip;
+		public Chip Chip { get; private set; }
 		[HideInInspector]
 		[SerializeField]
 		private bool skipSetup = false;
@@ -56,6 +56,12 @@
 		private ChipUi draggingInstance;
 
 		public bool IsSidebarChip{ get; private set; }
+
+		void Awake()
+		{
+			Chip = CreateChip();
+			UiManager.Register(this);
+		}
 
 		void Start()
 		{
@@ -75,7 +81,6 @@
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
 			IsSidebarChip = (canvas.tag == "Sidebar");
-			chip = CreateChip();
 
 			if (!skipSetup)
 			{
@@ -87,12 +92,17 @@
 					useCompactFormat = true;
 					rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, ((3 * maxTotalPortCount - 1) * in0.RectTransform.sizeDelta.y) / 2);
 				}
-				SetupPorts(InPortCount, chip.inputPorts, useCompactFormat, ref in0, ref inR, ref inPorts);
-				SetupPorts(OutPortCount, chip.outputPorts, useCompactFormat, ref out0, ref outR, ref outPorts);
+				SetupPorts(InPortCount, Chip.inputPorts, useCompactFormat, ref in0, ref inR, ref inPorts);
+				SetupPorts(OutPortCount, Chip.outputPorts, useCompactFormat, ref out0, ref outR, ref outPorts);
 				Sprite sprite = GetSprite();
 				if (sprite != null)
 					icon.sprite = sprite;
 			}
+		}
+
+		void OnDestroy()
+		{
+			UiManager.Unregister(this);
 		}
 
 		private void SetupPorts(int portCount, Port[] ports, bool useCompactFormat, ref PortUi port0UI, ref PortUi resetPortUi, ref PortUi[] portUIs)
@@ -105,7 +115,7 @@
 			{
 				portUIs[0] = port0UI;
 				port0UI.chipUi = this;
-				port0UI.port = ports[0];
+				port0UI.Port = ports[0];
 				RectTransform tr0 = port0UI.RectTransform;
 				
 				if (useCompactFormat)
@@ -120,7 +130,7 @@
 					PortUi portUi = Instantiate<PortUi>(port0UI, transform);
 					portUIs[i] = portUi;
 					portUi.chipUi = this;
-					portUi.port = ports[i];
+					portUi.Port = ports[i];
 					portUi.RectTransform.anchoredPosition = tr0.anchoredPosition + i * offset;
 					portUi.Image.color = portColors[i % portColors.Length];
 				}
@@ -129,7 +139,7 @@
 			{
 				portUIs[portCount] = resetPortUi;
 				resetPortUi.chipUi = this;
-				resetPortUi.port = ports[portCount];
+				resetPortUi.Port = ports[portCount];
 			}
 			else
 				Destroy(resetPortUi);
@@ -169,14 +179,14 @@
 
 		private Sprite GetSprite()
 		{
-			return icons[chip.IconIndex];
+			return icons[Chip.IconIndex];
 		}
 
 		public int InPortCount
 		{
 			get
 			{
-				return chip.inputPortCount;
+				return Chip.inputPortCount;
 			}
 		}
 
@@ -184,7 +194,7 @@
 		{
 			get
 			{
-				return chip.inputPorts.Length;
+				return Chip.inputPorts.Length;
 			}
 		}
 
@@ -192,7 +202,7 @@
 		{
 			get
 			{
-				return chip.outputPortCount;
+				return Chip.outputPortCount;
 			}
 		}
 
@@ -200,7 +210,7 @@
 		{
 			get
 			{
-				return chip.outputPorts.Length;
+				return Chip.outputPorts.Length;
 			}
 		}
 
@@ -208,7 +218,7 @@
 		{
 			get
 			{
-				return chip.hasReset;
+				return Chip.hasReset;
 			}
 		}
 
@@ -303,14 +313,14 @@
 				{
 					draggingInstance.inPorts[i] = draggingInstance.transform.GetChild(inPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
 					draggingInstance.inPorts[i].chipUi = draggingInstance;
-					draggingInstance.inPorts[i].port = draggingInstance.chip.inputPorts[i];
+					draggingInstance.inPorts[i].Port = draggingInstance.Chip.inputPorts[i];
 				}
 				draggingInstance.outPorts = new PortUi[outPorts.Length];
 				for (int i = 0; i < outPorts.Length; i++)
 				{
 					draggingInstance.outPorts[i] = draggingInstance.transform.GetChild(outPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
 					draggingInstance.outPorts[i].chipUi = draggingInstance;
-					draggingInstance.outPorts[i].port = draggingInstance.chip.outputPorts[i];
+					draggingInstance.outPorts[i].Port = draggingInstance.Chip.outputPorts[i];
 				}
 			}
 			draggingInstance = null;
