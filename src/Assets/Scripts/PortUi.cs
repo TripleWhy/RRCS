@@ -15,7 +15,7 @@
 		public RectTransform RectTransform { get; private set; }
 		public Image Image { get; private set; }
 		private LineRenderer draggingLine;
-		private List<LineRenderer> connectedLines = new List<LineRenderer>();
+		private readonly List<LineRenderer> connectedLines = new List<LineRenderer>();
 		internal ChipUi chipUi;
 
 		void Awake()
@@ -67,6 +67,14 @@
 			}
 		}
 
+		private bool HasLines
+		{
+			get
+			{
+				return connectedLines.Count != 0;
+			}
+		}
+
 		#region IBeginDragHandler implementation
 
 		public void OnBeginDrag(PointerEventData eventData)
@@ -77,10 +85,16 @@
 				return;
 			if (chipUi.IsSidebarChip)
 				return;
-			draggingLine = Instantiate(linePrefab, linesContainer);
-			int lpi = LinePositionIndex;
-			draggingLine.SetPosition(lpi, Center);
-			draggingLine.startColor = draggingLine.endColor = Image.color;
+			if (isInput && HasLines)
+			{
+				return;
+			}
+			else
+			{
+				draggingLine = Instantiate(linePrefab, linesContainer);
+				draggingLine.SetPosition(LinePositionIndex, Center);
+				draggingLine.startColor = draggingLine.endColor = Image.color;
+			}
 		}
 
 		#endregion
@@ -109,7 +123,7 @@
 				if (dstPort != null)
 					break;
 			}
-			if (dstPort == null || dstPort.isInput == isInput || dstPort.chipUi.IsSidebarChip || (isInput && connectedLines.Count != 0) || (dstPort.isInput && dstPort.connectedLines.Count != 0))
+			if (dstPort == null || dstPort.isInput == isInput || dstPort.chipUi.IsSidebarChip || (isInput && HasLines) || (dstPort.isInput && dstPort.HasLines))
 				Destroy(draggingLine.gameObject);
 			else
 			{
