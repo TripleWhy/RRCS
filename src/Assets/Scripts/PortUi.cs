@@ -9,6 +9,7 @@
 	{
 		public bool isInput;
 		public LineRenderer linePrefab;
+		public Port port;
 
 		private static Transform linesContainer;
 		public RectTransform RectTransform { get; private set; }
