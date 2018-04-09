@@ -38,6 +38,7 @@
 			if (port.IsInput && port.IsConnected)
 				return false;
 			connectedPorts.Add(port);
+			port.connectedPorts.Add(this);
 			Connected(this, port);
 			return true;
 		}
@@ -46,6 +47,7 @@
 		{
 			if (!connectedPorts.Remove(port))
 				return;
+			port.connectedPorts.Remove(this);
 			Disconnected(this, port);
 		}
 	}
