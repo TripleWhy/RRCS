@@ -10,23 +10,31 @@
 
 		public static void Register(ChipUi chipUi)
 		{
+			if (chipUi.IsSidebarChip)
+				return;
 			chips[chipUi.Chip] = chipUi;
 		}
 
 		public static void Unregister(ChipUi chipUi)
 		{
+			if (chipUi.IsSidebarChip)
+				return;
 			chips.Remove(chipUi.Chip);
 		}
 
 		public static void Register(PortUi portUi)
 		{
-			ports[portUi.Port] = portUi;
+			if (portUi.chipUi.IsSidebarChip)
+				return;
+			ports.Add(portUi.Port, portUi);
 			portUi.Port.Connected += Port_Connected;
 			portUi.Port.Disconnected += Port_Disconnected;
 		}
 
 		public static void Unregister(PortUi portUi)
 		{
+			if (portUi.chipUi.IsSidebarChip)
+				return;
 			portUi.Port.Connected -= Port_Connected;
 			portUi.Port.Disconnected -= Port_Disconnected;
 			ports.Remove(portUi.Port);
