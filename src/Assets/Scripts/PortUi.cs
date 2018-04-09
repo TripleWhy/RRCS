@@ -16,6 +16,7 @@
 		public RectTransform RectTransform { get; private set; }
 		public Image Image { get; private set; }
 		private LineRenderer draggingLine;
+		private PortUi draggingOriginalConnectedPort;
 		private readonly Dictionary<PortUi, LineRenderer> connectedLines = new Dictionary<PortUi, LineRenderer>();
 		internal ChipUi chipUi;
 
@@ -108,7 +109,12 @@
 				return;
 			if (isInput && HasLines)
 			{
-				return;
+				//connectedLines sould contain exactly 1 entry.
+				foreach (KeyValuePair<PortUi, LineRenderer> entry in connectedLines)
+				{
+					draggingOriginalConnectedPort = entry.Key;
+					draggingLine = entry.Value;
+				}
 			}
 			else
 			{
@@ -126,7 +132,11 @@
 		{
 			if (draggingLine == null)
 				return;
-			draggingLine.SetPosition(LinePositionOtherIndex, (Vector2)eventData.pressEventCamera.ScreenToWorldPoint(eventData.position));
+			Vector2 pos = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position); //Cast Vector3 to Vector2 to discard the z coordinate
+			if (draggingOriginalConnectedPort)
+				draggingLine.SetPosition(LinePositionIndex, pos);
+			else
+				draggingLine.SetPosition(LinePositionOtherIndex, pos);
 		}
 
 		#endregion
@@ -144,13 +154,43 @@
 				if (dstPort != null)
 					break;
 			}
-			if (dstPort == null || dstPort.isInput == isInput || dstPort.chipUi.IsSidebarChip || (isInput && HasLines) || (dstPort.isInput && dstPort.HasLines))
+			if (draggingOriginalConnectedPort != null && object.ReferenceEquals(dstPort, this))
 			{
-				Destroy(draggingLine.gameObject);
+				draggingOriginalConnectedPort = null;
+				draggingLine.SetPosition(LinePositionIndex, Center);
 				draggingLine = null;
+				return;
+			}
+			PortUi srcPort = draggingOriginalConnectedPort ?? this;
+			if (dstPort == null || dstPort.isInput == srcPort.isInput || dstPort.chipUi.IsSidebarChip || (srcPort.isInput && srcPort.HasLines) || (dstPort.isInput && dstPort.HasLines))
+			{
+				if (draggingOriginalConnectedPort != null)
+				{
+					draggingLine = null;
+					port.Disconnect(draggingOriginalConnectedPort.port);
+				}
+				else
+				{
+					Destroy(draggingLine.gameObject);
+					draggingLine = null;
+				}
 			}
 			else
-				port.Connect(dstPort.port);
+			{
+				if (draggingOriginalConnectedPort != null)
+				{
+					port.Disconnect(draggingOriginalConnectedPort.port);
+					draggingOriginalConnectedPort = null;
+					if (srcPort.draggingLine == null)
+						srcPort.draggingLine = draggingLine;
+					else
+						Destroy(draggingLine.gameObject);
+					draggingLine = null;
+					srcPort.port.Connect(dstPort.port);
+				}
+				else
+					srcPort.port.Connect(dstPort.port);
+			}
 		}
 
 		#endregion
