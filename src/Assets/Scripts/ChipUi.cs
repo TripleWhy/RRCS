@@ -110,7 +110,7 @@
 			portUIs = new PortUi[ports.Length];
 
 			if (portCount <= 0)
-				Destroy(port0UI);
+				Destroy(port0UI.gameObject);
 			else
 			{
 				portUIs[0] = port0UI;
@@ -142,7 +142,7 @@
 				resetPortUi.Port = ports[portCount];
 			}
 			else
-				Destroy(resetPortUi);
+				Destroy(resetPortUi.gameObject);
 			port0UI = null;
 			resetPortUi = null;
 		}

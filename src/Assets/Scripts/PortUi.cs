@@ -195,7 +195,7 @@
 			{
 				if (destroyLine)
 				{
-					Destroy(line);
+					Destroy(line.gameObject);
 					draggingLine = null;
 				}
 				return false;
@@ -204,7 +204,7 @@
 			{
 				if (destroyLine)
 				{
-					Destroy(line);
+					Destroy(line.gameObject);
 					return false;
 				}
 				return true;
