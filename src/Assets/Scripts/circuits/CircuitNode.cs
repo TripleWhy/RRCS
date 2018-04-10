@@ -9,6 +9,9 @@
 		public readonly OutputPort[] outputPorts;
 		protected readonly CircuitManager manager;
 
+		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
+		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
+
 		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset)
 		{
 			this.inputPortCount = inputCount;
