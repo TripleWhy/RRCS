@@ -2,7 +2,7 @@
 {
 	public abstract class SimpleCombinatorChip : Chip
 	{
-		protected SimpleCombinatorChip() : base(2, 1, true)
+		protected SimpleCombinatorChip(CircuitManager manager) : base(manager, 2, 1, true)
 		{
 		}
 

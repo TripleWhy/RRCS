@@ -2,7 +2,7 @@
 {
 	public class AndChip : Chip
 	{
-		public AndChip() : base(7, 1, true)
+		public AndChip(CircuitManager manager) : base(manager, 7, 1, true)
 		{
 			foreach (InputPort port in inputPorts)
 				port.UnconnectedValue = 1;

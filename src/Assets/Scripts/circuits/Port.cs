@@ -18,6 +18,11 @@
 			this.isReset = isReset;
 		}
 
+		~Port()
+		{
+			Destroy();
+		}
+
 		public abstract bool IsInput { get; }
 		public abstract int GetValue();
 
@@ -27,6 +32,11 @@
 			{
 				return connectedPorts.Count != 0;
 			}
+		}
+
+		public void Destroy()
+		{
+			DisconnectAll();
 		}
 
 		public bool Connect(Port port)
@@ -49,6 +59,12 @@
 				return;
 			port.connectedPorts.Remove(this);
 			Disconnected(this, port);
+		}
+
+		public void DisconnectAll()
+		{
+			for (int i = connectedPorts.Count - 1; i >= 0; i--)
+				Disconnect(connectedPorts[i]);
 		}
 	}
 }

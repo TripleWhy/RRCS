@@ -51,6 +51,7 @@
 		private RectTransform rectTransform;
 		private Canvas canvas;
 		private static Canvas worldCanvas;
+		private static WordCanvasUi worldCanvasUi;
 		private static Sprite[] icons;
 		private RectTransform canvasRectTransform;
 		private ChipUi draggingInstance;
@@ -59,12 +60,6 @@
 
 		void Awake()
 		{
-			Chip = CreateChip();
-			UiManager.Register(this);
-		}
-
-		void Start()
-		{
 			if (worldCanvas == null)
 			{
 				foreach (Canvas c in FindObjectsOfType<Canvas>())
@@ -72,11 +67,18 @@
 					if (c.tag == "WorldUi")
 					{
 						worldCanvas = c;
+						worldCanvasUi = worldCanvas.GetComponent<WordCanvasUi>();
 						break;
 					}
 				}
 				icons = Resources.LoadAll<Sprite>("iconsWhite");
 			}
+			Chip = CreateChip();
+			UiManager.Register(this);
+		}
+
+		void Start()
+		{
 			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
@@ -157,21 +159,21 @@
 			switch(type)
 			{
 				case ChipType.Add:
-					return new AddChip();
+					return new AddChip(worldCanvasUi.manager);
 				case ChipType.Subtract:
-					return new SubtractChip();
+					return new SubtractChip(worldCanvasUi.manager);
 				case ChipType.Multiply:
-					return new MultiplyChip();
+					return new MultiplyChip(worldCanvasUi.manager);
 				case ChipType.Divide:
-					return new DivideChip();
+					return new DivideChip(worldCanvasUi.manager);
 				case ChipType.Modulo:
-					return new ModuloChip();
+					return new ModuloChip(worldCanvasUi.manager);
 				case ChipType.And:
-					return new AndChip();
+					return new AndChip(worldCanvasUi.manager);
 				case ChipType.Or:
-					return new OrChip();
+					return new OrChip(worldCanvasUi.manager);
 				case ChipType.Not:
-					return new NotChip();
+					return new NotChip(worldCanvasUi.manager);
 				default:
 					return null;
 			}

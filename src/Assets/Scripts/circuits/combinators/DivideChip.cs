@@ -2,6 +2,10 @@
 {
 	public class DivideChip : SimpleCombinatorChip
 	{
+		public DivideChip(CircuitManager manager) : base(manager)
+		{
+		}
+
 		override public int IconIndex
 		{
 			get

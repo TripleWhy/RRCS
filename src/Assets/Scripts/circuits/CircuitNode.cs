@@ -7,8 +7,9 @@
 		public readonly bool hasReset;
 		public readonly InputPort[] inputPorts;
 		public readonly OutputPort[] outputPorts;
+		protected readonly CircuitManager manager;
 
-		protected CircuitNode(int inputCount, int outputCount, bool hasReset)
+		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset)
 		{
 			this.inputPortCount = inputCount;
 			this.outputPortCount = outputCount;
@@ -26,6 +27,22 @@
 				outputPorts[i] = new OutputPort(this, false);
 			if (hasReset)
 				outputPorts[outputCount] = new OutputPort(this, true);
+
+			manager.AddNode(this);
+		}
+
+		~CircuitNode()
+		{
+			Destroy();
+		}
+
+		public virtual void Destroy()
+		{
+			foreach (OutputPort port in outputPorts)
+				port.Destroy();
+			foreach (InputPort port in inputPorts)
+				port.Destroy();
+			manager.RemoveNode(this);
 		}
 
 		public abstract void Evaluate();

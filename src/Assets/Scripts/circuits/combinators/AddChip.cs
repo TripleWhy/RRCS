@@ -2,7 +2,7 @@
 {
 	public class AddChip : Chip
 	{
-		public AddChip() : base(3, 1, true)
+		public AddChip(CircuitManager manager) : base(manager, 3, 1, true)
 		{
 		}
 

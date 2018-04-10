@@ -2,7 +2,7 @@
 {
 	public class NotChip : Chip
 	{
-		public NotChip() : base(1, 1, true)
+		public NotChip(CircuitManager manager) : base(manager, 1, 1, true)
 		{
 		}
 

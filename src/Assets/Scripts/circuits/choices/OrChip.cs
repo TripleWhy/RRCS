@@ -2,7 +2,7 @@
 {
 	public class OrChip : Chip
 	{
-		public OrChip() : base(7, 1, true)
+		public OrChip(CircuitManager manager) : base(manager, 7, 1, true)
 		{
 		}
 

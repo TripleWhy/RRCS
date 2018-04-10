@@ -2,6 +2,10 @@
 {
 	public class ModuloChip : SimpleCombinatorChip
 	{
+		public ModuloChip(CircuitManager manager) : base(manager)
+		{
+		}
+
 		override public int IconIndex
 		{
 			get

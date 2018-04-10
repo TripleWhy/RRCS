@@ -2,6 +2,10 @@
 {
 	public class MultiplyChip : SimpleCombinatorChip
 	{
+		public MultiplyChip(CircuitManager manager) : base(manager)
+		{
+		}
+
 		override public int IconIndex
 		{
 			get

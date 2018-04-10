@@ -1,9 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
-	[System.Serializable]
 	public abstract class Chip : CircuitNode
 	{
-		public Chip(int inputCount, int outputCount, bool hasReset) : base(inputCount, outputCount, hasReset)
+		public Chip(CircuitManager manager, int inputCount, int outputCount, bool hasReset) : base(manager, inputCount, outputCount, hasReset)
 		{
 		}
 
