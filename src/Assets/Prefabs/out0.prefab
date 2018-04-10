@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 0
+  valueText: {fileID: 114289888732515098}
   linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114851617793773056

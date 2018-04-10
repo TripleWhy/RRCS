@@ -9,6 +9,7 @@
 	public class PortUi : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
 		public bool isInput;
+		public Text valueText;
 		public LineRenderer linePrefab;
 		private Port port;
 
@@ -196,6 +197,7 @@
 		#endregion
 
 		private Vector3 lastPos;
+		private int lastValue;
 		void Update()
 		{
 			if (RectTransform.position != lastPos)
@@ -203,6 +205,15 @@
 				lastPos = RectTransform.position;
 				foreach (LineRenderer line in connectedLines.Values)
 					line.SetPosition(LinePositionIndex, Center);
+			}
+			if (valueText.gameObject.activeInHierarchy)
+			{
+				int value = port.GetValue();
+				if (value != lastValue)
+				{
+					lastValue = value;
+					valueText.text = value.ToString();
+				}
 			}
 		}
 

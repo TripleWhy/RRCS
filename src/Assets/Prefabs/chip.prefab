@@ -427,6 +427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 0
+  valueText: {fileID: 114797639261858344}
   linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114327506228288440
@@ -523,6 +524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 0
+  valueText: {fileID: 114114621127473796}
   linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114692728013051894
@@ -584,6 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 1
+  valueText: {fileID: 114146424407454504}
   linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114797639261858344
@@ -685,6 +688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 1
+  valueText: {fileID: 114716334915154002}
   linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114994975184414986
