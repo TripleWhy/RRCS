@@ -48,7 +48,14 @@
 			manager.RemoveNode(this);
 		}
 
-		public abstract void Evaluate();
+		public IEnumerable<CircuitNode> DependsOn()
+		{
+			foreach (InputPort port in inputPorts)
+			{
+				if (port.IsConnected && !object.ReferenceEquals(port.connectedPorts[0].node, this))
+					yield return port.connectedPorts[0].node;
+			}
+		}
 
 		public static int ToInt(bool b)
 		{
