@@ -8,7 +8,7 @@
 
 		override public void Evaluate()
 		{
-			if (ToBool(inputPorts[3].GetValue()))
+			if (ToBool(inputPorts[2].GetValue()))
 				outputPorts[0].Value = 0;
 			else
 				outputPorts[0].Value = Combine(inputPorts[0].GetValue(), inputPorts[1].GetValue());
