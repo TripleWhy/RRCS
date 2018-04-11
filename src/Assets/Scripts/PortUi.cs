@@ -169,6 +169,7 @@
 				{
 					draggingLine = null;
 					port.Disconnect(draggingOriginalConnectedPort.port);
+					draggingOriginalConnectedPort = null;
 				}
 				else
 				{
