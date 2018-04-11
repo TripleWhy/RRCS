@@ -29,6 +29,8 @@
 			ports.Add(portUi.Port, portUi);
 			portUi.Port.Connected += Port_Connected;
 			portUi.Port.Disconnected += Port_Disconnected;
+
+			portUi.TextActive = true; //TODO causes the lines to be drawn behind the chips. Appears to be related to the point in time when the text is activated.
 		}
 
 		public static void Unregister(PortUi portUi)

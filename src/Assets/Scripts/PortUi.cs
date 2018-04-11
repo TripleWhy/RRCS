@@ -218,6 +218,18 @@
 			}
 		}
 
+		public bool TextActive
+		{
+			get
+			{
+				return valueText.gameObject.activeSelf;
+			}
+			set
+			{
+				valueText.gameObject.SetActive(value);
+			}
+		}
+
 		internal LineRenderer AddConnection(PortUi otherUi, LineRenderer line)
 		{
 			if (line == null)
