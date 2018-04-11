@@ -6,7 +6,7 @@
 		{
 		}
 
-		override public void Evaluate()
+		override protected void EvaluateOutputs()
 		{
 			if (ToBool(inputPorts[2].GetValue()))
 				outputPorts[0].Value = 0;

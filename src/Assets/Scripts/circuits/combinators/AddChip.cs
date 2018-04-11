@@ -14,7 +14,7 @@
 			}
 		}
 
-		override public void Evaluate()
+		override protected void EvaluateOutputs()
 		{
 			if (ToBool(inputPorts[3]))
 				outputPorts[0].Value = 0;

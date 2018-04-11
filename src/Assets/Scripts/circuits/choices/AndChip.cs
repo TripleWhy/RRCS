@@ -4,8 +4,8 @@
 	{
 		public AndChip(CircuitManager manager) : base(manager, 7, 1, true)
 		{
-			foreach (InputPort port in inputPorts)
-				port.UnconnectedValue = 1;
+			for (int i = 0; i < inputPortCount; i++)
+				inputPorts[i].UnconnectedValue = 1;
 		}
 
 		override public int IconIndex
@@ -16,7 +16,7 @@
 			}
 		}
 
-		override public void Evaluate()
+		override protected void EvaluateOutputs()
 		{
 			outputPorts[0].Value = ToInt(
 				!ToBool(inputPorts[7])

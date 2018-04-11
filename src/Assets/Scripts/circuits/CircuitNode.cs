@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System.Collections.Generic;
+
 	public abstract class CircuitNode
 	{
 		public readonly int inputPortCount;
@@ -31,7 +33,8 @@
 			if (hasReset)
 				outputPorts[outputCount] = new OutputPort(this, true);
 
-			manager.AddNode(this);
+			if (manager != null)
+				manager.AddNode(this);
 		}
 
 		~CircuitNode()
@@ -76,5 +79,14 @@
 		{
 			return ToBool(ToInt(p));
 		}
+
+		public virtual void Evaluate()
+		{
+			if (hasReset && ToBool(inputPorts[inputPortCount]))
+				outputPorts[outputPortCount].Value = 1;
+			EvaluateOutputs();
+		}
+
+		protected abstract void EvaluateOutputs();
 	}
 }

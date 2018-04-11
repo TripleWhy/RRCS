@@ -73,17 +73,17 @@
 				}
 				icons = Resources.LoadAll<Sprite>("iconsWhite");
 			}
+			rectTransform = (RectTransform)transform;
+			canvas = GetComponentInParent<Canvas>();
+			canvasRectTransform = (RectTransform)canvas.transform;
+			IsSidebarChip = (canvas.tag == "Sidebar");
+
 			Chip = CreateChip();
 			UiManager.Register(this);
 		}
 
 		void Start()
 		{
-			rectTransform = (RectTransform)transform;
-			canvas = GetComponentInParent<Canvas>();
-			canvasRectTransform = (RectTransform)canvas.transform;
-			IsSidebarChip = (canvas.tag == "Sidebar");
-
 			if (!skipSetup)
 			{
 				skipSetup = true;
@@ -151,29 +151,25 @@
 
 		private Chip CreateChip()
 		{
-			return CreateChip(type);
-		}
-
-		private static Chip CreateChip(ChipType type)
-		{
-			switch(type)
+			CircuitManager manager = IsSidebarChip ? null : worldCanvasUi.manager;
+			switch (type)
 			{
 				case ChipType.Add:
-					return new AddChip(worldCanvasUi.manager);
+					return new AddChip(manager);
 				case ChipType.Subtract:
-					return new SubtractChip(worldCanvasUi.manager);
+					return new SubtractChip(manager);
 				case ChipType.Multiply:
-					return new MultiplyChip(worldCanvasUi.manager);
+					return new MultiplyChip(manager);
 				case ChipType.Divide:
-					return new DivideChip(worldCanvasUi.manager);
+					return new DivideChip(manager);
 				case ChipType.Modulo:
-					return new ModuloChip(worldCanvasUi.manager);
+					return new ModuloChip(manager);
 				case ChipType.And:
-					return new AndChip(worldCanvasUi.manager);
+					return new AndChip(manager);
 				case ChipType.Or:
-					return new OrChip(worldCanvasUi.manager);
+					return new OrChip(manager);
 				case ChipType.Not:
-					return new NotChip(worldCanvasUi.manager);
+					return new NotChip(manager);
 				default:
 					return null;
 			}
@@ -324,6 +320,7 @@
 					draggingInstance.outPorts[i].chipUi = draggingInstance;
 					draggingInstance.outPorts[i].Port = draggingInstance.Chip.outputPorts[i];
 				}
+				worldCanvasUi.manager.AddNode(draggingInstance.Chip);
 			}
 			draggingInstance = null;
 		}

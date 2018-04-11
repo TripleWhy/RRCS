@@ -14,7 +14,7 @@
 			}
 		}
 
-		override public void Evaluate()
+		override protected void EvaluateOutputs()
 		{
 			outputPorts[0].Value = ToInt(!ToBool(inputPorts[1]) && !ToBool(inputPorts[0]));
 		}
