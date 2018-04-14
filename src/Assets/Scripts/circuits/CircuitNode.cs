@@ -1,14 +1,16 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using System.Collections.Generic;
 
-	public abstract class CircuitNode
+	public abstract class CircuitNode : IComparable<CircuitNode>
 	{
 		public readonly int inputPortCount;
 		public readonly int outputPortCount;
 		public readonly bool hasReset;
 		public readonly InputPort[] inputPorts;
 		public readonly OutputPort[] outputPorts;
+		internal int RingEvaluationPriority { get; set; }
 		protected readonly CircuitManager manager;
 
 		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
@@ -116,5 +118,10 @@
 		}
 
 		protected abstract void EvaluateOutputs();
+
+		public int CompareTo(CircuitNode other)
+		{
+			return RingEvaluationPriority.CompareTo(other.RingEvaluationPriority);
+		}
 	}
 }
