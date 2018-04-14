@@ -22,19 +22,47 @@
 			int totalInputCount = inputCount + (hasReset ? 1 : 0);
 			inputPorts = new InputPort[totalInputCount];
 			for (int i = 0; i < inputCount; i++)
+			{
 				inputPorts[i] = new InputPort(this, false);
+				inputPorts[i].ValueChanged += CircuitNode_ValueChanged;
+				inputPorts[i].Connected += CircuitNode_Connected;
+				inputPorts[i].Disconnected += CircuitNode_Connected;
+			}
 			if (hasReset)
+			{
 				inputPorts[inputCount] = new InputPort(this, true);
+				inputPorts[inputCount].ValueChanged += CircuitNode_ValueChanged;
+				inputPorts[inputCount].Connected += CircuitNode_Connected;
+				inputPorts[inputCount].Disconnected += CircuitNode_Connected;
+			}
 			
 			int totalOutputCount = outputCount + (hasReset ? 1 : 0);
 			outputPorts = new OutputPort[totalOutputCount];
 			for (int i = 0; i < outputCount; i++)
+			{
 				outputPorts[i] = new OutputPort(this, false);
+				outputPorts[i].Connected += CircuitNode_Connected;
+				outputPorts[i].Disconnected += CircuitNode_Connected;
+			}
 			if (hasReset)
+			{
 				outputPorts[outputCount] = new OutputPort(this, true);
+				outputPorts[outputCount].Connected += CircuitNode_Connected;
+				outputPorts[outputCount].Disconnected += CircuitNode_Connected;
+			}
 
 			if (manager != null)
 				manager.AddNode(this);
+		}
+
+		private void CircuitNode_Connected(Port sender, Port other)
+		{
+			EvaluationRequired(this);
+		}
+
+		private void CircuitNode_ValueChanged(Port sender)
+		{
+			EvaluationRequired(this);
 		}
 
 		~CircuitNode()

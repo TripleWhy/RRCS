@@ -5,8 +5,10 @@
 	public abstract class Port
 	{
 		public delegate void ConnectionEventHandler(Port sender, Port other);
+		public delegate void ValueChangedEventHandler(Port sender);
 		public event ConnectionEventHandler Connected = delegate {};
 		public event ConnectionEventHandler Disconnected = delegate {};
+		public event ValueChangedEventHandler ValueChanged = delegate { };
 
 		public readonly List<Port> connectedPorts = new List<Port>();
 		public readonly CircuitNode node;
@@ -47,6 +49,10 @@
 				return false;
 			if (port.IsInput && port.IsConnected)
 				return false;
+			if (IsInput)
+				port.ValueChanged += ValueChanged;
+			else //port.IsInput
+				ValueChanged += port.ValueChanged;
 			connectedPorts.Add(port);
 			port.connectedPorts.Add(this);
 			Connected(this, port);
@@ -65,6 +71,11 @@
 		{
 			for (int i = connectedPorts.Count - 1; i >= 0; i--)
 				Disconnect(connectedPorts[i]);
+		}
+
+		protected void EmitValueChanged()
+		{
+			ValueChanged(this);
 		}
 	}
 }

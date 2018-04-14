@@ -1,6 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
 	using System.Collections.Generic;
+	using UnityEngine;
 
 	public class CircuitManager
 	{
@@ -13,16 +14,6 @@
 				return;
 			nodes.Add(node);
 			node.EvaluationRequired += Node_EvaluationRequired;
-			foreach (Port port in node.inputPorts)
-			{
-				port.Connected += Invalidate;
-				port.Disconnected += Invalidate;
-			}
-			foreach (Port port in node.outputPorts)
-			{
-				port.Connected += Invalidate;
-				port.Disconnected += Invalidate;
-			}
 			Invalidate();
 		}
 
@@ -60,11 +51,13 @@
 
 		public void EvaluateIfNecessary()
 		{
-			dirty = true; //TODO: Remove and instead firgure out a way to allow self-modifying loops to set the flag.
 			if (dirty)
 			{
 				dirty = false; //Clearing the flag before Evaluate() allows Evaluate() to set the flag again.
+				float t0 = Time.realtimeSinceStartup;
 				Evaluate();
+				float t1 = Time.realtimeSinceStartup;
+				Debug.Log(t0 - t1);
 			}
 		}
 
