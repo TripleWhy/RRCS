@@ -35,7 +35,7 @@
 
 		public static void Unregister(PortUi portUi)
 		{
-			if (portUi.chipUi.IsSidebarChip)
+			if (portUi.chipUi == null || portUi.chipUi.IsSidebarChip)
 				return;
 			portUi.Port.Connected -= Port_Connected;
 			portUi.Port.Disconnected -= Port_Disconnected;
