@@ -112,8 +112,8 @@
 
 		public virtual void Evaluate()
 		{
-			if (hasReset && ToBool(inputPorts[inputPortCount]))
-				outputPorts[outputPortCount].Value = 1;
+			if (hasReset)
+				outputPorts[outputPortCount].Value = ToInt(ToBool(inputPorts[inputPortCount]));
 			EvaluateOutputs();
 		}
 
