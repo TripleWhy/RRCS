@@ -162,9 +162,9 @@ TextureImporter:
       name: iconsWhite_2
       rect:
         serializedVersion: 2
-        x: 1607
+        x: 1560
         y: 1780
-        width: 119
+        width: 212
         height: 168
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -176,9 +176,9 @@ TextureImporter:
       name: iconsWhite_3
       rect:
         serializedVersion: 2
-        x: 219
+        x: 221
         y: 1772
-        width: 217
+        width: 212
         height: 165
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

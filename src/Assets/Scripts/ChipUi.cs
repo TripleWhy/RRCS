@@ -11,7 +11,8 @@
 		public enum ChipType
 		{
 			Add, Subtract, Multiply, Divide, Modulo,
-			Equal, NotEqual, GreaterThan, TreaterThanOrEqual, LessThan, LessThanOrEqual,
+			Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual,
+			AdvancedEqual, AdvancedNotEqual, AdvancedGreaterThan, AdvancedGreaterThanOrEqual, AdvancedLessThan, AdvancedLessThanOrEqual,
 			And, Or, Not,
 			Variable,
 			Output, Message,
@@ -170,6 +171,10 @@
 					return new OrChip(manager);
 				case ChipType.Not:
 					return new NotChip(manager);
+				case ChipType.Equal:
+					return new SimpleEqualsChip(manager);
+				case ChipType.NotEqual:
+					return new SimpleNotEqualsChip(manager);
 				default:
 					return null;
 			}
