@@ -6,12 +6,9 @@
 	{
 		public readonly CircuitManager manager = new CircuitManager();
 		private float simuationSpeed = 1f;
-		private bool paused = false;
 
 		void FixedUpdate()
 		{
-			if (paused)
-				Time.timeScale = 0f;
 			manager.EvaluateIfNecessary();
 		}
 
@@ -40,20 +37,18 @@
 
 		public void SimulationPlay()
 		{
-			paused = false;
 			Time.timeScale = SimulationSpeed;
 		}
 
 		public void SimulationPause()
 		{
-			paused = true;
 			Time.timeScale = 0f;
 		}
 
 		public void SimulationStep()
 		{
-			paused = true;
-			Time.timeScale = 1;
+			SimulationPause();
+			FixedUpdate();
 		}
 	}
 }
