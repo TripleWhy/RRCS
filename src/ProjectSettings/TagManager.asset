@@ -43,9 +43,3 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: ChipBodies
-    uniqueID: 385447375
-    locked: 0
-  - name: ChipDetails
-    uniqueID: 3279038897
-    locked: 0
