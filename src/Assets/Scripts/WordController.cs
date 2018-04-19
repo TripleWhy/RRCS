@@ -50,5 +50,17 @@
 			SimulationPause();
 			FixedUpdate();
 		}
+
+		public bool ShowPortLabels
+		{
+			get
+			{
+				return UiManager.ShowPortLabels;
+			}
+			set
+			{
+				UiManager.ShowPortLabels = value;
+			}
+		}
 	}
 }

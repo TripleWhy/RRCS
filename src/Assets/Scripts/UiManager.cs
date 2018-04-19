@@ -7,6 +7,7 @@
 	{
 		private static readonly Dictionary<Chip, ChipUi> chips = new Dictionary<Chip, ChipUi>();
 		private static readonly Dictionary<Port, PortUi> ports = new Dictionary<Port, PortUi>();
+		private static bool showPortLabels = false;
 
 		public static void Register(ChipUi chipUi)
 		{
@@ -29,8 +30,7 @@
 			ports.Add(portUi.Port, portUi);
 			portUi.Port.Connected += Port_Connected;
 			portUi.Port.Disconnected += Port_Disconnected;
-
-			portUi.TextActive = true; //TODO causes the lines to be drawn behind the chips. Appears to be related to the point in time when the text is activated.
+			portUi.TextActive = showPortLabels;
 		}
 
 		public static void Unregister(PortUi portUi)
@@ -75,6 +75,22 @@
 		public static PortUi GetUi(Port port)
 		{
 			return ports[port];
+		}
+
+		public static bool ShowPortLabels
+		{
+			get
+			{
+				return showPortLabels;
+			}
+			set
+			{
+				if (value == showPortLabels)
+					return;
+				showPortLabels = value;
+				foreach (PortUi port in ports.Values)
+					port.TextActive = value;
+			}
 		}
 	}
 }
