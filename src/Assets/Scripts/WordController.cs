@@ -2,7 +2,7 @@
 {
 	using UnityEngine;
 
-	public class WordCanvasUi : MonoBehaviour
+	public class WordController : MonoBehaviour
 	{
 		public readonly CircuitManager manager = new CircuitManager();
 		private float simuationSpeed = 1f;
