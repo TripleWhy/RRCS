@@ -1,12 +1,11 @@
 ﻿namespace AssemblyCSharp
 {
-	using System.Collections;
-	using System.Collections.Generic;
 	using UnityEngine;
 	using UnityEngine.UI;
 	using UnityEngine.EventSystems;
+	using UnityEngine.UI.Extensions;
 
-	public class ChipUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+	public class ChipUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IBoxSelectable
 	{
 		public enum ChipType
 		{
@@ -39,6 +38,7 @@
 		public PortUi out0;
 		public PortUi outR;
 		public Image icon;
+		public RectTransform selectionPrefab;
 
 		public Chip Chip { get; private set; }
 		[HideInInspector]
@@ -56,6 +56,7 @@
 		private static Sprite[] icons;
 		private RectTransform canvasRectTransform;
 		private ChipUi draggingInstance;
+		private RectTransform selectionInstance;
 
 		public bool IsSidebarChip{ get; private set; }
 
@@ -329,8 +330,93 @@
 			}
 			draggingInstance = null;
 		}
-
 		#endregion
+
+		#region Implemented members of IBoxSelectable
+		bool _selected = false;
+		public bool selected
+		{
+			get
+			{
+				return _selected;
+			}
+			set
+			{
+				if (IsSidebarChip)
+					return;
+				print("set selected " + value);
+				if (value == _selected)
+					return;
+				_selected = value;
+				UpdateSelected();
+			}
+		}
+
+		bool _preSelected = false;
+		public bool preSelected
+		{
+			get
+			{
+				return _preSelected;
+			}
+			set
+			{
+				if (IsSidebarChip)
+					return;
+				if (value == _preSelected)
+					return;
+				_preSelected = value;
+				UpdateSelected();
+			}
+		}
+		#endregion
+
+		private void UpdateSelected()
+		{
+			if ((preSelected || selected) && selectionInstance == null)
+			{
+				selectionInstance = Instantiate(selectionPrefab, rectTransform);
+				UpdateSelectionSize();
+				CameraControls.Instance.ZoomChanged += Camera_ZoomChanged;
+			}
+			else if (!preSelected && !selected && selectionInstance != null)
+			{
+				Destroy(selectionInstance.gameObject);
+				selectionInstance = null;
+			}
+		}
+
+		private void Camera_ZoomChanged(float inverseZoom)
+		{
+			Vector2 pos = new Vector2(0, 0);
+			Vector2 size = rectTransform.sizeDelta;
+			if (inPorts.Length != 0)
+			{
+				if (outPorts.Length != 0)
+					size.x += inPorts[0].RectTransform.sizeDelta.x;
+				else
+				{
+					size.x += inPorts[0].RectTransform.sizeDelta.x * 0.5f;
+					pos.x += inPorts[0].RectTransform.sizeDelta.x * 0.25f;
+				}
+			}
+			else
+			{
+				if (outPorts.Length != 0)
+				{
+					size.x += outPorts[0].RectTransform.sizeDelta.x * 0.5f;
+					pos.x += outPorts[0].RectTransform.sizeDelta.x * 0.25f;
+				}
+			}
+			selectionInstance.anchoredPosition = pos;
+			selectionInstance.sizeDelta = size / inverseZoom;
+			selectionInstance.localScale = new Vector3(inverseZoom, inverseZoom);
+		}
+
+		private void UpdateSelectionSize()
+		{
+			Camera_ZoomChanged(CameraControls.Instance.InverseZoom);
+		}
 	}
 
 }

@@ -340,6 +340,8 @@ MonoBehaviour:
   out0: {fileID: 114954171152792676}
   outR: {fileID: 114031671345654430}
   icon: {fileID: 114349600175431742}
+  selectionPrefab: {fileID: 224680459627969996, guid: ee940d1ada1ab3f4d9f18db2c536981e,
+    type: 2}
   skipSetup: 0
 --- !u!114 &114122193091781906
 MonoBehaviour:
