@@ -2,7 +2,7 @@
 {
 	using UnityEngine;
 
-	public class WordController : MonoBehaviour
+	public class RRCSManager : MonoBehaviour
 	{
 		public readonly CircuitManager manager = new CircuitManager();
 		private float simuationSpeed = 1f;

@@ -52,7 +52,7 @@
 		private RectTransform rectTransform;
 		private Canvas canvas;
 		private static Canvas worldCanvas;
-		private static WordController worldCanvasUi;
+		private static RRCSManager worldCanvasUi;
 		private static Sprite[] icons;
 		private RectTransform canvasRectTransform;
 		private ChipUi draggingInstance;
@@ -69,7 +69,7 @@
 					if (c.tag == "WorldUi")
 					{
 						worldCanvas = c;
-						worldCanvasUi = worldCanvas.GetComponent<WordController>();
+						worldCanvasUi = worldCanvas.GetComponent<RRCSManager>();
 						break;
 					}
 				}
