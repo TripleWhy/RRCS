@@ -325,6 +325,7 @@
 					draggingInstance.outPorts[i].Port = draggingInstance.Chip.outputPorts[i];
 				}
 				RRCSManager.Instance.circuitManager.AddNode(draggingInstance.Chip);
+				UiManager.Register(draggingInstance);
 			}
 			draggingInstance = null;
 		}
