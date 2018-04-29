@@ -15,12 +15,6 @@
 
 		void Awake()
 		{
-			if (RRCSManager.Instance.cameraControls != null)
-			{
-				Destroy(gameObject);
-				throw new InvalidOperationException("A CameraControls already exists.");
-			}
-			RRCSManager.Instance.cameraControls = this;
 			cam = GetComponent<Camera>();
 		}
 

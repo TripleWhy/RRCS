@@ -6,7 +6,7 @@
 	{
 		public readonly CircuitManager circuitManager = new CircuitManager();
 		private float simuationSpeed = 1f;
-		internal CameraControls cameraControls;
+		public CameraControls cameraControls;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance
