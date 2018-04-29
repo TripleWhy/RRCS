@@ -7,7 +7,6 @@
 	{
 		private float inverseZoom = 0.5f;
 
-		public static CameraControls Instance = null;
 		private Camera cam;
 		private int screenHeight;
 
@@ -16,12 +15,12 @@
 
 		void Awake()
 		{
-			if (Instance != null)
+			if (RRCSManager.Instance.cameraControls != null)
 			{
 				Destroy(gameObject);
 				throw new InvalidOperationException("A CameraControls already exists.");
 			}
-			Instance = this;
+			RRCSManager.Instance.cameraControls = this;
 			cam = GetComponent<Camera>();
 		}
 

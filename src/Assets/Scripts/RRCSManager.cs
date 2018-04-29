@@ -4,12 +4,24 @@
 
 	public class RRCSManager : MonoBehaviour
 	{
-		public readonly CircuitManager manager = new CircuitManager();
+		public readonly CircuitManager circuitManager = new CircuitManager();
 		private float simuationSpeed = 1f;
+		internal CameraControls cameraControls;
+
+		private static RRCSManager instance;
+		public static RRCSManager Instance
+		{
+			get
+			{
+				if (instance == null)
+					instance = GameObject.FindObjectOfType<RRCSManager>();
+				return instance;
+			}
+		}
 
 		void FixedUpdate()
 		{
-			manager.EvaluateIfNecessary();
+			circuitManager.EvaluateIfNecessary();
 		}
 
 		public float SimulationSpeed

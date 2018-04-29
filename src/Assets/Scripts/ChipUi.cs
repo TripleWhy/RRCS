@@ -52,7 +52,6 @@
 		private RectTransform rectTransform;
 		private Canvas canvas;
 		private static Canvas worldCanvas;
-		private static RRCSManager worldCanvasUi;
 		private static Sprite[] icons;
 		private RectTransform canvasRectTransform;
 		private ChipUi draggingInstance;
@@ -69,7 +68,6 @@
 					if (c.tag == "WorldUi")
 					{
 						worldCanvas = c;
-						worldCanvasUi = worldCanvas.GetComponent<RRCSManager>();
 						break;
 					}
 				}
@@ -153,7 +151,7 @@
 
 		private Chip CreateChip()
 		{
-			CircuitManager manager = IsSidebarChip ? null : worldCanvasUi.manager;
+			CircuitManager manager = IsSidebarChip ? null : RRCSManager.Instance.circuitManager;
 			switch (type)
 			{
 				case ChipType.Add:
@@ -326,7 +324,7 @@
 					draggingInstance.outPorts[i].chipUi = draggingInstance;
 					draggingInstance.outPorts[i].Port = draggingInstance.Chip.outputPorts[i];
 				}
-				worldCanvasUi.manager.AddNode(draggingInstance.Chip);
+				RRCSManager.Instance.circuitManager.AddNode(draggingInstance.Chip);
 			}
 			draggingInstance = null;
 		}
@@ -377,7 +375,7 @@
 			{
 				selectionInstance = Instantiate(selectionPrefab, rectTransform);
 				UpdateSelectionSize();
-				CameraControls.Instance.ZoomChanged += Camera_ZoomChanged;
+				RRCSManager.Instance.cameraControls.ZoomChanged += Camera_ZoomChanged;
 			}
 			else if (!preSelected && !selected && selectionInstance != null)
 			{
@@ -415,7 +413,7 @@
 
 		private void UpdateSelectionSize()
 		{
-			Camera_ZoomChanged(CameraControls.Instance.InverseZoom);
+			Camera_ZoomChanged(RRCSManager.Instance.cameraControls.InverseZoom);
 		}
 	}
 

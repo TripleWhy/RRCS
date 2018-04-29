@@ -7,7 +7,6 @@
 	{
 		public AccordionSection[] sections;
 
-		// Use this for initialization
 		void Start()
 		{
 			foreach (AccordionSection section in sections)
