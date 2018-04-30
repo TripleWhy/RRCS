@@ -110,7 +110,7 @@
 				return;
 			if (isInput && HasLines)
 			{
-				//connectedLines sould contain exactly 1 entry.
+				//connectedLines should contain exactly 1 entry.
 				foreach (KeyValuePair<PortUi, LineRenderer> entry in connectedLines)
 				{
 					draggingOriginalConnectedPort = entry.Key;
@@ -123,6 +123,7 @@
 				draggingLine.SetPosition(LinePositionIndex, Center);
 				draggingLine.startColor = draggingLine.endColor = Image.color;
 			}
+			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
 		}
 
 		#endregion
@@ -148,6 +149,7 @@
 		{
 			if (draggingLine == null)
 				return;
+			RRCSManager.Instance.selectionManager.SelectionEnabled = true;
 			PortUi dstPort = null;
 			foreach (GameObject go in eventData.hovered)
 			{

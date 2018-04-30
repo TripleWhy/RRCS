@@ -92,7 +92,7 @@ namespace UnityEngine.UI.Extensions
 	 * 2) The user can filter which objects should be selectable, for example units versus menu selections
 	 *
 	 */
-		void SetSelectableGroup(IEnumerable<MonoBehaviour> behaviourCollection) {
+		public void SetSelectableGroup(IEnumerable<MonoBehaviour> behaviourCollection) {
 			
 			// If null, the selectionbox reverts to it's default behaviour
 			if (behaviourCollection == null) {

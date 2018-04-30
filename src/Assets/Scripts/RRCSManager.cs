@@ -7,6 +7,7 @@
 		public readonly CircuitManager circuitManager = new CircuitManager();
 		private float simuationSpeed = 1f;
 		public CameraControls cameraControls;
+		public SelectionManager selectionManager;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance
@@ -17,6 +18,12 @@
 					instance = GameObject.FindObjectOfType<RRCSManager>();
 				return instance;
 			}
+		}
+
+		private void Awake()
+		{
+			if (instance == null)
+				instance = this;
 		}
 
 		void FixedUpdate()

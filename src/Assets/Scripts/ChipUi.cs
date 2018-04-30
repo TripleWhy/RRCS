@@ -230,6 +230,14 @@
 		{
 			if (eventData.button != 0)
 				return;
+			DoPointerDown(eventData);
+			foreach (ChipUi chip in RRCSManager.Instance.selectionManager.GetSelectedChips())
+				if (!object.ReferenceEquals(chip, this))
+					chip.DoPointerDown(eventData);
+		}
+
+		public void DoPointerDown(PointerEventData eventData)
+		{
 			Vector2 n_originalLocalPointerPosition;
 			RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out n_originalLocalPointerPosition);
 			pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) - rectTransform.InverseTransformPoint(new Vector3());
@@ -245,10 +253,12 @@
 				return;
 			if (draggingInstance != null)
 				return;
-			if (!IsSidebarChip)
-				return;
-			draggingInstance = Instantiate(this, canvasRectTransform);
-			draggingInstance.GetComponent<Image>().raycastTarget = false;
+			if (IsSidebarChip)
+			{
+				draggingInstance = Instantiate(this, canvasRectTransform);
+				draggingInstance.GetComponent<Image>().raycastTarget = false;
+			}
+			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
 		}
 
 		#endregion
@@ -259,10 +269,18 @@
 		{
 			if (eventData.button != 0)
 				return;
+			DoDrag(eventData);
+			foreach (ChipUi chip in RRCSManager.Instance.selectionManager.GetSelectedChips())
+				if (!object.ReferenceEquals(chip, this))
+					chip.DoDrag(eventData);
+		}
+
+		private void DoDrag(PointerEventData eventData)
+		{
 			ChipUi chip = draggingInstance ?? this;
 
-			if (chip.rectTransform == null || chip.canvasRectTransform == null)
-				return;
+			Debug.Assert(chip.rectTransform != null);
+			Debug.Assert(chip.canvasRectTransform != null);
 
 			Vector2 worldPosition = eventData.position;
 			if (eventData.pressEventCamera != null)
@@ -279,6 +297,7 @@
 		{
 			if (eventData.button != 0)
 				return;
+			RRCSManager.Instance.selectionManager.SelectionEnabled = true;
 			if (draggingInstance == null)
 				return;
 
@@ -341,9 +360,7 @@
 			}
 			set
 			{
-				if (IsSidebarChip)
-					return;
-				print("set selected " + value);
+				Debug.Assert(!IsSidebarChip);
 				if (value == _selected)
 					return;
 				_selected = value;

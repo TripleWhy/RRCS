@@ -124,6 +124,7 @@ GameObject:
   - component: {fileID: 71807218}
   - component: {fileID: 71807216}
   - component: {fileID: 71807215}
+  - component: {fileID: 71807217}
   m_Layer: 5
   m_Name: Selection Box
   m_TagString: Untagged
@@ -145,12 +146,24 @@ MonoBehaviour:
   color: {r: 0.816, g: 0.816, b: 0.816, a: 0.353}
   art: {fileID: 0}
   selectionMask: {fileID: 1684601275}
+  boxRect: {fileID: 0}
 --- !u!222 &71807216
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 71807214}
+--- !u!114 &71807217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 71807214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 014ae52b1a7d4794aa7c9442ac7748ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!223 &71807218
 Canvas:
   m_ObjectHideFlags: 0
@@ -795,6 +808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraControls: {fileID: 1732939166}
+  selectionManager: {fileID: 71807217}
 --- !u!1 &535808578
 GameObject:
   m_ObjectHideFlags: 0

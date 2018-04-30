@@ -9,11 +9,18 @@
 		private static readonly Dictionary<Port, PortUi> ports = new Dictionary<Port, PortUi>();
 		private static bool showPortLabels = false;
 
+		public static IEnumerable<MonoBehaviour> GetSelectables()
+		{
+			foreach (ChipUi ui in chips.Values)
+				yield return ui;
+		}
+
 		public static void Register(ChipUi chipUi)
 		{
 			if (chipUi.IsSidebarChip)
 				return;
 			chips[chipUi.Chip] = chipUi;
+			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
 		}
 
 		public static void Unregister(ChipUi chipUi)
@@ -21,6 +28,7 @@
 			if (chipUi.IsSidebarChip)
 				return;
 			chips.Remove(chipUi.Chip);
+			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
 		}
 
 		public static void Register(PortUi portUi)
@@ -75,6 +83,11 @@
 		public static PortUi GetUi(Port port)
 		{
 			return ports[port];
+		}
+
+		public static ICollection<ChipUi> GetChips()
+		{
+			return chips.Values;
 		}
 
 		public static bool ShowPortLabels
