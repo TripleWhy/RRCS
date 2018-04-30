@@ -16,10 +16,7 @@
 
 		override protected void EvaluateOutputs()
 		{
-			if (ToBool(inputPorts[3]))
-				outputPorts[0].Value = 0;
-			else
-				outputPorts[0].Value = ToInt(inputPorts[0]) + ToInt(inputPorts[1]) + ToInt(inputPorts[2]);
+			outputPorts[0].Value = ToInt(inputPorts[0]) + ToInt(inputPorts[1]) + ToInt(inputPorts[2]);
 		}
 	}
 }

@@ -8,10 +8,7 @@
 
 		override protected void EvaluateOutputs()
 		{
-			if (ToBool(inputPorts[2].GetValue()))
-				outputPorts[0].Value = 0;
-			else
-				outputPorts[0].Value = Combine(inputPorts[0].GetValue(), inputPorts[1].GetValue());
+			outputPorts[0].Value = Combine(inputPorts[0].GetValue(), inputPorts[1].GetValue());
 		}
 
 		abstract protected int Combine(int a, int b);

@@ -16,14 +16,13 @@
 
 		override protected void EvaluateOutputs()
 		{
-			if (ToBool(inputPorts[7])
-				|| !(inputPorts[0].IsConnected
-						|| inputPorts[1].IsConnected
-						|| inputPorts[2].IsConnected
-						|| inputPorts[3].IsConnected
-						|| inputPorts[4].IsConnected
-						|| inputPorts[5].IsConnected
-						|| inputPorts[6].IsConnected))
+			if (!(inputPorts[0].IsConnected
+				|| inputPorts[1].IsConnected
+				|| inputPorts[2].IsConnected
+				|| inputPorts[3].IsConnected
+				|| inputPorts[4].IsConnected
+				|| inputPorts[5].IsConnected
+				|| inputPorts[6].IsConnected))
 				outputPorts[0].Value = outputPorts[1].Value = 0;
 			else
 			{
