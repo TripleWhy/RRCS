@@ -6,7 +6,7 @@
 	using System.Collections.Generic;
 	using System;
 
-	public class PortUi : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+	public class PortUi : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
 		public bool isInput;
 		public Text valueText;
@@ -97,6 +97,24 @@
 				return connectedLines.Count != 0;
 			}
 		}
+
+		#region IPointerDownHandler implementation
+
+		public void OnPointerDown(PointerEventData eventData)
+		{
+			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
+		}
+
+		#endregion
+
+		#region IPointerUpHandler implementation
+
+		public void OnPointerUp(PointerEventData eventData)
+		{
+			RRCSManager.Instance.selectionManager.SelectionEnabled = true;
+		}
+
+		#endregion
 
 		#region IBeginDragHandler implementation
 
