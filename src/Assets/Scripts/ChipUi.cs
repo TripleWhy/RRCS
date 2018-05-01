@@ -174,6 +174,8 @@
 					return new SimpleEqualsChip(manager);
 				case ChipType.NotEqual:
 					return new SimpleNotEqualsChip(manager);
+				case ChipType.Variable:
+					return new VariableChip(manager);
 				default:
 					return null;
 			}

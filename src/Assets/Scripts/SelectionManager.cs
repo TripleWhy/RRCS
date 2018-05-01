@@ -14,6 +14,14 @@
 			SetSelectables(UiManager.GetSelectables());
 		}
 
+		public SelectionBox.SelectionEvent OnSelectionChange
+		{
+			get
+			{
+				return box.onSelectionChange;
+			}
+		}
+
 		public bool SelectionEnabled
 		{
 			get

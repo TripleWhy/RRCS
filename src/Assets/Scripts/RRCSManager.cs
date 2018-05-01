@@ -1,6 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
 	using UnityEngine;
+	using UnityEngine.UI.Extensions;
 
 	public class RRCSManager : MonoBehaviour
 	{
@@ -8,6 +9,7 @@
 		private float simuationSpeed = 1f;
 		public CameraControls cameraControls;
 		public SelectionManager selectionManager;
+		public NodeSettingsUi settingsEditor;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance
@@ -24,6 +26,7 @@
 		{
 			if (instance == null)
 				instance = this;
+			selectionManager.OnSelectionChange.AddListener(delegate { settingsEditor.SetSelectedChips(selectionManager.GetSelectedChips()); });
 		}
 
 		void FixedUpdate()

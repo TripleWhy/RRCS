@@ -10,6 +10,7 @@
 		public readonly bool hasReset;
 		public readonly InputPort[] inputPorts;
 		public readonly OutputPort[] outputPorts;
+		public readonly NodeSetting[] settings;
 		internal int RingEvaluationPriority { get; set; }
 		protected readonly CircuitManager manager;
 
@@ -21,6 +22,7 @@
 			this.inputPortCount = inputCount;
 			this.outputPortCount = outputCount;
 			this.hasReset = hasReset;
+			this.settings = CreateSettings();
 			int totalInputCount = inputCount + (hasReset ? 1 : 0);
 			inputPorts = new InputPort[totalInputCount];
 			for (int i = 0; i < inputCount; i++)
@@ -130,6 +132,31 @@
 		public int CompareTo(CircuitNode other)
 		{
 			return RingEvaluationPriority.CompareTo(other.RingEvaluationPriority);
+		}
+
+		protected virtual NodeSetting[] CreateSettings()
+		{
+			return new NodeSetting[0];
+		}
+
+		public virtual void SetSetting(NodeSetting setting, object value)
+		{
+			if (value == setting.currentValue)
+				return;
+			setting.currentValue = value;
+			EvaluationRequired(this);
+		}
+
+		public void SetSetting(NodeSetting.SettingType type, object value)
+		{
+			foreach (NodeSetting setting in settings)
+			{
+				if (setting.type == type)
+				{
+					SetSetting(setting, value);
+					break;
+				}
+			}
 		}
 	}
 }
