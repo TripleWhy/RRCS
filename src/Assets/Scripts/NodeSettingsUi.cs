@@ -1,12 +1,16 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using System.Collections.Generic;
 	using UnityEngine;
 
 	public class NodeSettingsUi : MonoBehaviour
 	{
+		public IntEditor intEditorPrefab;
+
 		private IntEditor priorityEditor;
 		private List<ChipUi> selectedChips = new List<ChipUi>();
+		private List<GameObject> editors = new List<GameObject>();
 
 		private void Awake()
 		{
@@ -28,6 +32,10 @@
 
 		public void SetSelectedChips(IEnumerable<ChipUi> chips)
 		{
+			foreach (GameObject go in editors)
+				Destroy(go);
+			editors.Clear();
+
 			selectedChips.Clear();
 			foreach (ChipUi chipUi in chips)
 				selectedChips.Add(chipUi);
@@ -47,6 +55,46 @@
 				priorityEditor.gameObject.SetActive(true);
 				priorityEditor.Value = selectedChips[0].Chip.RingEvaluationPriority;
 			}
+
+			Dictionary<NodeSetting.SettingType, int> typeUsages = new Dictionary<NodeSetting.SettingType, int>();
+			foreach (ChipUi chipUi in selectedChips)
+			{
+				foreach (NodeSetting setting in chipUi.Chip.settings)
+				{
+					if (typeUsages.ContainsKey(setting.type))
+						typeUsages[setting.type]++;
+					else
+						typeUsages.Add(setting.type, 1);
+				}
+			}
+			foreach (NodeSetting setting in selectedChips[0].Chip.settings)
+			{
+				if (typeUsages[setting.type] != selectedChips.Count)
+					continue;
+				editors.Add(CreateSettingEditor(setting));
+			}
+		}
+
+		private GameObject CreateSettingEditor(NodeSetting setting)
+		{
+			if (setting.valueType == typeof(int))
+			{
+				IntEditor editor = Instantiate<IntEditor>(intEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += IntEditor_ValueChanged;
+				return editor.gameObject;
+			}
+			else
+			{
+				Debug.Assert(false);
+				return null;
+			}
+		}
+
+		private void IntEditor_ValueChanged(IntEditor sender, int value)
+		{
+			foreach (ChipUi chipUi in selectedChips)
+				chipUi.Chip.SetSetting(sender.Setting.type, value);
 		}
 	}
 }

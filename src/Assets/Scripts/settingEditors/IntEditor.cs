@@ -12,19 +12,23 @@
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 
 		private int value = 0;
+		private NodeSetting setting;
 		public int minimum = int.MinValue;
 		public int maximum = int.MaxValue;
+		private Text settingNameText;
 		private InputField input;
 		private Button plusButton;
 		private Button minusButton;
 
-		void Start()
+		void Awake()
 		{
 			foreach (Transform child in transform)
 			{
-				if (input == null)
+				if (settingNameText == null)
+					settingNameText = child.GetComponent<Text>();
+				else if (input == null)
 					input = child.GetComponent<InputField>();
-				if (minusButton == null)
+				else if (minusButton == null)
 					minusButton = child.GetComponent<Button>();
 				else if (plusButton == null)
 					plusButton = child.GetComponent<Button>();
@@ -73,6 +77,20 @@
 				plusButton.interactable = val < maximum;
 				minusButton.interactable = val > minimum;
 				ValueChanged(this, val);
+			}
+		}
+
+		public NodeSetting Setting
+		{
+			get
+			{
+				return setting;
+			}
+			set
+			{
+				settingNameText.text = value.displayName;
+				Value = (int)value.currentValue;
+				setting = value;
 			}
 		}
 	}
