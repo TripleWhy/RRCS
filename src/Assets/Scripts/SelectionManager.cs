@@ -41,11 +41,11 @@
 			box.SetSelectableGroup(behaviours);
 		}
 
-		public IEnumerable<ChipUi> GetSelectedChips()
+		public IEnumerable<NodeUi> GetSelectedNodes()
 		{
-			foreach (ChipUi chip in UiManager.GetChips())
-				if (chip.selected)
-					yield return chip;
+			foreach (NodeUi node in UiManager.GetNodes())
+				if (node.selected)
+					yield return node;
 		}
 	}
 }

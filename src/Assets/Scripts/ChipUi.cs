@@ -5,7 +5,7 @@
 	using UnityEngine.EventSystems;
 	using UnityEngine.UI.Extensions;
 
-	public class ChipUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IBoxSelectable
+	public class ChipUi : NodeUi
 	{
 		public enum ChipType
 		{
@@ -21,65 +21,24 @@
 			Respawn, PlayerHit,
 		};
 
-		private static readonly Color[] portColors =
-			{
-				new Color(0.83F, 0.20F, 0.20F, 1.00F),
-				new Color(0.31F, 0.68F, 0.24F, 1.00F),
-				new Color(0.12F, 0.45F, 0.81F, 1.00F),
-				new Color(0.09F, 0.87F, 0.86F, 1.00F),
-				new Color(0.91F, 0.29F, 0.50F, 1.00F),
-				new Color(0.94F, 0.77F, 0.15F, 1.00F),
-				new Color(0.06F, 0.15F, 0.18F, 1.00F),
-			};
-
 		public ChipType type;
 		public PortUi in0;
 		public PortUi inR;
 		public PortUi out0;
 		public PortUi outR;
 		public Image icon;
-		public RectTransform selectionPrefab;
 
-		public Chip Chip { get; private set; }
 		[HideInInspector]
 		[SerializeField]
 		private bool skipSetup = false;
 
-		private PortUi[] inPorts;
-		private PortUi[] outPorts;
-
-		private Vector3 pointerWorldOffset;
-		private RectTransform rectTransform;
-		private Canvas canvas;
-		private static Canvas worldCanvas;
 		private static Sprite[] icons;
-		private RectTransform canvasRectTransform;
-		private ChipUi draggingInstance;
-		private RectTransform selectionInstance;
 
-		public bool IsSidebarChip{ get; private set; }
-
-		void Awake()
+		new void Awake()
 		{
-			if (worldCanvas == null)
-			{
-				foreach (Canvas c in FindObjectsOfType<Canvas>())
-				{
-					if (c.tag == "WorldUi")
-					{
-						worldCanvas = c;
-						break;
-					}
-				}
+			base.Awake();
+			if (icons == null)
 				icons = Resources.LoadAll<Sprite>("iconsWhite");
-			}
-			rectTransform = (RectTransform)transform;
-			canvas = GetComponentInParent<Canvas>();
-			canvasRectTransform = (RectTransform)canvas.transform;
-			IsSidebarChip = (canvas.tag == "Sidebar");
-
-			Chip = CreateChip();
-			UiManager.Register(this);
 		}
 
 		void Start()
@@ -102,9 +61,16 @@
 			}
 		}
 
-		void OnDestroy()
+		public Chip Chip
 		{
-			UiManager.Unregister(this);
+			get
+			{
+				return (Chip)Node;
+			}
+			protected set
+			{
+				Node = value;
+			}
 		}
 
 		private void SetupPorts(int portCount, Port[] ports, bool useCompactFormat, ref PortUi port0UI, ref PortUi resetPortUi, ref PortUi[] portUIs)
@@ -116,7 +82,7 @@
 			else
 			{
 				portUIs[0] = port0UI;
-				port0UI.chipUi = this;
+				port0UI.nodeUi = this;
 				port0UI.Port = ports[0];
 				RectTransform tr0 = port0UI.RectTransform;
 				
@@ -131,16 +97,16 @@
 				{
 					PortUi portUi = Instantiate<PortUi>(port0UI, transform);
 					portUIs[i] = portUi;
-					portUi.chipUi = this;
+					portUi.nodeUi = this;
 					portUi.Port = ports[i];
 					portUi.RectTransform.anchoredPosition = tr0.anchoredPosition + i * offset;
-					portUi.Image.color = portColors[i % portColors.Length];
+					portUi.PortIndex = i;
 				}
 			}
 			if (HasReset)
 			{
 				portUIs[portCount] = resetPortUi;
-				resetPortUi.chipUi = this;
+				resetPortUi.nodeUi = this;
 				resetPortUi.Port = ports[portCount];
 			}
 			else
@@ -149,9 +115,8 @@
 			resetPortUi = null;
 		}
 
-		private Chip CreateChip()
+		protected override CircuitNode CreateNode(CircuitManager manager)
 		{
-			CircuitManager manager = IsSidebarChip ? null : RRCSManager.Instance.circuitManager;
 			switch (type)
 			{
 				case ChipType.Add:
@@ -185,256 +150,5 @@
 		{
 			return icons[Chip.IconIndex];
 		}
-
-		public int InPortCount
-		{
-			get
-			{
-				return Chip.inputPortCount;
-			}
-		}
-
-		public int TotalInPortCount
-		{
-			get
-			{
-				return Chip.inputPorts.Length;
-			}
-		}
-
-		public int OutPortCount
-		{
-			get
-			{
-				return Chip.outputPortCount;
-			}
-		}
-
-		public int TotalOutPortCount
-		{
-			get
-			{
-				return Chip.outputPorts.Length;
-			}
-		}
-
-		public bool HasReset
-		{
-			get
-			{
-				return Chip.hasReset;
-			}
-		}
-
-		#region IPointerDownHandler implementation
-
-		public void OnPointerDown(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			DoPointerDown(eventData);
-			foreach (ChipUi chip in RRCSManager.Instance.selectionManager.GetSelectedChips())
-				if (!object.ReferenceEquals(chip, this))
-					chip.DoPointerDown(eventData);
-		}
-
-		public void DoPointerDown(PointerEventData eventData)
-		{
-			Vector2 n_originalLocalPointerPosition;
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out n_originalLocalPointerPosition);
-			pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) - rectTransform.InverseTransformPoint(new Vector3());
-		}
-
-		#endregion
-
-		#region IBeginDragHandler implementation
-
-		public void OnBeginDrag(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			if (draggingInstance != null)
-				return;
-			if (IsSidebarChip)
-			{
-				draggingInstance = Instantiate(this, canvasRectTransform);
-				draggingInstance.GetComponent<Image>().raycastTarget = false;
-			}
-			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
-		}
-
-		#endregion
-
-		#region IDragHandler implementation
-
-		public void OnDrag(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			DoDrag(eventData);
-			foreach (ChipUi chip in RRCSManager.Instance.selectionManager.GetSelectedChips())
-				if (!object.ReferenceEquals(chip, this))
-					chip.DoDrag(eventData);
-		}
-
-		private void DoDrag(PointerEventData eventData)
-		{
-			ChipUi chip = draggingInstance ?? this;
-
-			Debug.Assert(chip.rectTransform != null);
-			Debug.Assert(chip.canvasRectTransform != null);
-
-			Vector2 worldPosition = eventData.position;
-			if (eventData.pressEventCamera != null)
-				worldPosition = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position);
-
-			chip.rectTransform.position = (Vector3)(worldPosition) - pointerWorldOffset;
-		}
-
-		#endregion
-
-		#region IEndDragHandler implementation
-
-		public void OnEndDrag(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			RRCSManager.Instance.selectionManager.SelectionEnabled = true;
-			if (draggingInstance == null)
-				return;
-
-			bool isWorldPos = (eventData.hovered.Count == 0);
-			if (!isWorldPos)
-			{
-				foreach (GameObject h in eventData.hovered)
-				{
-					if (object.ReferenceEquals(h, worldCanvas.gameObject))
-					{
-						isWorldPos = true;
-						break;
-					}
-				}
-			}
-			if (!isWorldPos)
-			{
-				Destroy(draggingInstance.gameObject);
-			}
-			else
-			{
-				//This is _way_ too complicated, and totally misplaced here. Is there a better way?
-
-				Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
-				draggingInstance.GetComponent<Image>().raycastTarget = true;
-				draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
-				draggingInstance.rectTransform.position = newPos;
-				draggingInstance.canvas = worldCanvas;
-				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
-				draggingInstance.IsSidebarChip = false;
-
-				draggingInstance.inPorts = new PortUi[inPorts.Length];
-				for (int i = 0; i < inPorts.Length; i++)
-				{
-					draggingInstance.inPorts[i] = draggingInstance.transform.GetChild(inPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
-					draggingInstance.inPorts[i].chipUi = draggingInstance;
-					draggingInstance.inPorts[i].Port = draggingInstance.Chip.inputPorts[i];
-				}
-				draggingInstance.outPorts = new PortUi[outPorts.Length];
-				for (int i = 0; i < outPorts.Length; i++)
-				{
-					draggingInstance.outPorts[i] = draggingInstance.transform.GetChild(outPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
-					draggingInstance.outPorts[i].chipUi = draggingInstance;
-					draggingInstance.outPorts[i].Port = draggingInstance.Chip.outputPorts[i];
-				}
-				RRCSManager.Instance.circuitManager.AddNode(draggingInstance.Chip);
-				UiManager.Register(draggingInstance);
-			}
-			draggingInstance = null;
-		}
-		#endregion
-
-		#region Implemented members of IBoxSelectable
-		bool _selected = false;
-		public bool selected
-		{
-			get
-			{
-				return _selected;
-			}
-			set
-			{
-				Debug.Assert(!IsSidebarChip);
-				if (value == _selected)
-					return;
-				_selected = value;
-				UpdateSelected();
-			}
-		}
-
-		bool _preSelected = false;
-		public bool preSelected
-		{
-			get
-			{
-				return _preSelected;
-			}
-			set
-			{
-				if (IsSidebarChip)
-					return;
-				if (value == _preSelected)
-					return;
-				_preSelected = value;
-				UpdateSelected();
-			}
-		}
-		#endregion
-
-		private void UpdateSelected()
-		{
-			if ((preSelected || selected) && selectionInstance == null)
-			{
-				selectionInstance = Instantiate(selectionPrefab, rectTransform);
-				UpdateSelectionSize();
-				RRCSManager.Instance.cameraControls.ZoomChanged += Camera_ZoomChanged;
-			}
-			else if (!preSelected && !selected && selectionInstance != null)
-			{
-				Destroy(selectionInstance.gameObject);
-				selectionInstance = null;
-			}
-		}
-
-		private void Camera_ZoomChanged(float inverseZoom)
-		{
-			Vector2 pos = new Vector2(0, 0);
-			Vector2 size = rectTransform.sizeDelta;
-			if (inPorts.Length != 0)
-			{
-				if (outPorts.Length != 0)
-					size.x += inPorts[0].RectTransform.sizeDelta.x;
-				else
-				{
-					size.x += inPorts[0].RectTransform.sizeDelta.x * 0.5f;
-					pos.x += inPorts[0].RectTransform.sizeDelta.x * 0.25f;
-				}
-			}
-			else
-			{
-				if (outPorts.Length != 0)
-				{
-					size.x += outPorts[0].RectTransform.sizeDelta.x * 0.5f;
-					pos.x += outPorts[0].RectTransform.sizeDelta.x * 0.25f;
-				}
-			}
-			selectionInstance.anchoredPosition = pos;
-			selectionInstance.sizeDelta = size / inverseZoom;
-			selectionInstance.localScale = new Vector3(inverseZoom, inverseZoom);
-		}
-
-		private void UpdateSelectionSize()
-		{
-			Camera_ZoomChanged(RRCSManager.Instance.cameraControls.InverseZoom);
-		}
 	}
-
 }

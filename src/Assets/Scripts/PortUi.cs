@@ -19,7 +19,18 @@
 		private LineRenderer draggingLine;
 		private PortUi draggingOriginalConnectedPort;
 		private readonly Dictionary<PortUi, LineRenderer> connectedLines = new Dictionary<PortUi, LineRenderer>();
-		internal ChipUi chipUi;
+		internal NodeUi nodeUi;
+
+		private static readonly Color[] portColors =
+			{
+				new Color(0.83F, 0.20F, 0.20F, 1.00F),
+				new Color(0.31F, 0.68F, 0.24F, 1.00F),
+				new Color(0.12F, 0.45F, 0.81F, 1.00F),
+				new Color(0.09F, 0.87F, 0.86F, 1.00F),
+				new Color(0.91F, 0.29F, 0.50F, 1.00F),
+				new Color(0.94F, 0.77F, 0.15F, 1.00F),
+				new Color(0.06F, 0.15F, 0.18F, 1.00F),
+			};
 
 		void Awake()
 		{
@@ -55,6 +66,14 @@
 					throw new InvalidOperationException();
 				port = value;
 				UiManager.Register(this);
+			}
+		}
+
+		public int PortIndex
+		{
+			set
+			{
+				Image.color = portColors[value % portColors.Length];
 			}
 		}
 
@@ -124,7 +143,7 @@
 				return;
 			if (draggingLine != null)
 				return;
-			if (chipUi.IsSidebarChip)
+			if (nodeUi.IsSidebarNode)
 				return;
 			if (isInput && HasLines)
 			{
@@ -183,7 +202,7 @@
 				return;
 			}
 			PortUi srcPort = draggingOriginalConnectedPort ?? this;
-			if (dstPort == null || dstPort.isInput == srcPort.isInput || dstPort.chipUi.IsSidebarChip || (srcPort.isInput && srcPort.HasLines) || (dstPort.isInput && dstPort.HasLines))
+			if (dstPort == null || dstPort.isInput == srcPort.isInput || dstPort.nodeUi.IsSidebarNode || (srcPort.isInput && srcPort.HasLines) || (dstPort.isInput && dstPort.HasLines))
 			{
 				if (draggingOriginalConnectedPort != null)
 				{

@@ -26,7 +26,7 @@
 		{
 			if (instance == null)
 				instance = this;
-			selectionManager.OnSelectionChange.AddListener(delegate { settingsEditor.SetSelectedChips(selectionManager.GetSelectedChips()); });
+			selectionManager.OnSelectionChange.AddListener(delegate { settingsEditor.SetSelectedNodes(selectionManager.GetSelectedNodes()); });
 		}
 
 		void FixedUpdate()

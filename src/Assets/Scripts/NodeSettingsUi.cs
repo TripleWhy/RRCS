@@ -9,7 +9,7 @@
 		public IntEditor intEditorPrefab;
 
 		private IntEditor priorityEditor;
-		private List<ChipUi> selectedChips = new List<ChipUi>();
+		private List<NodeUi> selectedNodes = new List<NodeUi>();
 		private List<GameObject> editors = new List<GameObject>();
 
 		private void Awake()
@@ -25,41 +25,41 @@
 
 		private void PriorityEditor_ValueChanged(IntEditor sender, int value)
 		{
-			Debug.Assert(selectedChips.Count == 1);
-			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedChips[0].Chip, value);
-			priorityEditor.Value = selectedChips[0].Chip.RingEvaluationPriority;
+			Debug.Assert(selectedNodes.Count == 1);
+			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
+			priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
 		}
 
-		public void SetSelectedChips(IEnumerable<ChipUi> chips)
+		public void SetSelectedNodes(IEnumerable<NodeUi> nodes)
 		{
 			foreach (GameObject go in editors)
 				Destroy(go);
 			editors.Clear();
 
-			selectedChips.Clear();
-			foreach (ChipUi chipUi in chips)
-				selectedChips.Add(chipUi);
-			if (selectedChips.Count == 0)
+			selectedNodes.Clear();
+			foreach (NodeUi nodeUi in nodes)
+				selectedNodes.Add(nodeUi);
+			if (selectedNodes.Count == 0)
 			{
 				gameObject.SetActive(false);
 				return;
 			}
 			gameObject.SetActive(true); //Executes Awake() the first time this happens. Therefore it has to be executed before anything else.
 
-			if (selectedChips.Count > 1)
+			if (selectedNodes.Count > 1)
 			{
 				priorityEditor.gameObject.SetActive(false);
 			}
 			else
 			{
 				priorityEditor.gameObject.SetActive(true);
-				priorityEditor.Value = selectedChips[0].Chip.RingEvaluationPriority;
+				priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
 			}
 
 			Dictionary<NodeSetting.SettingType, int> typeUsages = new Dictionary<NodeSetting.SettingType, int>();
-			foreach (ChipUi chipUi in selectedChips)
+			foreach (NodeUi nodeUi in selectedNodes)
 			{
-				foreach (NodeSetting setting in chipUi.Chip.settings)
+				foreach (NodeSetting setting in nodeUi.Node.settings)
 				{
 					if (typeUsages.ContainsKey(setting.type))
 						typeUsages[setting.type]++;
@@ -67,9 +67,9 @@
 						typeUsages.Add(setting.type, 1);
 				}
 			}
-			foreach (NodeSetting setting in selectedChips[0].Chip.settings)
+			foreach (NodeSetting setting in selectedNodes[0].Node.settings)
 			{
-				if (typeUsages[setting.type] != selectedChips.Count)
+				if (typeUsages[setting.type] != selectedNodes.Count)
 					continue;
 				editors.Add(CreateSettingEditor(setting));
 			}
@@ -93,7 +93,7 @@
 
 		private void IntEditor_ValueChanged(IntEditor sender, int value)
 		{
-			foreach (ChipUi chipUi in selectedChips)
+			foreach (ChipUi chipUi in selectedNodes)
 				chipUi.Chip.SetSetting(sender.Setting.type, value);
 		}
 	}

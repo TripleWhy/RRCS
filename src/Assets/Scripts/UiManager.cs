@@ -5,35 +5,35 @@
 
 	static class UiManager
 	{
-		private static readonly Dictionary<Chip, ChipUi> chips = new Dictionary<Chip, ChipUi>();
+		private static readonly Dictionary<CircuitNode, NodeUi> nodes = new Dictionary<CircuitNode, NodeUi>();
 		private static readonly Dictionary<Port, PortUi> ports = new Dictionary<Port, PortUi>();
 		private static bool showPortLabels = false;
 
 		public static IEnumerable<MonoBehaviour> GetSelectables()
 		{
-			foreach (ChipUi ui in chips.Values)
+			foreach (NodeUi ui in nodes.Values)
 				yield return ui;
 		}
 
-		public static void Register(ChipUi chipUi)
+		public static void Register(NodeUi nodeUi)
 		{
-			if (chipUi.IsSidebarChip)
+			if (nodeUi.IsSidebarNode)
 				return;
-			chips[chipUi.Chip] = chipUi;
+			nodes[nodeUi.Node] = nodeUi;
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
 		}
 
-		public static void Unregister(ChipUi chipUi)
+		public static void Unregister(NodeUi nodeUi)
 		{
-			if (chipUi.IsSidebarChip)
+			if (nodeUi.IsSidebarNode)
 				return;
-			chips.Remove(chipUi.Chip);
+			nodes.Remove(nodeUi.Node);
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
 		}
 
 		public static void Register(PortUi portUi)
 		{
-			if (portUi.chipUi.IsSidebarChip)
+			if (portUi.nodeUi.IsSidebarNode)
 				return;
 			ports.Add(portUi.Port, portUi);
 			portUi.Port.Connected += Port_Connected;
@@ -43,7 +43,7 @@
 
 		public static void Unregister(PortUi portUi)
 		{
-			if (portUi.chipUi == null || portUi.chipUi.IsSidebarChip)
+			if (portUi.nodeUi == null || portUi.nodeUi.IsSidebarNode)
 				return;
 			portUi.Port.Connected -= Port_Connected;
 			portUi.Port.Disconnected -= Port_Disconnected;
@@ -66,18 +66,14 @@
 			otherUi.RemoveConnection(senderUi, destroy);
 		}
 
-		public static ChipUi GetUi(CircuitNode node)
+		public static NodeUi GetUi(CircuitNode node)
 		{
-			Chip chip = node as Chip;
-			if (chip != null)
-				return GetUi(chip);
-			else
-				return null;
+			return nodes[node];
 		}
 
 		public static ChipUi GetUi(Chip chip)
 		{
-			return chips[chip];
+			return (ChipUi)GetUi((CircuitNode)chip);
 		}
 
 		public static PortUi GetUi(Port port)
@@ -85,9 +81,9 @@
 			return ports[port];
 		}
 
-		public static ICollection<ChipUi> GetChips()
+		public static ICollection<NodeUi> GetNodes()
 		{
-			return chips.Values;
+			return nodes.Values;
 		}
 
 		public static bool ShowPortLabels

@@ -59,19 +59,19 @@
 				manager.AddNode(this);
 		}
 
+		~CircuitNode()
+		{
+			Destroy();
+		}
+
 		private void CircuitNode_Connected(Port sender, Port other)
 		{
-			EvaluationRequired(this);
+			EmitEvaluationRequired();
 		}
 
 		private void CircuitNode_ValueChanged(Port sender)
 		{
-			EvaluationRequired(this);
-		}
-
-		~CircuitNode()
-		{
-			Destroy();
+			EmitEvaluationRequired();
 		}
 
 		public virtual void Destroy()
@@ -144,7 +144,7 @@
 			if (value == setting.currentValue)
 				return;
 			setting.currentValue = value;
-			EvaluationRequired(this);
+			EmitEvaluationRequired();
 		}
 
 		public void SetSetting(NodeSetting.SettingType type, object value)
@@ -157,6 +157,11 @@
 					break;
 				}
 			}
+		}
+
+		protected void EmitEvaluationRequired()
+		{
+			EvaluationRequired(this);
 		}
 	}
 }
