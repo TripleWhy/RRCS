@@ -4,6 +4,7 @@
 	using UnityEngine.UI;
 	using UnityEngine.EventSystems;
 	using UnityEngine.UI.Extensions;
+	using System;
 
 	public abstract class NodeUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IBoxSelectable
 	{
@@ -21,8 +22,7 @@
 		private RectTransform canvasRectTransform;
 		private NodeUi draggingInstance;
 		private RectTransform selectionInstance;
-
-		public bool IsSidebarNode{ get; private set; }
+		private bool isSidebarNode = true;
 
 		protected void Awake()
 		{
@@ -40,9 +40,11 @@
 			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
-			IsSidebarNode = (canvas.tag == "Sidebar");
+			isSidebarNode = (canvas.tag == "Sidebar");
 
 			Node = CreateNode();
+			if (!isSidebarNode)
+				OnMovedToWorld();
 			UiManager.Register(this);
 		}
 
@@ -98,6 +100,44 @@
 			}
 		}
 
+		public bool IsSidebarNode
+		{
+			get
+			{
+				return isSidebarNode;
+			}
+			private set
+			{
+				if (value == isSidebarNode)
+					return;
+				if (!isSidebarNode && value)
+					throw new InvalidOperationException();
+				isSidebarNode = value;
+				OnMovedToWorld();
+
+				Debug.Assert(inPorts != null);
+				Debug.Assert(inPorts.Length == Node.inputPorts.Length);
+				Debug.Assert(outPorts != null);
+				Debug.Assert(outPorts.Length == Node.outputPorts.Length);
+				for (int i = 0; i < inPorts.Length; i++)
+				{
+					inPorts[i].Port = Node.inputPorts[i];
+					UiManager.Register(inPorts[i]);
+				}
+				for (int i = 0; i < outPorts.Length; i++)
+				{
+					outPorts[i].Port = Node.outputPorts[i];
+					UiManager.Register(outPorts[i]);
+				}
+				RRCSManager.Instance.circuitManager.AddNode(Node);
+				UiManager.Register(this);
+			}
+		}
+
+		protected virtual void OnMovedToWorld()
+		{
+		}
+
 		#region IPointerDownHandler implementation
 
 		public void OnPointerDown(PointerEventData eventData)
@@ -105,9 +145,9 @@
 			if (eventData.button != 0)
 				return;
 			DoPointerDown(eventData);
-			foreach (ChipUi chip in RRCSManager.Instance.selectionManager.GetSelectedNodes())
-				if (!object.ReferenceEquals(chip, this))
-					chip.DoPointerDown(eventData);
+			foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
+				if (!object.ReferenceEquals(node, this))
+					node.DoPointerDown(eventData);
 		}
 
 		public void DoPointerDown(PointerEventData eventData)
@@ -150,9 +190,9 @@
 			if (eventData.button != 0)
 				return;
 			DoDrag(eventData);
-			foreach (ChipUi chip in RRCSManager.Instance.selectionManager.GetSelectedNodes())
-				if (!object.ReferenceEquals(chip, this))
-					chip.DoDrag(eventData);
+			foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
+				if (!object.ReferenceEquals(node, this))
+					node.DoDrag(eventData);
 		}
 
 		private void DoDrag(PointerEventData eventData)
@@ -199,32 +239,12 @@
 			}
 			else
 			{
-				//This is _way_ too complicated, and totally misplaced here. Is there a better way?
-
 				Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
-				draggingInstance.GetComponent<Image>().raycastTarget = true;
 				draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
 				draggingInstance.rectTransform.position = newPos;
 				draggingInstance.canvas = worldCanvas;
 				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
 				draggingInstance.IsSidebarNode = false;
-
-				draggingInstance.inPorts = new PortUi[inPorts.Length];
-				for (int i = 0; i < inPorts.Length; i++)
-				{
-					draggingInstance.inPorts[i] = draggingInstance.transform.GetChild(inPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
-					draggingInstance.inPorts[i].nodeUi = draggingInstance;
-					draggingInstance.inPorts[i].Port = draggingInstance.Node.inputPorts[i];
-				}
-				draggingInstance.outPorts = new PortUi[outPorts.Length];
-				for (int i = 0; i < outPorts.Length; i++)
-				{
-					draggingInstance.outPorts[i] = draggingInstance.transform.GetChild(outPorts[i].transform.GetSiblingIndex()).GetComponent<PortUi>();
-					draggingInstance.outPorts[i].nodeUi = draggingInstance;
-					draggingInstance.outPorts[i].Port = draggingInstance.Node.outputPorts[i];
-				}
-				RRCSManager.Instance.circuitManager.AddNode(draggingInstance.Node);
-				UiManager.Register(draggingInstance);
 			}
 			draggingInstance = null;
 		}

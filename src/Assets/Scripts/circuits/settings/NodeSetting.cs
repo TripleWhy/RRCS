@@ -10,6 +10,7 @@
 			Output0,
 			Output1,
 			Output2,
+			SendPlayerId,
 		};
 
 		public readonly SettingType type;
@@ -35,6 +36,8 @@
 					return new NodeSetting(type, "G Signal", typeof(int), 0);
 				case SettingType.Output2:
 					return new NodeSetting(type, "B Signal", typeof(int), 0);
+				case SettingType.SendPlayerId:
+					return new NodeSetting(type, "Send Player ID", typeof(bool), false);
 			}
 			Debug.Assert(false);
 			return null;

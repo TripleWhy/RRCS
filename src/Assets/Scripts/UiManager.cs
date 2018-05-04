@@ -19,6 +19,9 @@
 		{
 			if (nodeUi.IsSidebarNode)
 				return;
+			Debug.Assert(!nodes.ContainsKey(nodeUi.Node));
+			if (nodes.ContainsKey(nodeUi.Node))
+				return;
 			nodes[nodeUi.Node] = nodeUi;
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
 		}
@@ -34,6 +37,8 @@
 		public static void Register(PortUi portUi)
 		{
 			if (portUi.nodeUi.IsSidebarNode)
+				return;
+			if (ports.ContainsKey(portUi.Port))
 				return;
 			ports.Add(portUi.Port, portUi);
 			portUi.Port.Connected += Port_Connected;

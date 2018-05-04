@@ -7,6 +7,7 @@
 	public class NodeSettingsUi : MonoBehaviour
 	{
 		public IntEditor intEditorPrefab;
+		public BoolEditor boolEditorPrefab;
 
 		private IntEditor priorityEditor;
 		private List<NodeUi> selectedNodes = new List<NodeUi>();
@@ -84,6 +85,13 @@
 				editor.ValueChanged += IntEditor_ValueChanged;
 				return editor.gameObject;
 			}
+			else if (setting.valueType == typeof(bool))
+			{
+				BoolEditor editor = Instantiate<BoolEditor>(boolEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += BoolEditor_ValueChanged;
+				return editor.gameObject;
+			}
 			else
 			{
 				Debug.Assert(false);
@@ -93,8 +101,14 @@
 
 		private void IntEditor_ValueChanged(IntEditor sender, int value)
 		{
-			foreach (ChipUi chipUi in selectedNodes)
-				chipUi.Chip.SetSetting(sender.Setting.type, value);
+			foreach (NodeUi nodeUi in selectedNodes)
+				nodeUi.Node.SetSetting(sender.Setting.type, value);
+		}
+
+		private void BoolEditor_ValueChanged(BoolEditor sender, bool value)
+		{
+			foreach (NodeUi nodeUi in selectedNodes)
+				nodeUi.Node.SetSetting(sender.Setting.type, value);
 		}
 	}
 }

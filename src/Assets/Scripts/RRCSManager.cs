@@ -10,6 +10,7 @@
 		public CameraControls cameraControls;
 		public SelectionManager selectionManager;
 		public NodeSettingsUi settingsEditor;
+		public int currentPlayerId = 1;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance

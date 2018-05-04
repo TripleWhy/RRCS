@@ -1,9 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using UnityEngine;
 	using UnityEngine.UI;
-	using UnityEngine.EventSystems;
-	using UnityEngine.UI.Extensions;
 
 	public class ChipUi : NodeUi
 	{
@@ -75,6 +74,8 @@
 
 		private void SetupPorts(int portCount, Port[] ports, bool useCompactFormat, ref PortUi port0UI, ref PortUi resetPortUi, ref PortUi[] portUIs)
 		{
+			Debug.Assert(ports != null);
+			Debug.Assert(portUIs == null);
 			portUIs = new PortUi[ports.Length];
 
 			if (portCount <= 0)
@@ -149,6 +150,42 @@
 		private Sprite GetSprite()
 		{
 			return icons[Chip.IconIndex];
+		}
+
+		protected override void OnMovedToWorld()
+		{
+			if (!skipSetup)
+				return;
+			GetComponent<Image>().raycastTarget = true;
+			Debug.Assert(inPorts == null);
+			Debug.Assert(outPorts == null);
+			inPorts = new PortUi[TotalInPortCount];
+			outPorts = new PortUi[TotalOutPortCount];
+			int inPortIndex = 0;
+			int outPortIndex = 0;
+			foreach (Transform child in transform)
+			{
+				PortUi port = child.GetComponent<PortUi>();
+				if (port == null)
+					continue;
+				port.nodeUi = this;
+				if (port.isInput)
+				{
+					int index = port.IsReset ? InPortCount : (inPortIndex++);
+					Debug.Assert(inPorts[index] == null);
+					inPorts[index] = port;
+					port.Port = Node.inputPorts[index];
+				}
+				else
+				{
+					int index = port.IsReset ? OutPortCount : (outPortIndex++);
+					Debug.Assert(outPorts[index] == null);
+					outPorts[index] = port;
+					port.Port = Node.outputPorts[index];
+				}
+			}
+			Debug.Assert(!Array.Exists(inPorts, element => element == null));
+			Debug.Assert(!Array.Exists(outPorts, element => element == null));
 		}
 	}
 }

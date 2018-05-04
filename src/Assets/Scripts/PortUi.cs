@@ -63,9 +63,26 @@
 			set
 			{
 				if (port != null)
+				{
+					if (object.ReferenceEquals(port, value))
+						return;
 					throw new InvalidOperationException();
+				}
+				Debug.Assert(value.IsInput == isInput);
+				Debug.Assert(value.isReset == IsReset);
 				port = value;
 				UiManager.Register(this);
+			}
+		}
+
+		public bool IsReset
+		{
+			get
+			{
+				if (port != null)
+					return port.isReset;
+				// :-/
+				return GetComponentsInChildren<Text>().Length == 1;
 			}
 		}
 
