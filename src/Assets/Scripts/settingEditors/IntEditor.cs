@@ -11,10 +11,13 @@
 		public delegate void ValueChangedEventHandler(IntEditor sender, int value);
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 
+		[SerializeField]
 		private int value = 0;
+		[SerializeField]
+		private int minimum = int.MinValue;
+		[SerializeField]
+		private int maximum = int.MaxValue;
 		private NodeSetting setting;
-		public int minimum = int.MinValue;
-		public int maximum = int.MaxValue;
 		private Text settingNameText;
 		private InputField input;
 		private Button plusButton;
@@ -73,10 +76,50 @@
 				if (val == this.value)
 					return;
 				this.value = val;
-				input.text = val.ToString();
-				plusButton.interactable = val < maximum;
-				minusButton.interactable = val > minimum;
+				if (input != null)
+				{
+					input.text = val.ToString();
+					plusButton.interactable = val < maximum;
+					minusButton.interactable = val > minimum;
+				}
 				ValueChanged(this, val);
+			}
+		}
+
+		public int Minimum
+		{
+			get
+			{
+				return minimum;
+			}
+			set
+			{
+				if (value == minimum)
+					return;
+				minimum = value;
+				if (minusButton != null)
+					minusButton.interactable = Value > minimum;
+				if (Value < minimum)
+					Value = minimum;
+			}
+		}
+
+
+		public int Maximum
+		{
+			get
+			{
+				return maximum;
+			}
+			set
+			{
+				if (value == maximum)
+					return;
+				maximum = value;
+				if (plusButton != null)
+					plusButton.interactable = Value < maximum;
+				if (Value < maximum)
+					Value = maximum;
 			}
 		}
 
