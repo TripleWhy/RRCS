@@ -113,6 +113,7 @@
 				if (!isSidebarNode && value)
 					throw new InvalidOperationException();
 				isSidebarNode = value;
+				GetComponent<Image>().raycastTarget = true;
 				OnMovedToWorld();
 
 				Debug.Assert(inPorts != null);

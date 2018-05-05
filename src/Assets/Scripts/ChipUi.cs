@@ -156,7 +156,6 @@
 		{
 			if (!skipSetup)
 				return;
-			GetComponent<Image>().raycastTarget = true;
 			Debug.Assert(inPorts == null);
 			Debug.Assert(outPorts == null);
 			inPorts = new PortUi[TotalInPortCount];
