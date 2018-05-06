@@ -74,7 +74,9 @@
 
 		private void OnInputChanged(string text)
 		{
-			Value = int.Parse(text);
+			int result;
+			if (int.TryParse(text, out result))
+				Value = result;
 		}
 
 		public int Value
