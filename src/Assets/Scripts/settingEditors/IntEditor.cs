@@ -118,7 +118,7 @@
 				maximum = value;
 				if (plusButton != null)
 					plusButton.interactable = Value < maximum;
-				if (Value < maximum)
+				if (Value > maximum)
 					Value = maximum;
 			}
 		}
