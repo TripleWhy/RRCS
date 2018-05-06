@@ -1,7 +1,5 @@
 ﻿namespace AssemblyCSharp
 {
-	using System;
-	using UnityEngine;
 	using UnityEditor;
 
 	[CustomEditor(typeof(CameraControls))]

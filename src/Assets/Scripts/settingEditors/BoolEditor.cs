@@ -9,7 +9,6 @@
 		public delegate void ValueChangedEventHandler(BoolEditor sender, bool value);
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 
-		private bool value = false;
 		private NodeSetting setting;
 		private Text settingNameText;
 		private Toggle toggle;
