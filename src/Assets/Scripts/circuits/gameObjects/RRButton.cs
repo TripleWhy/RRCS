@@ -44,7 +44,7 @@
 		private int GetOutputValue()
 		{
 			if ((bool)settings[0].currentValue)
-				return RRCSManager.Instance.currentPlayerId;
+				return RRCSManager.Instance.CurrentPlayerId;
 			else
 				return 1;
 		}

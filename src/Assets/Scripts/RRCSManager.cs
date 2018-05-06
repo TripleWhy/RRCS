@@ -10,7 +10,7 @@
 		public CameraControls cameraControls;
 		public SelectionManager selectionManager;
 		public NodeSettingsUi settingsEditor;
-		public int currentPlayerId = 1;
+		public int CurrentPlayerId { get; set; }
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance
@@ -27,6 +27,7 @@
 		{
 			if (instance == null)
 				instance = this;
+			CurrentPlayerId = 1;
 			selectionManager.OnSelectionChange.AddListener(delegate { settingsEditor.SetSelectedNodes(selectionManager.GetSelectedNodes()); });
 		}
 

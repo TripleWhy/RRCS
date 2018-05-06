@@ -2,17 +2,24 @@
 {
 	using System;
 	using UnityEngine;
+	using UnityEngine.Events;
 	using UnityEngine.EventSystems;
 	using UnityEngine.UI;
 	using UnityEngine.UI.Extensions;
 
 	public class IntEditor : MonoBehaviour
 	{
+		[System.Serializable]
+		public class ValueChangeEvent : UnityEvent<int>
+		{
+		}
+
 		public delegate void ValueChangedEventHandler(IntEditor sender, int value);
 		public event ValueChangedEventHandler ValueChanged = delegate { };
+		public ValueChangeEvent onValueChanged;
 
 		[SerializeField]
-		private int value = 0;
+		private int currentValue = 0;
 		[SerializeField]
 		private int minimum = int.MinValue;
 		[SerializeField]
@@ -39,12 +46,20 @@
 			Debug.Assert(input != null);
 			Debug.Assert(plusButton != null);
 			Debug.Assert(minusButton != null);
+
+			plusButton.interactable = Value < maximum;
+			minusButton.interactable = Value > minimum;
+			input.text = Value.ToString();
+
 			input.onValueChanged.AddListener(OnInputChanged);
 			plusButton.onClick.AddListener(OnPlusClicked);
 			minusButton.onClick.AddListener(OnMinusClicked);
+		}
 
-			plusButton.interactable = value < maximum;
-			minusButton.interactable = value > minimum;
+		void Start()
+		{
+			if (onValueChanged == null)
+				onValueChanged = new ValueChangeEvent();
 		}
 
 		private void OnPlusClicked()
@@ -66,23 +81,22 @@
 		{
 			get
 			{
-				return value;
+				return currentValue;
 			}
 			set
 			{
-				if (value == this.value)
-					return;
 				int val = Math.Min(Math.Max(minimum, value), maximum);
-				if (val == this.value)
+				if (val == this.currentValue)
 					return;
-				this.value = val;
 				if (input != null)
 				{
 					input.text = val.ToString();
 					plusButton.interactable = val < maximum;
 					minusButton.interactable = val > minimum;
 				}
+				this.currentValue = val;
 				ValueChanged(this, val);
+				onValueChanged.Invoke(val);
 			}
 		}
 
@@ -94,8 +108,6 @@
 			}
 			set
 			{
-				if (value == minimum)
-					return;
 				minimum = value;
 				if (minusButton != null)
 					minusButton.interactable = Value > minimum;
@@ -113,8 +125,6 @@
 			}
 			set
 			{
-				if (value == maximum)
-					return;
 				maximum = value;
 				if (plusButton != null)
 					plusButton.interactable = Value < maximum;
