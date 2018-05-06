@@ -19,17 +19,17 @@
 			get
 			{
 				if (instance == null)
+				{
 					instance = GameObject.FindObjectOfType<RRCSManager>();
+					instance.CurrentPlayerId = 1;
+					instance.WorldCanvas = instance.GetComponent<Canvas>();
+				}
 				return instance;
 			}
 		}
 
 		private void Awake()
 		{
-			if (instance == null)
-				instance = this;
-			CurrentPlayerId = 1;
-			WorldCanvas = GetComponent<Canvas>();
 			selectionManager.OnSelectionChange.AddListener(delegate { settingsEditor.SetSelectedNodes(selectionManager.GetSelectedNodes()); });
 		}
 
