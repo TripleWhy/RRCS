@@ -198,7 +198,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Order
+  m_Text: Value
 --- !u!114 &114043446932487256
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -344,6 +344,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2c66dfd2371ad344a5279ab9e736e0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: AssemblyCSharp.IntEditor+ValueChangeEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  currentValue: 0
   minimum: -2147483648
   maximum: 2147483647
 --- !u!114 &114391019653674648
