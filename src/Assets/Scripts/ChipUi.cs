@@ -140,6 +140,26 @@
 					return new SimpleEqualsChip(manager);
 				case ChipType.NotEqual:
 					return new SimpleNotEqualsChip(manager);
+				case ChipType.GreaterThan:
+					return new SimpleGreaterThanChip(manager);
+				case ChipType.GreaterThanOrEqual:
+					return new SimpleGreaterThanOrEqualChip(manager);
+				case ChipType.LessThan:
+					return new SimpleLessThanChip(manager);
+				case ChipType.LessThanOrEqual:
+					return new SimpleLessThanOrEqualChip(manager);
+				case ChipType.AdvancedEqual:
+					return new AdvancedEqualsChip(manager);
+				case ChipType.AdvancedNotEqual:
+					return new AdvancedNotEqualsChip(manager);
+				case ChipType.AdvancedGreaterThan:
+					return new AdvancedGreaterThanChip(manager);
+				case ChipType.AdvancedGreaterThanOrEqual:
+					return new AdvancedGreaterThanOrEqualChip(manager);
+				case ChipType.AdvancedLessThan:
+					return new AdvancedLessThanChip(manager);
+				case ChipType.AdvancedLessThanOrEqual:
+					return new AdvancedLessThanOrEqualChip(manager);
 				case ChipType.Variable:
 					return new VariableChip(manager);
 				default:
