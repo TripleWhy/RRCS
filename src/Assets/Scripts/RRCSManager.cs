@@ -7,6 +7,7 @@
 	{
 		public readonly CircuitManager circuitManager = new CircuitManager();
 		private float simuationSpeed = 1f;
+		public Canvas WorldCanvas { get; private set; }
 		public CameraControls cameraControls;
 		public SelectionManager selectionManager;
 		public NodeSettingsUi settingsEditor;
@@ -28,6 +29,7 @@
 			if (instance == null)
 				instance = this;
 			CurrentPlayerId = 1;
+			WorldCanvas = GetComponent<Canvas>();
 			selectionManager.OnSelectionChange.AddListener(delegate { settingsEditor.SetSelectedNodes(selectionManager.GetSelectedNodes()); });
 		}
 

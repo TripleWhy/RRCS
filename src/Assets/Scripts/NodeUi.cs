@@ -18,7 +18,6 @@
 		private Vector3 pointerWorldOffset;
 		protected RectTransform rectTransform;
 		private Canvas canvas;
-		private static Canvas worldCanvas;
 		private RectTransform canvasRectTransform;
 		private NodeUi draggingInstance;
 		private RectTransform selectionInstance;
@@ -26,21 +25,10 @@
 
 		protected void Awake()
 		{
-			if (worldCanvas == null)
-			{
-				foreach (Canvas c in FindObjectsOfType<Canvas>())
-				{
-					if (c.tag == "WorldUi")
-					{
-						worldCanvas = c;
-						break;
-					}
-				}
-			}
 			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
-			isSidebarNode = (canvas.tag == "Sidebar");
+			isSidebarNode = !object.ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
 
 			Node = CreateNode();
 			if (!isSidebarNode)
@@ -222,6 +210,7 @@
 			if (draggingInstance == null)
 				return;
 
+			Canvas worldCanvas = RRCSManager.Instance.WorldCanvas;
 			bool isWorldPos = (eventData.hovered.Count == 0);
 			if (!isWorldPos)
 			{
