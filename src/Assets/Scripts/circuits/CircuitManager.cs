@@ -33,16 +33,6 @@
 			}
 
 			node.EvaluationRequired -= Node_EvaluationRequired;
-			foreach (Port port in node.inputPorts)
-			{
-				port.Connected += Invalidate;
-				port.Disconnected += Invalidate;
-			}
-			foreach (Port port in node.outputPorts)
-			{
-				port.Connected += Invalidate;
-				port.Disconnected += Invalidate;
-			}
 			Invalidate();
 		}
 
@@ -71,6 +61,13 @@
 		public void Invalidate()
 		{
 			dirty = true;
+		}
+
+		internal void Clear()
+		{
+			foreach (CircuitNode node in nodes)
+				node.EvaluationRequired -= Node_EvaluationRequired;
+			nodes.Clear();
 		}
 
 		private void Node_EvaluationRequired(CircuitNode source)

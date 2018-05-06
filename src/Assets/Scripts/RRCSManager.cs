@@ -88,5 +88,21 @@
 				UiManager.ShowPortLabels = value;
 			}
 		}
+
+		public void Clear()
+		{
+			foreach (Transform child in WorldCanvas.transform)
+				Destroy(child.gameObject);
+			//TODO reset camera
+			circuitManager.Clear();
+		}
+
+		public void StoreFile()
+		{
+		}
+
+		public void LoadFile()
+		{
+		}
 	}
 }
