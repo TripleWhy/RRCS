@@ -3,6 +3,7 @@
 	using System;
 	using System.Diagnostics;
 
+    [Serializable()]
 	public class NodeSetting
 	{
 		public enum SettingType

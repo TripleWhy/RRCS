@@ -3,16 +3,17 @@
 	using System;
 	using System.Collections.Generic;
 
+    [Serializable()]
 	public abstract class CircuitNode : IComparable<CircuitNode>
 	{
 		public readonly int inputPortCount;
 		public readonly int outputPortCount;
 		public readonly bool hasReset;
-		public readonly InputPort[] inputPorts;
-		public readonly OutputPort[] outputPorts;
+        [NonSerialized()] public readonly InputPort[] inputPorts;
+        [NonSerialized()] public readonly OutputPort[] outputPorts;
 		public readonly NodeSetting[] settings;
 		internal int RingEvaluationPriority { get; set; }
-		protected readonly CircuitManager manager;
+        [NonSerialized()] protected readonly CircuitManager manager;
 
 		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
 		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
