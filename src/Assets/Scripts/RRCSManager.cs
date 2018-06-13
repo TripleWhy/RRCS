@@ -97,11 +97,12 @@
 			circuitManager.Clear();
 		}
 
-		public void StoreFile()
+		public void StoreFile(FileSaveButton button)
 		{
+			//button.data = ...
 		}
 
-		public void LoadFile()
+		public void LoadFile(string url)
 		{
 		}
 	}
