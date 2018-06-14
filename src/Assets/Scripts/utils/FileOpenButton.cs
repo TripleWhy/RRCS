@@ -14,7 +14,7 @@ namespace AssemblyCSharp
 	public class FileOpenButton : MonoBehaviour, IPointerDownHandler
 	{
 		[System.Serializable]
-		public class FileSelectedEvent : UnityEvent<string>
+		public class FileSelectedEvent : UnityEvent<string, byte[]>
 		{
 		}
 
@@ -73,7 +73,14 @@ namespace AssemblyCSharp
 
 		private void FileSelected(string url)
 		{
-			onFileSelected.Invoke(url);
+			StartCoroutine(LoadFile(url));
+		}
+
+		private IEnumerator LoadFile(string url)
+		{
+			WWW loader = new WWW(url);
+			yield return loader;
+			onFileSelected.Invoke(url, loader.bytes);
 		}
 	}
 }

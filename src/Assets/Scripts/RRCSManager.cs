@@ -102,7 +102,7 @@
 			//button.data = ...
 		}
 
-		public void LoadFile(string url)
+		public void LoadFile(string url, byte[] content)
 		{
 		}
 	}
