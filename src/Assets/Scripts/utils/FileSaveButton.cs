@@ -17,10 +17,10 @@ namespace AssemblyCSharp
 		{
 		}
 
-		public string Title = "";
-		public string Directory = "";
-		public string FileName = "";
-		public string Extension = "";
+		public string title = "";
+		public string directory = "";
+		public string fileName = "";
+		public string extension = "";
 
 		public FileSelectedEvent onClicked;
 		public byte[] data;
@@ -70,7 +70,7 @@ namespace AssemblyCSharp
 		public void OnClick()
 		{
 			ButtonClicked();
-			var path = StandaloneFileBrowser.SaveFilePanel(Title, Directory, FileName, Extension);
+			string path = StandaloneFileBrowser.SaveFilePanel(title, directory, fileName, extension);
 			if (!string.IsNullOrEmpty(path))
 				File.WriteAllBytes(path, data);
 			data = null;

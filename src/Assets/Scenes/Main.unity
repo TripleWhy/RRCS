@@ -438,11 +438,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882e1824733f5cf498b24c24a9250dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Title: 
-  FileName: 
-  Directory: 
-  Extension: rrsc
-  Multiselect: 0
+  title: 
+  fileName: 
+  directory: 
+  extension: 
+  multiselect: 0
   onFileSelected:
     m_PersistentCalls:
       m_Calls:
@@ -7583,10 +7583,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7d82fb4fd8879f499e50577dc7979b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Title: 
-  Directory: 
-  FileName: 
-  Extension: rrsc
+  title: 
+  directory: 
+  fileName: 
+  extension: 
   onClicked:
     m_PersistentCalls:
       m_Calls:

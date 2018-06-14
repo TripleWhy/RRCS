@@ -18,11 +18,11 @@ namespace AssemblyCSharp
 		{
 		}
 
-		public string Title = "";
-		public string FileName = "";
-		public string Directory = "";
-		public string Extension = "";
-		public bool Multiselect = false;
+		public string title = "";
+		public string fileName = "";
+		public string directory = "";
+		public string extension = "";
+		public bool multiselect = false;
 		public FileSelectedEvent onFileSelected;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -65,7 +65,7 @@ namespace AssemblyCSharp
 
 		private void OnClick()
 		{
-			var paths = StandaloneFileBrowser.OpenFilePanel(Title, Directory, Extension, Multiselect);
+			string[] paths = StandaloneFileBrowser.OpenFilePanel(title, directory, extension, multiselect);
 			if (paths.Length > 0)
 				FileSelected(new System.Uri(paths[0]).AbsoluteUri);
 		}
