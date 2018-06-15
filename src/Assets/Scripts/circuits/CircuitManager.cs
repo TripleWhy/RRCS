@@ -8,6 +8,7 @@
 	{
 		private readonly List<CircuitNode> nodes = new List<CircuitNode>();
 		private bool dirty = true;
+		public int CurrentTick { get; private set; }
 
 		public void AddNode(CircuitNode node)
 		{
@@ -75,7 +76,15 @@
 			Invalidate();
 		}
 
-		public void EvaluateIfNecessary()
+		public void Tick()
+		{
+			CurrentTick++;
+			foreach (CircuitNode node in nodes)
+				node.Tick();
+			EvaluateIfNecessary();
+		}
+
+		private void EvaluateIfNecessary()
 		{
 			if (dirty)
 			{

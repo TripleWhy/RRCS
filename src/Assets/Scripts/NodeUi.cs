@@ -118,7 +118,7 @@
 					outPorts[i].Port = Node.outputPorts[i];
 					UiManager.Register(outPorts[i]);
 				}
-				RRCSManager.Instance.circuitManager.AddNode(Node);
+				Node.Manager = RRCSManager.Instance.circuitManager;
 				UiManager.Register(this);
 			}
 		}

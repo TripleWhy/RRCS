@@ -35,7 +35,7 @@
 
 		void FixedUpdate()
 		{
-			circuitManager.EvaluateIfNecessary();
+			circuitManager.Tick();
 		}
 
 		public float SimulationSpeed

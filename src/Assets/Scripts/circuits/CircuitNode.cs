@@ -12,7 +12,7 @@
 		public readonly OutputPort[] outputPorts;
 		public readonly NodeSetting[] settings;
 		internal int RingEvaluationPriority { get; set; }
-		protected readonly CircuitManager manager;
+		private CircuitManager manager;
 
 		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
 		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
@@ -55,8 +55,7 @@
 				outputPorts[outputCount].Disconnected += CircuitNode_Connected;
 			}
 
-			if (manager != null)
-				manager.AddNode(this);
+			Manager = manager;
 		}
 
 		~CircuitNode()
@@ -81,6 +80,24 @@
 			foreach (InputPort port in inputPorts)
 				port.Destroy();
 			manager.RemoveNode(this);
+		}
+
+		public CircuitManager Manager
+		{
+			get
+			{
+				return manager;
+			}
+			set
+			{
+				if (object.ReferenceEquals(value, manager))
+					return;
+				if (manager != null)
+					throw new InvalidOperationException("CircuitManager already assigned.");
+				manager = value;
+				if (manager != null)
+					manager.AddNode(this);
+			}
 		}
 
 		public IEnumerable<CircuitNode> DependsOn()
@@ -110,6 +127,10 @@
 		public static bool ToBool(Port p)
 		{
 			return ToBool(ToInt(p));
+		}
+
+		public virtual void Tick()
+		{
 		}
 
 		public virtual void Evaluate()

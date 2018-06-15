@@ -162,6 +162,8 @@
 					return new AdvancedLessThanOrEqualChip(manager);
 				case ChipType.Variable:
 					return new VariableChip(manager);
+				case ChipType.Delay:
+					return new DelayChip(manager);
 				case ChipType.Random:
 					return new RandomChip(manager);
 				default:
