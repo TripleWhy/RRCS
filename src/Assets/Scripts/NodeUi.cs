@@ -314,9 +314,12 @@
 					pos.x += outPorts[0].RectTransform.sizeDelta.x * 0.25f;
 				}
 			}
-			selectionInstance.anchoredPosition = pos;
-			selectionInstance.sizeDelta = size / inverseZoom;
-			selectionInstance.localScale = new Vector3(inverseZoom, inverseZoom);
+			if (selectionInstance != null)
+			{
+				selectionInstance.anchoredPosition = pos;
+				selectionInstance.sizeDelta = size / inverseZoom;
+				selectionInstance.localScale = new Vector3(inverseZoom, inverseZoom);
+			}
 		}
 
 		private void UpdateSelectionSize()
