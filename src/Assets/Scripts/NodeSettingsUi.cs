@@ -8,6 +8,7 @@
 	{
 		public IntEditor intEditorPrefab;
 		public BoolEditor boolEditorPrefab;
+		public SelectorConditionEditor selectorConditionEditorPrefab;
 
 		private IntEditor priorityEditor;
 		private List<NodeUi> selectedNodes = new List<NodeUi>();
@@ -92,6 +93,13 @@
 				editor.ValueChanged += BoolEditor_ValueChanged;
 				return editor.gameObject;
 			}
+			else if (setting.valueType == typeof(NodeSetting.SelectorCondition))
+			{
+				SelectorConditionEditor editor = Instantiate<SelectorConditionEditor>(selectorConditionEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ConditionChanged += Editor_ConditionChanged;
+				return editor.gameObject;
+			}
 			else
 			{
 				Debug.Assert(false);
@@ -106,6 +114,12 @@
 		}
 
 		private void BoolEditor_ValueChanged(BoolEditor sender, bool value)
+		{
+			foreach (NodeUi nodeUi in selectedNodes)
+				nodeUi.Node.SetSetting(sender.Setting.type, value);
+		}
+
+		private void Editor_ConditionChanged(SelectorConditionEditor sender, NodeSetting.SelectorCondition value)
 		{
 			foreach (NodeUi nodeUi in selectedNodes)
 				nodeUi.Node.SetSetting(sender.Setting.type, value);

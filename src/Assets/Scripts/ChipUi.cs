@@ -16,7 +16,7 @@
 			Output, Message,
 			Delay, Timer,
 			StartGame, GameState, SetScore, Score,
-			SFX, Random,
+			SFX, Random, Selector,
 			Respawn, PlayerHit,
 		};
 
@@ -168,6 +168,8 @@
 					return new TimerChip(manager);
 				case ChipType.Random:
 					return new RandomChip(manager);
+				case ChipType.Selector:
+					return new SelectorChip(manager);
 				default:
 					return null;
 			}
