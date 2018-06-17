@@ -46,6 +46,7 @@
 
 		override public void Evaluate()
 		{
+			outputPorts[outputPortCount].Value = ResetValue;
 			if (ToBool(inputPorts[2]))
 				queue.Clear();
 			else
