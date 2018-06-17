@@ -1,8 +1,5 @@
 ﻿namespace AssemblyCSharp
 {
-	using Priority_Queue;
-	using System;
-
 	public class TimerChip : Chip
 	{
 		private int remainingTicks = -1;
