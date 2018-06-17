@@ -129,6 +129,32 @@
 			return ToBool(ToInt(p));
 		}
 
+		protected int InValue(int index)
+		{
+			return ToInt(inputPorts[index]);
+		}
+
+		protected bool InBool(int index)
+		{
+			return ToBool(inputPorts[index]);
+		}
+
+		protected bool IsResetSet
+		{
+			get
+			{
+				return InBool(inputPortCount);
+			}
+		}
+
+		protected int ResetValue
+		{
+			get
+			{
+				return InValue(inputPortCount);
+			}
+		}
+
 		public virtual void Tick()
 		{
 		}
@@ -137,8 +163,8 @@
 		{
 			if (hasReset)
 			{
-				outputPorts[outputPortCount].Value = inputPorts[inputPortCount].GetValue();
-				if (ToBool(outputPorts[outputPortCount]))
+				outputPorts[outputPortCount].Value = ResetValue;
+				if (IsResetSet)
 				{
 					for (int i = 0; i < outputPortCount; ++i)
 						outputPorts[i].Value = 0;

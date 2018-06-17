@@ -164,6 +164,8 @@
 					return new VariableChip(manager);
 				case ChipType.Delay:
 					return new DelayChip(manager);
+				case ChipType.Timer:
+					return new TimerChip(manager);
 				case ChipType.Random:
 					return new RandomChip(manager);
 				default:

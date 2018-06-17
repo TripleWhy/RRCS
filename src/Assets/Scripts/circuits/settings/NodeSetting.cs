@@ -11,6 +11,7 @@
 			Output1,
 			Output2,
 			SendPlayerId,
+			LoopingTimer,
 		};
 
 		public readonly SettingType type;
@@ -38,6 +39,8 @@
 					return new NodeSetting(type, "B Signal", typeof(int), 0);
 				case SettingType.SendPlayerId:
 					return new NodeSetting(type, "Send Player ID", typeof(bool), false);
+				case SettingType.LoopingTimer:
+					return new NodeSetting(type, "Looping", typeof(bool), true);
 			}
 			Debug.Assert(false);
 			return null;
