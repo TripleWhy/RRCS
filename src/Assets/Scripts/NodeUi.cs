@@ -101,7 +101,7 @@
 				if (!isSidebarNode && value)
 					throw new InvalidOperationException();
 				isSidebarNode = value;
-				GetComponent<Image>().raycastTarget = true;
+				EnableRaycast(true);
 				OnMovedToWorld();
 
 				Debug.Assert(inPorts != null);
@@ -121,6 +121,11 @@
 				Node.Manager = RRCSManager.Instance.circuitManager;
 				UiManager.Register(this);
 			}
+		}
+
+		protected virtual void EnableRaycast(bool on)
+		{
+			GetComponent<Image>().raycastTarget = on;
 		}
 
 		protected virtual void OnMovedToWorld()
@@ -165,7 +170,7 @@
 			if (IsSidebarNode)
 			{
 				draggingInstance = Instantiate(this, canvasRectTransform);
-				draggingInstance.GetComponent<Image>().raycastTarget = false;
+				draggingInstance.EnableRaycast(false);
 			}
 			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
 		}
@@ -214,8 +219,10 @@
 			bool isWorldPos = (eventData.hovered.Count == 0);
 			if (!isWorldPos)
 			{
+				print("Drop world: " + worldCanvas.gameObject);
 				foreach (GameObject h in eventData.hovered)
 				{
+					print("Drop hover: " + h);
 					if (object.ReferenceEquals(h, worldCanvas.gameObject))
 					{
 						isWorldPos = true;
@@ -303,7 +310,7 @@
 				else
 				{
 					size.x += inPorts[0].RectTransform.sizeDelta.x * 0.5f;
-					pos.x += inPorts[0].RectTransform.sizeDelta.x * 0.25f;
+					pos.x -= inPorts[0].RectTransform.sizeDelta.x * 0.25f;
 				}
 			}
 			else
