@@ -4,6 +4,7 @@
 	{
 		private bool lastPressed = false;
 		private bool pressed = false;
+		private bool released = false;
 
 		public RRButton(CircuitManager manager) : base(manager, 0, 3, false)
 		{
@@ -16,6 +17,8 @@
 
 		protected override void EvaluateOutputs()
 		{
+			if (pressed && released && lastPressed)
+				pressed = released = false;
 			if (pressed)
 			{
 				outputPorts[2].Value = 0;
@@ -57,7 +60,7 @@
 
 		public void Release()
 		{
-			pressed = false;
+			released = true;
 			EmitEvaluationRequired();
 		}
 	}
