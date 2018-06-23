@@ -18,12 +18,19 @@ namespace AssemblyCSharp
 		{
 		}
 
+		[System.Serializable]
+		public class FileSelectedTextEvent : UnityEvent<string, string>
+		{
+		}
+
 		public string title = "";
 		public string fileName = "";
 		public string directory = "";
 		public string extension = "";
 		public bool multiselect = false;
+		public bool compressed = true;
 		public FileSelectedEvent onFileSelected;
+		public FileSelectedTextEvent onFileSelectedText;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     //
@@ -61,6 +68,8 @@ namespace AssemblyCSharp
 
 			if (onFileSelected == null)
 				onFileSelected = new FileSelectedEvent();
+			if (onFileSelectedText == null)
+				onFileSelectedText = new FileSelectedTextEvent();
 		}
 
 		private void OnClick()
@@ -80,7 +89,17 @@ namespace AssemblyCSharp
 		{
 			WWW loader = new WWW(url);
 			yield return loader;
-			onFileSelected.Invoke(url, loader.bytes);
+			if (!compressed)
+			{
+				onFileSelected.Invoke(url, loader.bytes);
+				onFileSelectedText.Invoke(url, loader.text);
+			}
+			else
+			{
+				byte[] data = FileUtils.UncompressDeflate(loader.bytes);
+				onFileSelected.Invoke(url, data);
+				onFileSelectedText.Invoke(url, Encoding.UTF8.GetString(data));
+			}
 		}
 	}
 }

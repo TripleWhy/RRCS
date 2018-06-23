@@ -92,6 +92,17 @@
 		{
 			return Encoding.UTF8.GetString(LoadDeflateFile(filePath));
 		}
+
+		public static byte[] UncompressDeflate(byte[] compressed)
+		{
+			using (var msi = new MemoryStream(compressed))
+			using (MemoryStream mso = new MemoryStream())
+			{
+				using (var gs = new DeflateStream(msi, CompressionMode.Decompress))
+					gs.CopyTo(mso);
+				return mso.ToArray();
+			}
+		}
 		// <--
 	}
 }

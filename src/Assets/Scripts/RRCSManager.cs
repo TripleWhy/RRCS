@@ -120,8 +120,11 @@
 			button.dataString = JsonUtility.ToJson(container, false);
 		}
 
-		public void LoadFile(string url, byte[] content)
+		public void LoadFile(string url, string content)
 		{
+			Clear();
+			StorageNodeGrahp container = JsonUtility.FromJson<StorageNodeGrahp>(content);
+			print(container);
 		}
 	}
 }
