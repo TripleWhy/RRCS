@@ -37,6 +37,14 @@
 			Invalidate();
 		}
 
+		public List<CircuitNode> Nodes
+		{
+			get
+			{
+				return nodes;
+			}
+		}
+
 		internal void UpdateNodePriority(CircuitNode node, int newPriority)
 		{
 			newPriority = Math.Min(Math.Max(newPriority, 0), nodes.Count - 1);

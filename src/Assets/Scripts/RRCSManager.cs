@@ -1,5 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
+	using System.IO;
+	using System.IO.Compression;
+	using System.Text;
 	using UnityEngine;
 	using UnityEngine.UI.Extensions;
 
@@ -97,9 +100,24 @@
 			circuitManager.Clear();
 		}
 
+		public void DbgSave()
+		{
+#if false
+			StorageNodeGrahp container = new StorageNodeGrahp();
+			container.Fill();
+			string str = JsonUtility.ToJson(container, true);
+			print(str);
+			File.WriteAllText(@"D:\Data\tmp\circuit.rrsc.json", str);
+			FileUtils.StoreGZipFile(@"D:\Data\tmp\circuit.rrsc.gz", str);
+			FileUtils.StoreDeflateFile(@"D:\Data\tmp\circuit.rrsc.deflate", str);
+#endif
+		}
+
 		public void StoreFile(FileSaveButton button)
 		{
-			//button.data = ...
+			StorageNodeGrahp container = new StorageNodeGrahp();
+			container.Fill();
+			button.dataString = JsonUtility.ToJson(container, false);
 		}
 
 		public void LoadFile(string url, byte[] content)

@@ -5886,7 +5886,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1881280529}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.49071124
+  m_Size: 0.45090234
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8106,7 +8106,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2024479847}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 533916712}
+        m_MethodName: DbgSave
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &2024479847
@@ -8153,10 +8164,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7d82fb4fd8879f499e50577dc7979b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: 
+  title: Save Circuit
   directory: 
-  fileName: 
-  extension: 
+  fileName: circuit
+  extension: rrsc
+  compress: 1
   onClicked:
     m_PersistentCalls:
       m_Calls:
@@ -8173,7 +8185,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: AssemblyCSharp.FileSaveButton+FileSelectedEvent, Assembly-CSharp,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  data: 
 --- !u!1 &2033593840
 GameObject:
   m_ObjectHideFlags: 0

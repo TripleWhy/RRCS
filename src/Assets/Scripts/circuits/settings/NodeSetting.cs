@@ -22,7 +22,7 @@
 			SelectorCondition6,
 		};
 
-		[System.Serializable]
+		[Serializable]
 		public class SelectorCondition
 		{
 			public enum LogicOperation

@@ -8,6 +8,7 @@ namespace AssemblyCSharp
 	using UnityEngine.EventSystems;
 	using SFB;
 	using UnityEngine.Events;
+	using System;
 
 	[RequireComponent(typeof(Button))]
 	public class FileSaveButton : MonoBehaviour, IPointerDownHandler
@@ -21,9 +22,11 @@ namespace AssemblyCSharp
 		public string directory = "";
 		public string fileName = "";
 		public string extension = "";
+		public bool compress = true;
 
 		public FileSelectedEvent onClicked;
-		public byte[] data;
+		[NonSerialized] public byte[] dataBytes;
+		[NonSerialized] public string dataString;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     //
@@ -72,8 +75,14 @@ namespace AssemblyCSharp
 			ButtonClicked();
 			string path = StandaloneFileBrowser.SaveFilePanel(title, directory, fileName, extension);
 			if (!string.IsNullOrEmpty(path))
-				File.WriteAllBytes(path, data);
-			data = null;
+			{
+				if (dataBytes != null)
+					FileUtils.StoreFile(path, dataBytes, compress);
+				else
+					FileUtils.StoreFile(path, dataString, compress);
+			}
+			dataBytes = null;
+			dataString = null;
 		}
 #endif
 
