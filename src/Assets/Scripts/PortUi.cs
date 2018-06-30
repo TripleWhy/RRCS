@@ -91,6 +91,13 @@
 			set
 			{
 				Image.color = portColors[value % portColors.Length];
+				foreach (LineRenderer line in connectedLines.Values)
+				{
+					if (LineUseStart)
+						line.startColor = Image.color;
+					else
+						line.endColor = Image.color;
+				}
 			}
 		}
 

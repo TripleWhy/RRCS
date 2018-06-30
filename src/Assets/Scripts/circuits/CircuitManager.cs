@@ -25,7 +25,7 @@
 
 		public void RemoveNode(CircuitNode node)
 		{
-			Debug.Assert(object.Equals(nodes[node.RingEvaluationPriority], node));
+			Debug.Assert(object.ReferenceEquals(nodes[node.RingEvaluationPriority], node));
 			nodes.RemoveAt(node.RingEvaluationPriority);
 			for (int i = node.RingEvaluationPriority, s = nodes.Count; i < s; i++)
 			{
@@ -34,6 +34,7 @@
 			}
 
 			node.EvaluationRequired -= Node_EvaluationRequired;
+			node.RingEvaluationPriority = -1;
 			Invalidate();
 		}
 
@@ -74,9 +75,9 @@
 
 		internal void Clear()
 		{
-			foreach (CircuitNode node in nodes)
-				node.EvaluationRequired -= Node_EvaluationRequired;
-			nodes.Clear();
+			for (int i = nodes.Count - 1; i >= 0; --i)
+				RemoveNode(nodes[i]);
+			Debug.Assert(nodes.Count == 0);
 		}
 
 		private void Node_EvaluationRequired(CircuitNode source)

@@ -56,6 +56,11 @@
 				return;
 			portUi.Port.Connected -= Port_Connected;
 			portUi.Port.Disconnected -= Port_Disconnected;
+
+			foreach (Port p in portUi.Port.connectedPorts)
+				if (ports.ContainsKey(p))
+					Port_Disconnected(portUi.Port, p);
+
 			ports.Remove(portUi.Port);
 		}
 

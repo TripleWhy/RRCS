@@ -75,6 +75,8 @@
 
 		public virtual void Destroy()
 		{
+			if (RingEvaluationPriority < 0)
+				return;
 			foreach (OutputPort port in outputPorts)
 				port.Destroy();
 			foreach (InputPort port in inputPorts)
