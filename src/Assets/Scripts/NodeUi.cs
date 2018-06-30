@@ -10,7 +10,7 @@
 	{
 		public RectTransform selectionPrefab;
 
-		public CircuitNode Node { get; protected set; }
+		private CircuitNode node;
 
 		protected PortUi[] inPorts;
 		protected PortUi[] outPorts;
@@ -30,15 +30,12 @@
 			canvasRectTransform = (RectTransform)canvas.transform;
 			isSidebarNode = !object.ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
 
-			Node = CreateNode();
-			if (!isSidebarNode)
-				OnMovedToWorld();
-			UiManager.Register(this);
+			CreateNode();
 		}
 
-		private CircuitNode CreateNode()
+		protected void CreateNode()
 		{
-			return CreateNode(IsSidebarNode ? null : RRCSManager.Instance.circuitManager);
+			Node = CreateNode(IsSidebarNode ? null : RRCSManager.Instance.circuitManager);
 		}
 
 		protected abstract CircuitNode CreateNode(CircuitManager manager);
@@ -46,6 +43,25 @@
 		void OnDestroy()
 		{
 			UiManager.Unregister(this);
+		}
+
+		public CircuitNode Node
+		{
+			get
+			{
+				return node;
+			}
+			protected set
+			{
+				if (node != null)
+					throw new InvalidOperationException();
+				if (value == null)
+					return;
+				node = value;
+				if (!IsSidebarNode)
+					OnMovedToWorld();
+				UiManager.Register(this);
+			}
 		}
 
 		public int InPortCount
@@ -100,6 +116,8 @@
 					return;
 				if (!isSidebarNode && value)
 					throw new InvalidOperationException();
+				if (!isSidebarNode && Node == null)
+					throw new InvalidOperationException();
 				isSidebarNode = value;
 				EnableRaycast(true);
 				OnMovedToWorld();
@@ -132,6 +150,15 @@
 		{
 		}
 
+		public virtual string GetParams()
+		{
+			return "";
+		}
+
+		public virtual void ParseParams(string parameters)
+		{
+		}
+
 		#region IPointerDownHandler implementation
 
 		public void OnPointerDown(PointerEventData eventData)
@@ -157,12 +184,6 @@
 
 		public void OnBeginDrag(PointerEventData eventData)
 		{
-			print("BeginDrag pointerCurrentRaycast: " + eventData.pointerCurrentRaycast + ", pointerDrag: " + eventData.pointerDrag + ", pointerPress: " + eventData.pointerPress + ", pointerPressRaycast: " + eventData.pointerPressRaycast);
-			foreach (GameObject go in eventData.hovered)
-			{
-				print("hover " + go);
-			}
-
 			if (eventData.button != 0)
 				return;
 			if (draggingInstance != null)

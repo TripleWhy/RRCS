@@ -375,14 +375,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a55e472320e94c4b89a1f718968a3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 19
+  selectionPrefab: {fileID: 224680459627969996, guid: ee940d1ada1ab3f4d9f18db2c536981e,
+    type: 2}
+  type: 0
   in0: {fileID: 114745543923706372}
   inR: {fileID: 114942917406294398}
   out0: {fileID: 114674574706041994}
   outR: {fileID: 114258559176984504}
   icon: {fileID: 114013186293552862}
-  selectionPrefab: {fileID: 224680459627969996, guid: ee940d1ada1ab3f4d9f18db2c536981e,
-    type: 2}
   skipSetup: 0
 --- !u!114 &114233709956266422
 MonoBehaviour:

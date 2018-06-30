@@ -42,6 +42,65 @@
 				this.operation = operation;
 				this.rhsArgument = rhsArgument;
 			}
+
+			public char OperationChar
+			{
+				get
+				{
+					switch (operation)
+					{
+						case LogicOperation.Equal:
+							return '=';
+						case LogicOperation.NotEqual:
+							return '≠';
+						case LogicOperation.GreaterThan:
+							return '>';
+						case LogicOperation.GreaterThanOrEqual:
+							return '≥';
+						case LogicOperation.LessThan:
+							return '<';
+						case LogicOperation.LessThanOrEqual:
+							return '≤';
+						default:
+							throw new InvalidOperationException();
+					}
+				}
+			}
+
+			public override string ToString()
+			{
+				return OperationChar.ToString() + rhsArgument;
+			}
+
+			public static LogicOperation ParseOperation(char c)
+			{
+				switch (c)
+				{
+					case '=':
+						return LogicOperation.Equal;
+					case '≠':
+						return LogicOperation.NotEqual;
+					case '>':
+						return LogicOperation.GreaterThan;
+					case '≥':
+						return LogicOperation.GreaterThanOrEqual;
+					case '<':
+						return LogicOperation.LessThan;
+					case '≤':
+						return LogicOperation.LessThanOrEqual;
+					default:
+						throw new FormatException("'" + c + "' is not a valid operation.");
+				}
+			}
+
+			public static SelectorCondition Parse(string str)
+			{
+				return new SelectorCondition
+				{
+					operation = ParseOperation(str[0]),
+					rhsArgument = int.Parse(str.Substring(1))
+				};
+			}
 		}
 
 		public readonly SettingType type;
@@ -90,6 +149,18 @@
 			}
 			Debug.Assert(false);
 			return null;
+		}
+
+		public void ParseValue(String stringValue)
+		{
+			if (valueType == typeof(int))
+				currentValue = int.Parse(stringValue);
+			else if (valueType == typeof(bool))
+				currentValue = bool.Parse(stringValue);
+			else if (valueType == typeof(SelectorCondition))
+				currentValue = SelectorCondition.Parse(stringValue);
+			else
+				throw new InvalidOperationException();
 		}
 	}
 }

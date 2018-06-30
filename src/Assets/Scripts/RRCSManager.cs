@@ -1,10 +1,6 @@
 ﻿namespace AssemblyCSharp
 {
-	using System.IO;
-	using System.IO.Compression;
-	using System.Text;
 	using UnityEngine;
-	using UnityEngine.UI.Extensions;
 
 	public class RRCSManager : MonoBehaviour
 	{
@@ -15,6 +11,10 @@
 		public SelectionManager selectionManager;
 		public NodeSettingsUi settingsEditor;
 		public int CurrentPlayerId { get; set; }
+
+		public GameObject chipUiPrefab;
+		public GameObject rRButtonPrefab;
+		public GameObject stageLightPrefab;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance
@@ -97,6 +97,7 @@
 			foreach (Transform child in WorldCanvas.transform)
 				Destroy(child.gameObject);
 			//TODO reset camera
+			//TODO remove lines
 			circuitManager.Clear();
 		}
 
@@ -107,7 +108,7 @@
 			container.Fill();
 			string str = JsonUtility.ToJson(container, true);
 			print(str);
-			File.WriteAllText(@"D:\Data\tmp\circuit.rrsc.json", str);
+			System.IO.File.WriteAllText(@"D:\Data\tmp\circuit.rrsc.json", str);
 			FileUtils.StoreGZipFile(@"D:\Data\tmp\circuit.rrsc.gz", str);
 			FileUtils.StoreDeflateFile(@"D:\Data\tmp\circuit.rrsc.deflate", str);
 #endif
@@ -124,7 +125,7 @@
 		{
 			Clear();
 			StorageNodeGrahp container = JsonUtility.FromJson<StorageNodeGrahp>(content);
-			print(container);
+			container.Restore(this);
 		}
 	}
 }

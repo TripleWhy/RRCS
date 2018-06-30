@@ -8,6 +8,7 @@
 	{
 		public enum ChipType
 		{
+			None,
 			Add, Subtract, Multiply, Divide, Modulo,
 			Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual,
 			AdvancedEqual, AdvancedNotEqual, AdvancedGreaterThan, AdvancedGreaterThanOrEqual, AdvancedLessThan, AdvancedLessThanOrEqual,
@@ -66,7 +67,7 @@
 			{
 				return (Chip)Node;
 			}
-			protected set
+			set
 			{
 				Node = value;
 			}
@@ -213,6 +214,17 @@
 			}
 			Debug.Assert(!Array.Exists(inPorts, element => element == null));
 			Debug.Assert(!Array.Exists(outPorts, element => element == null));
+		}
+
+		public override string GetParams()
+		{
+			return type.ToString();
+		}
+
+		public override void ParseParams(string parameters)
+		{
+			type = (ChipType)Enum.Parse(typeof(ChipType), parameters);
+			CreateNode();
 		}
 	}
 }

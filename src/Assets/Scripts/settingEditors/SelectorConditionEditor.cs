@@ -119,27 +119,7 @@
 				if (value == condition)
 					return;
 				condition = value;
-				switch (condition.operation)
-				{
-					case NodeSetting.SelectorCondition.LogicOperation.Equal:
-						operationButtonText.text = "=";
-						break;
-					case NodeSetting.SelectorCondition.LogicOperation.NotEqual:
-						operationButtonText.text = "≠";
-						break;
-					case NodeSetting.SelectorCondition.LogicOperation.LessThan:
-						operationButtonText.text = "<";
-						break;
-					case NodeSetting.SelectorCondition.LogicOperation.LessThanOrEqual:
-						operationButtonText.text = "≤";
-						break;
-					case NodeSetting.SelectorCondition.LogicOperation.GreaterThan:
-						operationButtonText.text = ">";
-						break;
-					case NodeSetting.SelectorCondition.LogicOperation.GreaterThanOrEqual:
-						operationButtonText.text = "≥";
-						break;
-				}
+				operationButtonText.text = condition.OperationChar.ToString();
 				if (input != null)
 					input.text = condition.rhsArgument.ToString();
 				ConditionChanged(this, condition);

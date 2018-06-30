@@ -44,6 +44,10 @@
 			portUi.Port.Connected += Port_Connected;
 			portUi.Port.Disconnected += Port_Disconnected;
 			portUi.TextActive = showPortLabels;
+
+			foreach (Port p in portUi.Port.connectedPorts)
+				if (ports.ContainsKey(p))
+					Port_Connected(portUi.Port, p);
 		}
 
 		public static void Unregister(PortUi portUi)
