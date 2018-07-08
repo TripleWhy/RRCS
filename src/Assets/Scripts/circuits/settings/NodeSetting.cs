@@ -11,6 +11,7 @@
 			Output1,
 			Output2,
 			SendPlayerId,
+			ContinuousOutput,
 			LoopingTimer,
 			SelectorFirstOnly,
 			SelectorCondition0,
@@ -128,6 +129,8 @@
 					return new NodeSetting(type, "B Signal", typeof(int), 0);
 				case SettingType.SendPlayerId:
 					return new NodeSetting(type, "Send Player ID", typeof(bool), false);
+				case SettingType.ContinuousOutput:
+					return new NodeSetting(type, "Continuous Output", typeof(bool), true);
 				case SettingType.LoopingTimer:
 					return new NodeSetting(type, "Looping", typeof(bool), true);
 				case SettingType.SelectorFirstOnly:
