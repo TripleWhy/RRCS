@@ -318,6 +318,7 @@
 			else if (!preSelected && !selected && selectionInstance != null)
 			{
 				Destroy(selectionInstance.gameObject);
+				RRCSManager.Instance.cameraControls.ZoomChanged -= Camera_ZoomChanged;
 				selectionInstance = null;
 			}
 		}
