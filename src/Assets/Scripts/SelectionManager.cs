@@ -2,6 +2,7 @@
 {
 	using System.Collections.Generic;
 	using UnityEngine;
+	using UnityEngine.EventSystems;
 	using UnityEngine.UI.Extensions;
 
 	public class SelectionManager : MonoBehaviour
@@ -16,7 +17,7 @@
 
 		void Update()
 		{
-			if (Input.GetButtonDown("Del"))
+			if (EventSystem.current.currentSelectedGameObject == null && Input.GetButtonDown("Del"))
 			{
 				List<NodeUi> selected = GetSelectedNodesList();
 				ClearSelection();
