@@ -29,31 +29,33 @@ namespace AssemblyCSharp
 		[NonSerialized] public string dataString;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    //
-    // WebGL
-    //
-    [DllImport("__Internal")]
-    private static extern void DownloadFile(string id, string filename, byte[] byteArray, int byteArraySize);
+		//
+		// WebGL
+		//
+		[DllImport("__Internal")]
+		private static extern void DownloadFile(string id, string filename, byte[] byteArray, int byteArraySize);
 
-	void Start()
-	{
-		if (onClicked == null)
-			onClicked = new FileSelectedEvent();
-	}
+		void Start()
+		{
+			if (onClicked == null)
+				onClicked = new FileSelectedEvent();
+		}
 
-    // Broser plugin should be called in OnPointerDown.
-    public void OnPointerDown(PointerEventData eventData)
-	{
-		ButtonClicked();
-        DownloadFile(gameObject.name, FileName + "." + Extension, data, data.Length);
-		data = null;
-    }
+		// Broser plugin should be called in OnPointerDown.
+		public void OnPointerDown(PointerEventData eventData)
+		{
+			ButtonClicked();
+			byte[] data = CreateBytes();
+			DownloadFile(gameObject.name, fileName + "." + extension, data, data.Length);
+			dataBytes = null;
+			dataString = null;
+		}
 
-    // Called from browser
-    public void OnFileDownloaded()
-	{
-        //
-    }
+		// Called from browser
+		public void OnFileDownloaded()
+		{
+			//
+		}
 #else
 		//
 		// Standalone platforms & editor
@@ -75,16 +77,18 @@ namespace AssemblyCSharp
 			ButtonClicked();
 			string path = StandaloneFileBrowser.SaveFilePanel(title, directory, fileName, extension);
 			if (!string.IsNullOrEmpty(path))
-			{
-				if (dataBytes != null)
-					FileUtils.StoreFile(path, dataBytes, compress);
-				else
-					FileUtils.StoreFile(path, dataString, compress);
-			}
+				FileUtils.StoreFile(path, CreateBytes(), false);
 			dataBytes = null;
 			dataString = null;
 		}
 #endif
+		private byte[] CreateBytes()
+		{
+			if (dataBytes != null)
+				return FileUtils.StorageBytes(dataBytes, compress);
+			else
+				return FileUtils.StorageBytes(dataString, compress);
+		}
 
 		private void ButtonClicked()
 		{
