@@ -318,24 +318,28 @@
 		{
 			LineRenderer line = connectedLines[otherUi];
 			connectedLines.Remove(otherUi);
-			if (line != null && object.ReferenceEquals(line, draggingLine))
+			if (line != null)
 			{
-				if (destroyLine)
+				if (object.ReferenceEquals(line, draggingLine))
 				{
-					Destroy(line.gameObject);
-					draggingLine = null;
-				}
-				return false;
-			}
-			else
-			{
-				if (destroyLine)
-				{
-					Destroy(line.gameObject);
+					if (destroyLine)
+					{
+						Destroy(line.gameObject);
+						draggingLine = null;
+					}
 					return false;
 				}
-				return true;
+				else
+				{
+					if (destroyLine)
+					{
+						Destroy(line.gameObject);
+						return false;
+					}
+					return true;
+				}
 			}
+			return true;
 		}
 	}
 }

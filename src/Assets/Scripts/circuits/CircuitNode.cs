@@ -81,7 +81,8 @@
 				port.Destroy();
 			foreach (InputPort port in inputPorts)
 				port.Destroy();
-			manager.RemoveNode(this);
+			if (manager != null)
+				manager.RemoveNode(this);
 		}
 
 		public CircuitManager Manager

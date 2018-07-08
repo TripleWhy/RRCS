@@ -43,6 +43,8 @@
 		void OnDestroy()
 		{
 			UiManager.Unregister(this);
+			if (Node != null)
+				Node.Destroy();
 		}
 
 		public CircuitNode Node

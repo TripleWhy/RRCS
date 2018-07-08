@@ -97,7 +97,6 @@
 			foreach (Transform child in WorldCanvas.transform)
 				Destroy(child.gameObject);
 			//TODO reset camera
-			//TODO remove lines
 			circuitManager.Clear();
 		}
 
