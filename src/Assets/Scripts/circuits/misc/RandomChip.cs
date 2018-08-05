@@ -25,9 +25,12 @@
 			{
 				try
 				{
-					outputPorts[0].Value = random.Next(InValue(1), InValue(2));
+					int min = InValue(1);
+					int max = InValue(2);
+					outputPorts[0].Value = random.Next(min, max);
 					clearValue = !(bool)settings[0].currentValue;
-					EmitEvaluationRequired();
+					if (clearValue || min + 1 < max)
+						EmitEvaluationRequired();
 				}
 				catch (ArgumentOutOfRangeException)
 				{
