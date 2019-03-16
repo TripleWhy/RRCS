@@ -8,6 +8,7 @@
 	{
 		public IntEditor intEditorPrefab;
 		public BoolEditor boolEditorPrefab;
+		public StringEditor stringEditorPrefab;
 		public SelectorConditionEditor selectorConditionEditorPrefab;
 
 		private IntEditor priorityEditor;
@@ -93,6 +94,13 @@
 				editor.ValueChanged += BoolEditor_ValueChanged;
 				return editor.gameObject;
 			}
+			else if (setting.valueType == typeof(string))
+			{
+				StringEditor editor = Instantiate<StringEditor>(stringEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += StringEditor_ValueChanged;
+				return editor.gameObject;
+			}
 			else if (setting.valueType == typeof(NodeSetting.SelectorCondition))
 			{
 				SelectorConditionEditor editor = Instantiate<SelectorConditionEditor>(selectorConditionEditorPrefab, transform);
@@ -119,6 +127,12 @@
 				nodeUi.Node.SetSetting(sender.Setting.type, value);
 		}
 
+		private void StringEditor_ValueChanged(StringEditor sender, string value)
+		{
+			foreach (NodeUi nodeUi in selectedNodes)
+				nodeUi.Node.SetSetting(sender.Setting.type, value);
+		}
+		
 		private void Editor_ConditionChanged(SelectorConditionEditor sender, NodeSetting.SelectorCondition value)
 		{
 			foreach (NodeUi nodeUi in selectedNodes)

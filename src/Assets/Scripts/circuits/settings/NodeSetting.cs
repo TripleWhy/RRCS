@@ -21,6 +21,11 @@
 			SelectorCondition4,
 			SelectorCondition5,
 			SelectorCondition6,
+			StateMinTimeInState,
+			StateValue0,
+			StateValue1,
+			StateValue2,
+			StateName,
 		};
 
 		[Serializable]
@@ -149,6 +154,16 @@
 					return new NodeSetting(type, "Y Condition", typeof(SelectorCondition), new SelectorCondition());
 				case SettingType.SelectorCondition6:
 					return new NodeSetting(type, "K Condition", typeof(SelectorCondition), new SelectorCondition());
+				case SettingType.StateMinTimeInState:
+					return new NodeSetting(type, "Min Time In State (ticks)", typeof(int), 0);
+				case SettingType.StateName:
+					return new NodeSetting(type, "State Name", typeof(string), "");
+				case SettingType.StateValue0:
+					return new NodeSetting(type, "Value 1", typeof(int), 0);
+				case SettingType.StateValue1:
+					return new NodeSetting(type, "Value 2", typeof(int), 0);
+				case SettingType.StateValue2:
+					return new NodeSetting(type, "Value 3", typeof(int), 0);
 			}
 			Debug.Assert(false);
 			return null;
@@ -160,6 +175,8 @@
 				currentValue = int.Parse(stringValue);
 			else if (valueType == typeof(bool))
 				currentValue = bool.Parse(stringValue);
+			else if (valueType == typeof(string))
+				currentValue = stringValue;
 			else if (valueType == typeof(SelectorCondition))
 				currentValue = SelectorCondition.Parse(stringValue);
 			else

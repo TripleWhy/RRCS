@@ -19,6 +19,7 @@
 			StartGame, GameState, SetScore, Score,
 			SFX, Random, Selector,
 			Respawn, PlayerHit,
+			StateMachine, State
 		};
 
 		public ChipType type;
@@ -171,6 +172,10 @@
 					return new RandomChip(manager);
 				case ChipType.Selector:
 					return new SelectorChip(manager);
+				case ChipType.StateMachine:
+					return new StateMachineChip(manager);
+				case ChipType.State:
+					return new StateChip(manager);
 				default:
 					return null;
 			}
