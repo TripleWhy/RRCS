@@ -13,6 +13,7 @@
 			Debug.Assert(outPorts == null);
 			inPorts = new PortUi[0];
 			outPorts = new PortUi[3];
+			statePorts = new PortUi[0];
 
 			int portIndex = 0;
 			foreach (Transform child in transform)

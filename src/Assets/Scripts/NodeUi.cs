@@ -14,6 +14,7 @@
 
 		protected PortUi[] inPorts;
 		protected PortUi[] outPorts;
+		protected PortUi[] statePorts;
 
 		private Vector3 pointerWorldOffset;
 		protected RectTransform rectTransform;
@@ -28,7 +29,7 @@
 			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
 			canvasRectTransform = (RectTransform)canvas.transform;
-			isSidebarNode = !object.ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
+			isSidebarNode = !ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
 
 			CreateNode();
 		}
@@ -98,6 +99,14 @@
 			}
 		}
 
+		public int TotalStatePortCount
+		{
+			get
+			{
+				return Node.statePort != null? 1:0;
+			}
+		}
+		
 		public bool HasReset
 		{
 			get
@@ -137,6 +146,11 @@
 				{
 					outPorts[i].Port = Node.outputPorts[i];
 					UiManager.Register(outPorts[i]);
+				}
+				for (int i = 0; i < statePorts.Length; i++)
+				{
+					statePorts[i].Port = Node.statePort;
+					UiManager.Register(statePorts[i]);
 				}
 				Node.Manager = RRCSManager.Instance.circuitManager;
 				UiManager.Register(this);

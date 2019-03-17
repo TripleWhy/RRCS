@@ -7,6 +7,7 @@
 	{
 		private static readonly Dictionary<CircuitNode, NodeUi> nodes = new Dictionary<CircuitNode, NodeUi>();
 		private static readonly Dictionary<Port, PortUi> ports = new Dictionary<Port, PortUi>();
+		private static readonly Dictionary<Connection, ConnectionUi> connections = new Dictionary<Connection, ConnectionUi>();
 		private static bool showPortLabels = false;
 
 		public static IEnumerable<MonoBehaviour> GetSelectables()
@@ -36,7 +37,7 @@
 
 		public static void Register(PortUi portUi)
 		{
-			if (portUi.nodeUi.IsSidebarNode)
+			if (portUi.nodeUi != null && portUi.nodeUi.IsSidebarNode)
 				return;
 			if (ports.ContainsKey(portUi.Port))
 				return;
@@ -45,9 +46,9 @@
 			portUi.Port.Disconnected += Port_Disconnected;
 			portUi.TextActive = showPortLabels;
 
-			foreach (Port p in portUi.Port.connectedPorts)
-				if (ports.ContainsKey(p))
-					Port_Connected(portUi.Port, p);
+			foreach (Connection c in portUi.Port.connections)
+				if (ports.ContainsKey(c.sourcePort) && ports.ContainsKey(c.targetPort))
+					Port_Connected(c);
 		}
 
 		public static void Unregister(PortUi portUi)
@@ -57,27 +58,43 @@
 			portUi.Port.Connected -= Port_Connected;
 			portUi.Port.Disconnected -= Port_Disconnected;
 
-			foreach (Port p in portUi.Port.connectedPorts)
-				if (ports.ContainsKey(p))
-					Port_Disconnected(portUi.Port, p);
+			foreach (Connection c in portUi.Port.connections)
+				if (ports.ContainsKey(c.sourcePort) && ports.ContainsKey(c.targetPort))
+					Port_Disconnected(c);
 
 			ports.Remove(portUi.Port);
 		}
-
-		private static void Port_Connected(Port sender, Port other)
+		
+		public static void Register(ConnectionUi connectionUi)
 		{
-			PortUi senderUi = GetUi(sender);
-			PortUi otherUi = GetUi(other);
-			LineRenderer line = senderUi.AddConnection(otherUi, null);
-			otherUi.AddConnection(senderUi, line);
+			Debug.Assert(!connections.ContainsKey(connectionUi.Connection));
+			if (connections.ContainsKey(connectionUi.Connection))
+				return;
+			connections[connectionUi.Connection] = connectionUi;
 		}
 
-		private static void Port_Disconnected(Port sender, Port other)
+		public static void Unregister(ConnectionUi connectionUi)
 		{
-			PortUi senderUi = GetUi(sender);
-			PortUi otherUi = GetUi(other);
-			bool destroy = senderUi.RemoveConnection(otherUi, false);
-			otherUi.RemoveConnection(senderUi, destroy);
+			if (connectionUi.Connection != null)
+			{
+				connections.Remove(connectionUi.Connection);
+			}
+		}
+
+		private static void Port_Connected(Connection connection)
+		{
+			PortUi sourceUi = GetUi(connection.sourcePort);
+			PortUi targetUi = GetUi(connection.targetPort);
+			ConnectionUi connectionUi = sourceUi.AddConnection(sourceUi, targetUi, connection, null);
+			targetUi.AddConnection(sourceUi, targetUi, connection, connectionUi);
+		}
+
+		private static void Port_Disconnected(Connection connection)
+		{
+			PortUi senderUi = GetUi(connection.sourcePort);
+			PortUi otherUi = GetUi(connection.targetPort);
+			bool destroy = senderUi.RemoveConnection(GetUi(connection), false);
+			otherUi.RemoveConnection(GetUi(connection), destroy);
 		}
 
 		public static NodeUi GetUi(CircuitNode node)
@@ -95,6 +112,11 @@
 			return ports[port];
 		}
 
+		public static ConnectionUi GetUi(Connection connection)
+		{
+			return connections[connection];
+		}
+		
 		public static ICollection<NodeUi> GetNodes()
 		{
 			return nodes.Values;

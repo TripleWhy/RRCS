@@ -27,6 +27,7 @@
 		public PortUi inR;
 		public PortUi out0;
 		public PortUi outR;
+		public PortUi state;
 		public Image icon;
 
 		[HideInInspector]
@@ -56,6 +57,8 @@
 				}
 				SetupPorts(InPortCount, Chip.inputPorts, useCompactFormat, ref in0, ref inR, ref inPorts);
 				SetupPorts(OutPortCount, Chip.outputPorts, useCompactFormat, ref out0, ref outR, ref outPorts);
+				PortUi nullPort = null;
+				SetupPorts(Chip.statePort!=null?1:0, new Port[]{Chip.statePort}, useCompactFormat, ref state, ref nullPort, ref statePorts);
 				Sprite sprite = GetSprite();
 				if (sprite != null)
 					icon.sprite = sprite;
@@ -92,7 +95,10 @@
 				if (useCompactFormat)
 				{
 					tr0.anchoredPosition = new Vector2(tr0.anchoredPosition.x, -tr0.sizeDelta.y / 2);
-					((RectTransform)resetPortUi.transform).anchoredPosition = new Vector2(0, tr0.sizeDelta.y / 2);
+					if (resetPortUi != null)
+					{
+						((RectTransform)resetPortUi.transform).anchoredPosition = new Vector2(0, tr0.sizeDelta.y / 2);
+					}
 				}
 				
 				Vector2 offset = new Vector2(0, tr0.sizeDelta.y * -3 / 2);
@@ -106,14 +112,21 @@
 					portUi.PortIndex = i;
 				}
 			}
-			if (HasReset)
+
+			if (resetPortUi != null)
 			{
-				portUIs[portCount] = resetPortUi;
-				resetPortUi.nodeUi = this;
-				resetPortUi.Port = ports[portCount];
+				if (HasReset)
+				{
+					portUIs[portCount] = resetPortUi;
+					resetPortUi.nodeUi = this;
+					resetPortUi.Port = ports[portCount];
+				} 
+				else
+				{
+					Destroy(resetPortUi.gameObject);
+				}
 			}
-			else
-				Destroy(resetPortUi.gameObject);
+			
 			port0UI = null;
 			resetPortUi = null;
 		}
@@ -194,8 +207,10 @@
 			Debug.Assert(outPorts == null);
 			inPorts = new PortUi[TotalInPortCount];
 			outPorts = new PortUi[TotalOutPortCount];
+			statePorts = new PortUi[TotalStatePortCount];
 			int inPortIndex = 0;
 			int outPortIndex = 0;
+			int statePortIndex = 0;
 			foreach (Transform child in transform)
 			{
 				PortUi port = child.GetComponent<PortUi>();
@@ -209,6 +224,13 @@
 					inPorts[index] = port;
 					port.Port = Node.inputPorts[index];
 				}
+				else if (port.isState)
+				{
+					int index = statePortIndex++;
+					Debug.Assert(statePorts[index] == null);
+					statePorts[index] = port;
+					port.Port = Node.statePort;
+				} 
 				else
 				{
 					int index = port.IsReset ? OutPortCount : (outPortIndex++);

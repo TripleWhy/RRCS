@@ -71,7 +71,7 @@
 					if (port.IsConnected)
 					{
 						NodeConnection connection = new NodeConnection();
-						OutputPort connectedPort = (OutputPort)port.connectedPorts[0];
+						OutputPort connectedPort = (OutputPort)port.connections[0].sourcePort;
 						connection.nodeIndex = connectedPort.node.RingEvaluationPriority;
 						connection.portIndex = Array.IndexOf(connectedPort.node.outputPorts, connectedPort);
 						storageNode.connections[portIndex] = connection;

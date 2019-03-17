@@ -12,9 +12,17 @@
 		public override int GetValue()
 		{
 			if (IsConnected)
-				return connectedPorts[0].GetValue();
+				return connections[0].sourcePort.GetValue();
 			else
 				return UnconnectedValue;
+		}
+
+		public override bool IsState
+		{
+			get
+			{
+				return false;
+			}
 		}
 
 		public override bool IsInput

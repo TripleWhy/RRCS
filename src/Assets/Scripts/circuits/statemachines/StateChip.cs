@@ -2,7 +2,7 @@
 {
 	public class StateChip : Chip
 	{
-		public StateChip(CircuitManager manager) : base(manager, 0, 3, false)
+		public StateChip(CircuitManager manager) : base(manager, 0, 3, false, StatePort.StatePortType.Node)
 		{
 		}
 

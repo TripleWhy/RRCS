@@ -10,6 +10,7 @@
 		public readonly bool hasReset;
 		public readonly InputPort[] inputPorts;
 		public readonly OutputPort[] outputPorts;
+		public readonly StatePort statePort;
 		public readonly NodeSetting[] settings;
 		internal int RingEvaluationPriority { get; set; }
 		private CircuitManager manager;
@@ -17,7 +18,7 @@
 		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
 		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
 
-		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset)
+		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset, StatePort.StatePortType statePortType = StatePort.StatePortType.None)
 		{
 			this.inputPortCount = inputCount;
 			this.outputPortCount = outputCount;
@@ -55,6 +56,19 @@
 				outputPorts[outputCount].Disconnected += CircuitNode_Connected;
 			}
 
+			switch (statePortType)
+			{
+					case StatePort.StatePortType.Root:
+						statePort = new StatePort(this, true);
+						break;
+					case StatePort.StatePortType.Node:
+						statePort = new StatePort(this, false);
+						break;
+					default:
+						statePort = null;
+						break;
+			}
+
 			Manager = manager;
 		}
 
@@ -63,7 +77,7 @@
 			Destroy();
 		}
 
-		private void CircuitNode_Connected(Port sender, Port other)
+		private void CircuitNode_Connected(Connection connection)
 		{
 			EmitEvaluationRequired();
 		}
@@ -107,8 +121,8 @@
 		{
 			foreach (InputPort port in inputPorts)
 			{
-				if (port.IsConnected && !object.ReferenceEquals(port.connectedPorts[0].node, this))
-					yield return port.connectedPorts[0].node;
+				if (port.IsConnected && !ReferenceEquals(port.connections[0].sourcePort.node, this))
+					yield return port.connections[0].sourcePort.node;
 			}
 		}
 
