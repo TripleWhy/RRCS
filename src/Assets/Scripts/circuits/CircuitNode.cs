@@ -117,7 +117,7 @@
 			}
 		}
 
-		public IEnumerable<CircuitNode> DependsOn()
+		public virtual IEnumerable<CircuitNode> DependsOn()
 		{
 			foreach (InputPort port in inputPorts)
 			{
