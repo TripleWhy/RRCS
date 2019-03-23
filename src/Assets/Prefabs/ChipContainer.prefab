@@ -373,7 +373,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionPrefab: {fileID: 224680459627969996, guid: ee940d1ada1ab3f4d9f18db2c536981e,
     type: 2}
-  type: 36
+  type: 0
   in0: {fileID: 114322346323254336}
   inR: {fileID: 114943218101706276}
   out0: {fileID: 114954171152792676}

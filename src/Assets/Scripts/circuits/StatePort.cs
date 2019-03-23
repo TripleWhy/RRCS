@@ -143,5 +143,20 @@ namespace AssemblyCSharp
                 }
             }
         }
+
+        public StateMachineTransition[] getAllOutgoingTransitions()
+        {
+            List<StateMachineTransition> outgoing = new List<StateMachineTransition>();
+
+            foreach (var connection in connections)
+            {
+                if (connection.sourcePort == this)
+                {
+                    outgoing.Add((StateMachineTransition) connection);
+                }
+            }
+
+            return outgoing.ToArray();
+        }
     }
 }

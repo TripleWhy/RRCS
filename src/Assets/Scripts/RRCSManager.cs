@@ -94,8 +94,11 @@
 
 		public void Clear()
 		{
+			// TODO: fix lines container
+			var keepAlive = GameObject.Find("WorldCanvas/Lines").transform;
 			foreach (Transform child in WorldCanvas.transform)
-				Destroy(child.gameObject);
+				if (child != keepAlive)
+					Destroy(child.gameObject);
 			//TODO reset camera
 			circuitManager.Clear();
 		}
@@ -112,7 +115,7 @@
 			FileUtils.StoreDeflateFile(@"D:\Data\tmp\circuit.rrsc.deflate", str);
 #endif
 		}
-
+		
 		public void StoreFile(FileSaveButton button)
 		{
 			StorageNodeGrahp container = new StorageNodeGrahp();

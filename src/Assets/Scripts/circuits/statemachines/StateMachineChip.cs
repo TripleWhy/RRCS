@@ -30,14 +30,20 @@ namespace AssemblyCSharp
 
         private bool isActive()
         {
-            return !inputPorts[0].IsConnected || inputPorts[0].GetValue() != 0;
+            return !IsResetSet && !inputPorts[0].IsConnected || inputPorts[0].GetValue() != 0;
         }
 
         public override void Evaluate()
         {
             Debug.Assert(statePort != null);
 
-            if (isActive())
+            
+            if (IsResetSet)
+            {
+                for (int i = 0; i < outputPortCount; ++i)
+                    outputPorts[i].Value = 0;
+            }
+            else if (isActive())
             {
                 prevActiveState = activeState;
                 activeState = statePort.getConnectedActiveState();
@@ -47,7 +53,8 @@ namespace AssemblyCSharp
                 if (activeState == null)
                     resetActiveState();
 
-                if (activeState != null && timeInState > 0 && timeInState >= (int) activeState.settings[0].currentValue)
+                if (activeState != null && timeInState > 0 &&
+                    timeInState >= (int) activeState.settings[0].currentValue)
                 {
                     var nextState = activeState.statePort.getNextStateAfterValidTransition();
                     if (nextState != null)
@@ -63,6 +70,7 @@ namespace AssemblyCSharp
 
                 EmitEvaluationRequired();
             }
+            outputPorts[outputPortCount].Value = ResetValue;
         }
 
         override protected void EvaluateOutputs()
