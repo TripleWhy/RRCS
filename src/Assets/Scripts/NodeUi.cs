@@ -204,9 +204,10 @@
             if (eventData.button != 0)
                 return;
             DoDrag(eventData);
-            foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
-                if (!object.ReferenceEquals(node, this))
-                    node.DoDrag(eventData);
+            if (!isSidebarNode)
+                foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
+                    if (!object.ReferenceEquals(node, this))
+                        node.DoDrag(eventData);
         }
 
         private void DoDrag(PointerEventData eventData)

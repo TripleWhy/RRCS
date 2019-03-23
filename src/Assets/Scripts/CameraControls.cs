@@ -1,67 +1,71 @@
 ﻿namespace AssemblyCSharp
 {
-	using System;
-	using UnityEngine;
+    using System;
+    using UnityEngine;
 
-	public class CameraControls : MonoBehaviour
-	{
-		private float inverseZoom = 0.5f;
+    public class CameraControls : MonoBehaviour
+    {
+        private float inverseZoom = 0.5f;
 
-		private Camera cam;
-		private int screenHeight;
+        private Camera cam;
+        private int screenHeight;
 
-		public delegate void ZoomChangedEventHandler(float inverseZoom);
-		public event ZoomChangedEventHandler ZoomChanged = delegate { };
+        public delegate void ZoomChangedEventHandler(float inverseZoom);
 
-		void Awake()
-		{
-			cam = GetComponent<Camera>();
-		}
+        public event ZoomChangedEventHandler ZoomChanged = delegate { };
 
-		void Update()
-		{
-			if (Screen.height != screenHeight)
-			{
-				screenHeight = Screen.height;
-				UpdateCameraZoom();
-			}
+        void Awake()
+        {
+            cam = GetComponent<Camera>();
+        }
 
-			if (Input.GetMouseButton(2))
-			{
-				float speed = cam.orthographicSize;
-				transform.position -= new Vector3(speed * Input.GetAxis("Mouse X") * Time.deltaTime, speed * Input.GetAxis("Mouse Y") * Time.deltaTime, 0f);
-			}
+        void Update()
+        {
+            if (Screen.height != screenHeight)
+            {
+                screenHeight = Screen.height;
+                UpdateCameraZoom();
+            }
 
-			float wheel = Input.GetAxis("Mouse ScrollWheel");
-			if (!Mathf.Approximately(wheel, 0f))
-			{
-				if (wheel > 0)
-					InverseZoom *= 0.5f;
-				else
-					InverseZoom *= 2f;
-			}
-		}
+            if (Input.GetMouseButton(2))
+            {
+                float speed = cam.orthographicSize;
+                transform.position -= new Vector3(speed * Input.GetAxis("Mouse X") * Time.deltaTime,
+                    speed * Input.GetAxis("Mouse Y") * Time.deltaTime, 0f);
+            }
 
-		public float InverseZoom
-		{
-			get
-			{
-				return inverseZoom;
-			}
-			set
-			{
-				float inv = Math.Max(Math.Min(8f, value), 0.0625f);
-				if (inv == inverseZoom)
-					return;
-				inverseZoom = inv;
-				UpdateCameraZoom();
-				ZoomChanged(inverseZoom);
-			}
-		}
+            float wheel = Input.GetAxis("Mouse ScrollWheel");
+            if (!Mathf.Approximately(wheel, 0f))
+            {
+                var mousePos = cam.ScreenToViewportPoint(Input.mousePosition);
 
-		private void UpdateCameraZoom()
-		{
-			cam.orthographicSize = inverseZoom * screenHeight * 0.5f;
-		}
-	}
+                if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 1 && mousePos.y < 1)
+                {
+                    if (wheel > 0)
+                        InverseZoom *= 0.5f;
+                    else
+                        InverseZoom *= 2f;
+                }
+            }
+        }
+
+        public float InverseZoom
+        {
+            get { return inverseZoom; }
+            set
+            {
+                float inv = Math.Max(Math.Min(8f, value), 0.0625f);
+                if (inv == inverseZoom)
+                    return;
+                inverseZoom = inv;
+                UpdateCameraZoom();
+                ZoomChanged(inverseZoom);
+            }
+        }
+
+        private void UpdateCameraZoom()
+        {
+            cam.orthographicSize = inverseZoom * screenHeight * 0.5f;
+        }
+    }
 }
