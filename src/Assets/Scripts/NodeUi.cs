@@ -1,376 +1,360 @@
 ﻿namespace AssemblyCSharp
 {
-	using UnityEngine;
-	using UnityEngine.UI;
-	using UnityEngine.EventSystems;
-	using UnityEngine.UI.Extensions;
-	using System;
+    using UnityEngine;
+    using UnityEngine.UI;
+    using UnityEngine.EventSystems;
+    using UnityEngine.UI.Extensions;
+    using System;
 
-	public abstract class NodeUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IBoxSelectable
-	{
-		public RectTransform selectionPrefab;
+    public abstract class NodeUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler,
+        IBoxSelectable
+    {
+        public RectTransform selectionPrefab;
 
-		private CircuitNode node;
+        private CircuitNode node;
 
-		protected PortUi[] inPorts;
-		protected PortUi[] outPorts;
-		protected PortUi[] statePorts;
+        protected PortUi[] inPorts;
+        protected PortUi[] outPorts;
+        protected PortUi[] statePorts;
 
-		private Vector3 pointerWorldOffset;
-		protected RectTransform rectTransform;
-		private Canvas canvas;
-		private RectTransform canvasRectTransform;
-		private NodeUi draggingInstance;
-		private RectTransform selectionInstance;
-		private bool isSidebarNode = true;
+        private Vector3 pointerWorldOffset;
+        protected RectTransform rectTransform;
+        private Canvas canvas;
+        private RectTransform canvasRectTransform;
+        private NodeUi draggingInstance;
+        private RectTransform selectionInstance;
+        private bool isSidebarNode = true;
 
-		protected void Awake()
-		{
-			rectTransform = (RectTransform)transform;
-			canvas = GetComponentInParent<Canvas>();
-			canvasRectTransform = (RectTransform)canvas.transform;
-			isSidebarNode = !ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
+        protected void Awake()
+        {
+            rectTransform = (RectTransform) transform;
+            canvas = GetComponentInParent<Canvas>();
+            canvasRectTransform = (RectTransform) canvas.transform;
+            isSidebarNode = !ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
 
-			CreateNode();
-		}
+            CreateNode();
+        }
 
-		protected void CreateNode()
-		{
-			Node = CreateNode(IsSidebarNode ? null : RRCSManager.Instance.circuitManager);
-		}
+        protected void CreateNode()
+        {
+            Node = CreateNode(IsSidebarNode ? null : RRCSManager.Instance.circuitManager);
+        }
 
-		protected abstract CircuitNode CreateNode(CircuitManager manager);
+        protected abstract CircuitNode CreateNode(CircuitManager manager);
 
-		void OnDestroy()
-		{
-			UiManager.Unregister(this);
-			if (Node != null)
-				Node.Destroy();
-		}
+        void OnDestroy()
+        {
+            UiManager.Unregister(this);
+            if (Node != null)
+                Node.Destroy();
+        }
 
-		public CircuitNode Node
-		{
-			get
-			{
-				return node;
-			}
-			protected set
-			{
-				if (node != null)
-					throw new InvalidOperationException();
-				if (value == null)
-					return;
-				node = value;
-				if (!IsSidebarNode)
-					OnMovedToWorld();
-				UiManager.Register(this);
-			}
-		}
+        public CircuitNode Node
+        {
+            get { return node; }
+            protected set
+            {
+                if (node != null)
+                    throw new InvalidOperationException();
+                if (value == null)
+                    return;
+                node = value;
+                if (!IsSidebarNode)
+                    OnMovedToWorld();
+                UiManager.Register(this);
+            }
+        }
 
-		public int InPortCount
-		{
-			get
-			{
-				return Node.inputPortCount;
-			}
-		}
+        public int InPortCount
+        {
+            get { return Node.inputPortCount; }
+        }
 
-		public int TotalInPortCount
-		{
-			get
-			{
-				return Node.inputPorts.Length;
-			}
-		}
+        public int TotalInPortCount
+        {
+            get { return Node.inputPorts.Length; }
+        }
 
-		public int OutPortCount
-		{
-			get
-			{
-				return Node.outputPortCount;
-			}
-		}
+        public int OutPortCount
+        {
+            get { return Node.outputPortCount; }
+        }
 
-		public int TotalOutPortCount
-		{
-			get
-			{
-				return Node.outputPorts.Length;
-			}
-		}
+        public int TotalOutPortCount
+        {
+            get { return Node.outputPorts.Length; }
+        }
 
-		public int TotalStatePortCount
-		{
-			get
-			{
-				return Node.statePort != null? 1:0;
-			}
-		}
-		
-		public bool HasReset
-		{
-			get
-			{
-				return Node.hasReset;
-			}
-		}
+        public int TotalStatePortCount
+        {
+            get { return Node.statePort != null ? 1 : 0; }
+        }
 
-		public bool IsSidebarNode
-		{
-			get
-			{
-				return isSidebarNode;
-			}
-			private set
-			{
-				if (value == isSidebarNode)
-					return;
-				if (!isSidebarNode && value)
-					throw new InvalidOperationException();
-				if (!isSidebarNode && Node == null)
-					throw new InvalidOperationException();
-				isSidebarNode = value;
-				EnableRaycast(true);
-				OnMovedToWorld();
+        public bool HasReset
+        {
+            get { return Node.hasReset; }
+        }
 
-				Debug.Assert(inPorts != null);
-				Debug.Assert(inPorts.Length == Node.inputPorts.Length);
-				Debug.Assert(outPorts != null);
-				Debug.Assert(outPorts.Length == Node.outputPorts.Length);
-				for (int i = 0; i < inPorts.Length; i++)
-				{
-					inPorts[i].Port = Node.inputPorts[i];
-					UiManager.Register(inPorts[i]);
-				}
-				for (int i = 0; i < outPorts.Length; i++)
-				{
-					outPorts[i].Port = Node.outputPorts[i];
-					UiManager.Register(outPorts[i]);
-				}
-				for (int i = 0; i < statePorts.Length; i++)
-				{
-					statePorts[i].Port = Node.statePort;
-					UiManager.Register(statePorts[i]);
-				}
-				Node.Manager = RRCSManager.Instance.circuitManager;
-				UiManager.Register(this);
-			}
-		}
+        public bool IsSidebarNode
+        {
+            get { return isSidebarNode; }
+            private set
+            {
+                if (value == isSidebarNode)
+                    return;
+                if (!isSidebarNode && value)
+                    throw new InvalidOperationException();
+                if (!isSidebarNode && Node == null)
+                    throw new InvalidOperationException();
+                isSidebarNode = value;
+                EnableRaycast(true);
+                OnMovedToWorld();
 
-		protected virtual void EnableRaycast(bool on)
-		{
-			GetComponent<Image>().raycastTarget = on;
-		}
+                Debug.Assert(inPorts != null);
+                Debug.Assert(inPorts.Length == Node.inputPorts.Length);
+                Debug.Assert(outPorts != null);
+                Debug.Assert(outPorts.Length == Node.outputPorts.Length);
+                for (int i = 0; i < inPorts.Length; i++)
+                {
+                    inPorts[i].Port = Node.inputPorts[i];
+                    UiManager.Register(inPorts[i]);
+                }
 
-		protected virtual void OnMovedToWorld()
-		{
-		}
+                for (int i = 0; i < outPorts.Length; i++)
+                {
+                    outPorts[i].Port = Node.outputPorts[i];
+                    UiManager.Register(outPorts[i]);
+                }
 
-		public virtual string GetParams()
-		{
-			return "";
-		}
+                for (int i = 0; i < statePorts.Length; i++)
+                {
+                    statePorts[i].Port = Node.statePort;
+                    UiManager.Register(statePorts[i]);
+                }
 
-		public virtual void ParseParams(string parameters)
-		{
-		}
+                Node.Manager = RRCSManager.Instance.circuitManager;
+                UiManager.Register(this);
+            }
+        }
 
-		#region IPointerDownHandler implementation
+        protected virtual void EnableRaycast(bool on)
+        {
+            GetComponent<Image>().raycastTarget = on;
+        }
 
-		public void OnPointerDown(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			DoPointerDown(eventData);
-			foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
-				if (!object.ReferenceEquals(node, this))
-					node.DoPointerDown(eventData);
-		}
+        protected virtual void OnMovedToWorld()
+        {
+        }
 
-		public void DoPointerDown(PointerEventData eventData)
-		{
-			Vector2 n_originalLocalPointerPosition;
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out n_originalLocalPointerPosition);
-			pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) - rectTransform.InverseTransformPoint(new Vector3());
-		}
+        public virtual string GetParams()
+        {
+            return "";
+        }
 
-		#endregion
+        public virtual void ParseParams(string parameters)
+        {
+        }
 
-		#region IBeginDragHandler implementation
+        #region IPointerDownHandler implementation
 
-		public void OnBeginDrag(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			if (draggingInstance != null)
-				return;
-			if (IsSidebarNode)
-			{
-				draggingInstance = Instantiate(this, canvasRectTransform);
-				draggingInstance.EnableRaycast(false);
-			}
-			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
-		}
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (eventData.button != 0)
+                return;
+            DoPointerDown(eventData);
+            foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
+                if (!object.ReferenceEquals(node, this))
+                    node.DoPointerDown(eventData);
+        }
 
-		#endregion
+        public void DoPointerDown(PointerEventData eventData)
+        {
+            Vector2 n_originalLocalPointerPosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position,
+                eventData.pressEventCamera, out n_originalLocalPointerPosition);
+            pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) -
+                                 rectTransform.InverseTransformPoint(new Vector3());
+        }
 
-		#region IDragHandler implementation
+        #endregion
 
-		public void OnDrag(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			DoDrag(eventData);
-			foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
-				if (!object.ReferenceEquals(node, this))
-					node.DoDrag(eventData);
-		}
+        #region IBeginDragHandler implementation
 
-		private void DoDrag(PointerEventData eventData)
-		{
-			NodeUi node = draggingInstance ?? this;
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (eventData.button != 0)
+                return;
+            if (draggingInstance != null)
+                return;
+            if (IsSidebarNode)
+            {
+                draggingInstance = Instantiate(this, canvasRectTransform);
+                draggingInstance.EnableRaycast(false);
+            }
 
-			Debug.Assert(node.rectTransform != null);
-			Debug.Assert(node.canvasRectTransform != null);
+            RRCSManager.Instance.selectionManager.SelectionEnabled = false;
+        }
 
-			Vector2 worldPosition = eventData.position;
-			if (eventData.pressEventCamera != null)
-				worldPosition = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position);
+        #endregion
 
-			node.rectTransform.position = (Vector3)(worldPosition) - pointerWorldOffset;
-		}
+        #region IDragHandler implementation
 
-		#endregion
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (eventData.button != 0)
+                return;
+            DoDrag(eventData);
+            foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
+                if (!object.ReferenceEquals(node, this))
+                    node.DoDrag(eventData);
+        }
 
-		#region IEndDragHandler implementation
+        private void DoDrag(PointerEventData eventData)
+        {
+            NodeUi node = draggingInstance ?? this;
 
-		public void OnEndDrag(PointerEventData eventData)
-		{
-			if (eventData.button != 0)
-				return;
-			RRCSManager.Instance.selectionManager.SelectionEnabled = true;
-			if (draggingInstance == null)
-				return;
+            Debug.Assert(node.rectTransform != null);
+            Debug.Assert(node.canvasRectTransform != null);
 
-			Canvas worldCanvas = RRCSManager.Instance.WorldCanvas;
-			bool isWorldPos = (eventData.hovered.Count == 0);
-			if (!isWorldPos)
-			{
-				print("Drop world: " + worldCanvas.gameObject);
-				foreach (GameObject h in eventData.hovered)
-				{
-					print("Drop hover: " + h);
-					if (object.ReferenceEquals(h, worldCanvas.gameObject))
-					{
-						isWorldPos = true;
-						break;
-					}
-				}
-			}
-			if (!isWorldPos)
-			{
-				Destroy(draggingInstance.gameObject);
-			}
-			else
-			{
-				Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
-				draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
-				draggingInstance.rectTransform.position = newPos;
-				draggingInstance.canvas = worldCanvas;
-				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
-				draggingInstance.IsSidebarNode = false;
-			}
-			draggingInstance = null;
-		}
-		#endregion
+            Vector2 worldPosition = eventData.position;
+            if (eventData.pressEventCamera != null)
+                worldPosition = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position);
 
-		#region Implemented members of IBoxSelectable
-		bool _selected = false;
-		public bool selected
-		{
-			get
-			{
-				return _selected;
-			}
-			set
-			{
-				Debug.Assert(!IsSidebarNode);
-				if (value == _selected)
-					return;
-				_selected = value;
-				UpdateSelected();
-			}
-		}
+            node.rectTransform.position = (Vector3) (worldPosition) - pointerWorldOffset;
+        }
 
-		bool _preSelected = false;
-		public bool preSelected
-		{
-			get
-			{
-				return _preSelected;
-			}
-			set
-			{
-				if (IsSidebarNode)
-					return;
-				if (value == _preSelected)
-					return;
-				_preSelected = value;
-				UpdateSelected();
-			}
-		}
-		#endregion
+        #endregion
 
-		private void UpdateSelected()
-		{
-			if ((preSelected || selected) && selectionInstance == null)
-			{
-				selectionInstance = Instantiate(selectionPrefab, rectTransform);
-				UpdateSelectionSize();
-				RRCSManager.Instance.cameraControls.ZoomChanged += Camera_ZoomChanged;
-			}
-			else if (!preSelected && !selected && selectionInstance != null)
-			{
-				Destroy(selectionInstance.gameObject);
-				RRCSManager.Instance.cameraControls.ZoomChanged -= Camera_ZoomChanged;
-				selectionInstance = null;
-			}
-		}
+        #region IEndDragHandler implementation
 
-		private void Camera_ZoomChanged(float inverseZoom)
-		{
-			Vector2 pos = new Vector2(0, 0);
-			Vector2 size = rectTransform.sizeDelta;
-			if (inPorts.Length != 0)
-			{
-				if (outPorts.Length != 0)
-					size.x += inPorts[0].RectTransform.sizeDelta.x;
-				else
-				{
-					size.x += inPorts[0].RectTransform.sizeDelta.x * 0.5f;
-					pos.x -= inPorts[0].RectTransform.sizeDelta.x * 0.25f;
-				}
-			}
-			else
-			{
-				if (outPorts.Length != 0)
-				{
-					size.x += outPorts[0].RectTransform.sizeDelta.x * 0.5f;
-					pos.x += outPorts[0].RectTransform.sizeDelta.x * 0.25f;
-				}
-			}
-			if (selectionInstance != null)
-			{
-				selectionInstance.anchoredPosition = pos;
-				selectionInstance.sizeDelta = size / inverseZoom;
-				selectionInstance.localScale = new Vector3(inverseZoom, inverseZoom);
-			}
-		}
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (eventData.button != 0)
+                return;
+            RRCSManager.Instance.selectionManager.SelectionEnabled = true;
+            if (draggingInstance == null)
+                return;
 
-		private void UpdateSelectionSize()
-		{
-			Camera_ZoomChanged(RRCSManager.Instance.cameraControls.InverseZoom);
-		}
-	}
+            Canvas worldCanvas = RRCSManager.Instance.WorldCanvas;
+            bool isWorldPos = (eventData.hovered.Count == 0);
+            if (!isWorldPos)
+            {
+                print("Drop world: " + worldCanvas.gameObject);
+                foreach (GameObject h in eventData.hovered)
+                {
+                    print("Drop hover: " + h);
+                    if (object.ReferenceEquals(h, worldCanvas.gameObject))
+                    {
+                        isWorldPos = true;
+                        break;
+                    }
+                }
+            }
 
+            if (!isWorldPos)
+            {
+                Destroy(draggingInstance.gameObject);
+            }
+            else
+            {
+                Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
+                draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
+                draggingInstance.rectTransform.position = newPos;
+                draggingInstance.canvas = worldCanvas;
+                draggingInstance.canvasRectTransform = (RectTransform) worldCanvas.transform;
+                draggingInstance.IsSidebarNode = false;
+            }
+
+            draggingInstance = null;
+        }
+
+        #endregion
+
+        #region Implemented members of IBoxSelectable
+
+        bool _selected = false;
+
+        public bool selected
+        {
+            get { return _selected; }
+            set
+            {
+                Debug.Assert(!IsSidebarNode);
+                if (value == _selected)
+                    return;
+                _selected = value;
+                UpdateSelected();
+            }
+        }
+
+        bool _preSelected = false;
+
+        public bool preSelected
+        {
+            get { return _preSelected; }
+            set
+            {
+                if (IsSidebarNode)
+                    return;
+                if (value == _preSelected)
+                    return;
+                _preSelected = value;
+                UpdateSelected();
+            }
+        }
+
+        #endregion
+
+        private void UpdateSelected()
+        {
+            if ((preSelected || selected) && selectionInstance == null)
+            {
+                selectionInstance = Instantiate(selectionPrefab, rectTransform);
+                UpdateSelectionSize();
+                RRCSManager.Instance.cameraControls.ZoomChanged += Camera_ZoomChanged;
+            }
+            else if (!preSelected && !selected && selectionInstance != null)
+            {
+                Destroy(selectionInstance.gameObject);
+                RRCSManager.Instance.cameraControls.ZoomChanged -= Camera_ZoomChanged;
+                selectionInstance = null;
+            }
+        }
+
+        private void Camera_ZoomChanged(float inverseZoom)
+        {
+            Vector2 pos = new Vector2(0, 0);
+            Vector2 size = rectTransform.sizeDelta;
+            if (inPorts.Length != 0)
+            {
+                if (outPorts.Length != 0)
+                    size.x += inPorts[0].RectTransform.sizeDelta.x;
+                else
+                {
+                    size.x += inPorts[0].RectTransform.sizeDelta.x * 0.5f;
+                    pos.x -= inPorts[0].RectTransform.sizeDelta.x * 0.25f;
+                }
+            }
+            else
+            {
+                if (outPorts.Length != 0)
+                {
+                    size.x += outPorts[0].RectTransform.sizeDelta.x * 0.5f;
+                    pos.x += outPorts[0].RectTransform.sizeDelta.x * 0.25f;
+                }
+            }
+
+            if (selectionInstance != null)
+            {
+                selectionInstance.anchoredPosition = pos;
+                selectionInstance.sizeDelta = size / inverseZoom;
+                selectionInstance.localScale = new Vector3(inverseZoom, inverseZoom);
+            }
+        }
+
+        private void UpdateSelectionSize()
+        {
+            Camera_ZoomChanged(RRCSManager.Instance.cameraControls.InverseZoom);
+        }
+    }
 }
