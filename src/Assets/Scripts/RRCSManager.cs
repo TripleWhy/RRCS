@@ -12,9 +12,7 @@
 		public NodeSettingsUi settingsEditor;
 		public int CurrentPlayerId { get; set; }
 
-		public GameObject chipUiPrefab;
-		public GameObject rRButtonPrefab;
-		public GameObject stageLightPrefab;
+		public GameObject NodeUiPrefabRoot;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance

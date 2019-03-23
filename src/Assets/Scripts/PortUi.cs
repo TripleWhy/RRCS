@@ -90,11 +90,6 @@
             }
         }
 
-        private bool LineUseStart
-        {
-            get { return isInput; }
-        }
-
         public Vector2 Center
         {
             get { return RectTransform.position; }
@@ -210,7 +205,7 @@
                     connection.UpdatePositions();
             }
 
-            if (valueText.gameObject.activeInHierarchy)
+            if (valueText != null && valueText.gameObject.activeInHierarchy)
             {
                 int value = port.GetValue();
                 if (value != lastValue)
@@ -223,8 +218,11 @@
 
         public bool TextActive
         {
-            get { return valueText.gameObject.activeSelf; }
-            set { valueText.gameObject.SetActive(value); }
+            get { return (valueText != null) && valueText.gameObject.activeSelf; }
+            set
+            {
+                if (valueText != null) valueText.gameObject.SetActive(value);
+            }
         }
 
         internal ConnectionUi AddConnection(PortUi sourceUi, PortUi targetUi, Connection connection,
