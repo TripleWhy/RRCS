@@ -135,15 +135,28 @@
         public void Restore(RRCSManager manager)
         {
             Dictionary<string, GameObject> typeMap = new Dictionary<string, GameObject>();
-            typeMap.Add(typeof(ChipUi).FullName, manager.chipUiPrefab);
-            typeMap.Add(typeof(RRButtonUi).FullName, manager.rRButtonPrefab);
-            typeMap.Add(typeof(StageLightUi).FullName, manager.stageLightPrefab);
+
+            var p = manager.NodeUiPrefabRoot.GetComponentInChildren<RRButtonUi>(true);
+            typeMap.Add(typeof(RRButtonUi).FullName,
+                manager.NodeUiPrefabRoot.GetComponentInChildren<RRButtonUi>(true).gameObject);
+            typeMap.Add(typeof(StageLightUi).FullName,
+                manager.NodeUiPrefabRoot.GetComponentInChildren<StageLightUi>(true).gameObject);
+            var chipPrefabs = manager.NodeUiPrefabRoot.GetComponentsInChildren<ChipUi>(true);
+            foreach (var prefab in chipPrefabs)
+            {
+                typeMap.Add(Enum.GetName(typeof(ChipUi.ChipType), prefab.type), prefab.gameObject);
+            }
+
 
             foreach (StorageNode storageNode in graph)
             {
-                if (!typeMap.ContainsKey(storageNode.uiType))
-                    throw new InvalidOperationException("Invalid node type " + storageNode.uiType + ".");
-                GameObject go = GameObject.Instantiate(typeMap[storageNode.uiType], manager.WorldCanvas.transform);
+                var typeKey = storageNode.uiType;
+                if (typeKey == typeof(ChipUi).FullName)
+                    typeKey = storageNode.typeParams;
+
+                if (!typeMap.ContainsKey(typeKey))
+                    throw new InvalidOperationException("Invalid node type " + typeKey + ".");
+                GameObject go = GameObject.Instantiate(typeMap[typeKey], manager.WorldCanvas.transform);
                 NodeUi ui = go.GetComponent<NodeUi>();
                 ui.ParseParams(storageNode.typeParams);
                 go.transform.position = storageNode.position;
