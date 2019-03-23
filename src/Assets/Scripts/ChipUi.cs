@@ -83,7 +83,7 @@
                 SetupPorts(InPortCount, Chip.inputPorts, useCompactFormat, ref in0, ref inR, ref inPorts);
                 SetupPorts(OutPortCount, Chip.outputPorts, useCompactFormat, ref out0, ref outR, ref outPorts);
                 PortUi nullPort = null;
-                SetupPorts(Chip.statePort != null ? 1 : 0, new Port[] {Chip.statePort}, useCompactFormat, ref state,
+                SetupPorts(Chip.statePort != null ? 1 : 0, new Port[] {Chip.statePort}, false, ref state,
                     ref nullPort, ref statePorts);
                 Sprite sprite = GetSprite();
                 if (sprite != null)
