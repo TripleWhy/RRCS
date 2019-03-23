@@ -157,7 +157,7 @@
 				case SettingType.StateMinTimeInState:
 					return new NodeSetting(type, "Min Time In State (ticks)", typeof(int), 0);
 				case SettingType.StateName:
-					return new NodeSetting(type, "State Name", typeof(string), "");
+					return new NodeSetting(type, "State Name", typeof(string), "State");
 				case SettingType.StateValue0:
 					return new NodeSetting(type, "Value 1", typeof(int), 0);
 				case SettingType.StateValue1:
