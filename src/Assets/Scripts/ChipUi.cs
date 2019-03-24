@@ -217,6 +217,8 @@
 
         private Sprite GetSprite()
         {
+            if (Chip.IconIndex == -1)
+                return null;
             return icons[Chip.IconIndex];
         }
 

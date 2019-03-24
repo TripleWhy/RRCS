@@ -14,7 +14,7 @@ namespace AssemblyCSharp
 
         public override int IconIndex
         {
-            get { return 14 + (isActive ? 1 : 0); }
+            get { return -1; }
         }
 
         public override void Evaluate()
