@@ -1,35 +1,50 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace AssemblyCSharp
 {
     public class ConnectionTransitionUi : ConnectionUi
     {
+        private static readonly Vector2 UP = new Vector2(0, 1);
         public PortUi enabledPort;
 
         public LineRenderer lineRenderer
         {
             get { return GetComponent<LineRenderer>(); }
         }
-        
+
         public override void UpdatePositions()
         {
-            Vector2 diff = (targetPosition - startPosition) ;
+            var positionCount = lineRenderer.positionCount;
+
+            Vector2 diff = (targetPosition - startPosition);
             Vector2 offsetVec = (diff.normalized * 15);
             Vector2 orthogonalOffset = new Vector2(offsetVec.y, -offsetVec.x);
             Vector2 portPosition = startPosition + (diff * 0.5f) + orthogonalOffset;
-            
-            lineRenderer.SetPosition(0, startPosition);
-            lineRenderer.SetPosition(1, portPosition);
-            lineRenderer.SetPosition(2, targetPosition);
+
+
+            for (int i = 0; i < positionCount; i++)
+            {
+                var t = (float) i / (positionCount - 1);
+                var tOrthogonal = (0.5f-Mathf.Abs(t - 0.5f)) * 2f;
+                tOrthogonal = Mathf.Pow(tOrthogonal, 0.5f);
+
+                lineRenderer.SetPosition(i, startPosition + diff * t + orthogonalOffset * tOrthogonal);
+            }
 
             if (enabledPort)
             {
                 enabledPort.transform.position =
                     new Vector3(portPosition.x, portPosition.y, enabledPort.transform.position.z);
+                var transformEulerAngles = enabledPort.transform.eulerAngles;
+                transformEulerAngles.z = -Vector2.SignedAngle(diff, UP);
+                enabledPort.transform.eulerAngles = transformEulerAngles;
+                
+                enabledPort.valueText.transform.position = new Vector3(portPosition.x - 16, portPosition.y, enabledPort.transform.position.z);
             }
         }
-        
+
         public override Connection Connection
         {
             get { return connection; }
@@ -46,9 +61,9 @@ namespace AssemblyCSharp
                 {
                     enabledPort.Port = ((StateMachineTransition) value).transitionEnabledPort;
                 }
-                
+
                 connection = value;
-                
+
                 UiManager.Register(this);
             }
         }
