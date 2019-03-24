@@ -1,6 +1,7 @@
-﻿namespace AssemblyCSharp
+﻿using System;
+
+namespace AssemblyCSharp
 {
-    using System;
     using UnityEngine;
     using UnityEngine.UI;
 
