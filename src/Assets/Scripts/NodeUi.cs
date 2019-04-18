@@ -45,6 +45,7 @@
         void OnDestroy()
         {
             UiManager.Unregister(this);
+            RRCSManager.Instance.cameraControls.ZoomChanged -= Camera_ZoomChanged;
             if (Node != null)
                 Node.Destroy();
         }
@@ -260,6 +261,7 @@
             {
                 Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
                 draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
+                draggingInstance.transform.SetAsFirstSibling();
                 draggingInstance.rectTransform.position = newPos;
                 draggingInstance.canvas = worldCanvas;
                 draggingInstance.canvasRectTransform = (RectTransform) worldCanvas.transform;

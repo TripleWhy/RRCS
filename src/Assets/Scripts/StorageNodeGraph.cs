@@ -157,6 +157,7 @@
                 if (!typeMap.ContainsKey(typeKey))
                     throw new InvalidOperationException("Invalid node type " + typeKey + ".");
                 GameObject go = GameObject.Instantiate(typeMap[typeKey], manager.WorldCanvas.transform);
+                go.transform.SetAsFirstSibling();
                 NodeUi ui = go.GetComponent<NodeUi>();
                 ui.ParseParams(storageNode.typeParams);
                 go.transform.position = storageNode.position;
