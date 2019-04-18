@@ -17,7 +17,7 @@ namespace AssemblyCSharp
 
         override public int IconIndex
         {
-            get { return -1; }
+            get { return 31; }
         }
 
         private void resetActiveState()

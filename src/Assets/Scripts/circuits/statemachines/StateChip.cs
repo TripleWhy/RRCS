@@ -14,7 +14,7 @@ namespace AssemblyCSharp
 
         public override int IconIndex
         {
-            get { return -1; }
+            get { return 32; }
         }
 
         public override void Evaluate()
