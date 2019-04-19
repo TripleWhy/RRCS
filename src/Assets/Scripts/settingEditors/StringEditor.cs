@@ -15,11 +15,11 @@
 		}
 
 		public delegate void ValueChangedEventHandler(StringEditor sender, string value);
+
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 		public ValueChangeEvent onValueChanged;
 
-		[SerializeField]
-		private string Value = "";
+		[SerializeField] private string Value = "";
 		private NodeSetting setting;
 		private Text settingNameText;
 		private InputField input;
@@ -33,6 +33,7 @@
 				else if (input == null)
 					input = child.GetComponent<InputField>();
 			}
+
 			Debug.Assert(input != null);
 
 			input.text = Value;
@@ -62,7 +63,7 @@
 			set
 			{
 				settingNameText.text = value.displayName;
-				Value = (string)value.currentValue;
+				Value = (string) value.currentValue;
 				setting = value;
 			}
 		}

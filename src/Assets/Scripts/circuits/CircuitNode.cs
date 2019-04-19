@@ -18,7 +18,8 @@
 		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
 		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
 
-		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset, StatePort.StatePortType statePortType = StatePort.StatePortType.None)
+		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset,
+			StatePort.StatePortType statePortType = StatePort.StatePortType.None)
 		{
 			this.inputPortCount = inputCount;
 			this.outputPortCount = outputCount;
@@ -58,15 +59,15 @@
 
 			switch (statePortType)
 			{
-					case StatePort.StatePortType.Root:
-						statePort = new StatePort(this, true);
-						break;
-					case StatePort.StatePortType.Node:
-						statePort = new StatePort(this, false);
-						break;
-					default:
-						statePort = null;
-						break;
+				case StatePort.StatePortType.Root:
+					statePort = new StatePort(this, true);
+					break;
+				case StatePort.StatePortType.Node:
+					statePort = new StatePort(this, false);
+					break;
+				default:
+					statePort = null;
+					break;
 			}
 
 			Manager = manager;
