@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 
 namespace AssemblyCSharp
 {
-	public class ConnectionTransitionUi : ConnectionUi
+	public class TransitionConnectionUi : ConnectionUi
 	{
 		private static readonly Vector2 UP = new Vector2(0, 1);
 		public PortUi enabledPort;
