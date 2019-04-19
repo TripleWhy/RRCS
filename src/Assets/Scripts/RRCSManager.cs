@@ -113,7 +113,7 @@
 			FileUtils.StoreDeflateFile(@"D:\Data\tmp\circuit.rrsc.deflate", str);
 #endif
 		}
-		
+
 		public void StoreFile(FileSaveButton button)
 		{
 			StorageNodeGrahp container = new StorageNodeGrahp();

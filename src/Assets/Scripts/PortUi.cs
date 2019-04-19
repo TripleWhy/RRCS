@@ -6,8 +6,7 @@
 	using System.Collections.Generic;
 	using System;
 
-	public class PortUi : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler,
-		IEndDragHandler
+	public class PortUi : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
 		public bool isInput;
 		public bool isState;
@@ -23,19 +22,19 @@
 		internal NodeUi nodeUi;
 
 		private static readonly Color[] portColors =
-		{
-			new Color(0.83F, 0.20F, 0.20F, 1.00F),
-			new Color(0.31F, 0.68F, 0.24F, 1.00F),
-			new Color(0.12F, 0.45F, 0.81F, 1.00F),
-			new Color(0.09F, 0.87F, 0.86F, 1.00F),
-			new Color(0.91F, 0.29F, 0.50F, 1.00F),
-			new Color(0.94F, 0.77F, 0.15F, 1.00F),
-			new Color(0.06F, 0.15F, 0.18F, 1.00F),
-		};
+			{
+				new Color(0.83F, 0.20F, 0.20F, 1.00F),
+				new Color(0.31F, 0.68F, 0.24F, 1.00F),
+				new Color(0.12F, 0.45F, 0.81F, 1.00F),
+				new Color(0.09F, 0.87F, 0.86F, 1.00F),
+				new Color(0.91F, 0.29F, 0.50F, 1.00F),
+				new Color(0.94F, 0.77F, 0.15F, 1.00F),
+				new Color(0.06F, 0.15F, 0.18F, 1.00F),
+			};
 
 		void Awake()
 		{
-			RectTransform = (RectTransform) transform;
+			RectTransform = (RectTransform)transform;
 			Image = GetComponent<Image>();
 			if (linesContainer == null)
 			{
@@ -50,7 +49,10 @@
 
 		public Port Port
 		{
-			get { return port; }
+			get
+			{
+				return port;
+			}
 			set
 			{
 				if (port != null)
@@ -59,7 +61,6 @@
 						return;
 					throw new InvalidOperationException();
 				}
-
 				Debug.Assert(value.IsInput == isInput);
 				Debug.Assert(value.isReset == IsReset);
 				port = value;
@@ -92,12 +93,18 @@
 
 		public Vector2 Center
 		{
-			get { return RectTransform.position; }
+			get
+			{
+				return RectTransform.position;
+			}
 		}
 
 		private bool HasLines
 		{
-			get { return connectedLines.Count != 0; }
+			get
+			{
+				return connectedLines.Count != 0;
+			}
 		}
 
 		#region IPointerDownHandler implementation
@@ -195,6 +202,7 @@
 
 		private Vector3 lastPos;
 		private int lastValue;
+
 		void Update()
 		{
 			if (RectTransform.position != lastPos)
@@ -217,7 +225,10 @@
 
 		public bool TextActive
 		{
-			get { return (valueText != null) && valueText.gameObject.activeSelf; }
+			get
+			{
+				return (valueText != null) && valueText.gameObject.activeSelf;
+			}
 			set
 			{
 				if (valueText != null) valueText.gameObject.SetActive(value);

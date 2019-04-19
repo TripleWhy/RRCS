@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using System;
 	using UnityEngine;
 	using UnityEngine.UI;
 
@@ -31,7 +30,9 @@ namespace AssemblyCSharp
 		public PortUi state;
 		public Image icon;
 
-		[HideInInspector] [SerializeField] private bool skipSetup = false;
+		[HideInInspector]
+		[SerializeField]
+		private bool skipSetup = false;
 
 		private static Sprite[] icons;
 
@@ -244,7 +245,6 @@ namespace AssemblyCSharp
 					port.Port = Node.outputPorts[index];
 				}
 			}
-
 			Debug.Assert(!Array.Exists(inPorts, element => element == null));
 			Debug.Assert(!Array.Exists(outPorts, element => element == null));
 		}

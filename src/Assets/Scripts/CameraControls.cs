@@ -11,7 +11,6 @@
 		private int screenHeight;
 
 		public delegate void ZoomChangedEventHandler(float inverseZoom);
-
 		public event ZoomChangedEventHandler ZoomChanged = delegate { };
 
 		void Awake()

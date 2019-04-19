@@ -9,9 +9,8 @@ namespace AssemblyCSharp
 		public delegate void ConnectionEventHandler(Connection connection);
 
 		public delegate void ValueChangedEventHandler(Port sender);
-
-		public event ConnectionEventHandler Connected = delegate { };
-		public event ConnectionEventHandler Disconnected = delegate { };
+		public event ConnectionEventHandler Connected = delegate {};
+		public event ConnectionEventHandler Disconnected = delegate {};
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 
 		public readonly List<Connection> connections = new List<Connection>();

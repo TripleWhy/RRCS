@@ -27,10 +27,10 @@
 
 		protected void Awake()
 		{
-			rectTransform = (RectTransform) transform;
+			rectTransform = (RectTransform)transform;
 			canvas = GetComponentInParent<Canvas>();
-			canvasRectTransform = (RectTransform) canvas.transform;
-			isSidebarNode = !ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
+			canvasRectTransform = (RectTransform)canvas.transform;
+			isSidebarNode = !object.ReferenceEquals(canvas, RRCSManager.Instance.WorldCanvas);
 
 			CreateNode();
 		}
@@ -144,7 +144,6 @@
 					inPorts[i].Port = Node.inputPorts[i];
 					UiManager.Register(inPorts[i]);
 				}
-
 				for (int i = 0; i < outPorts.Length; i++)
 				{
 					outPorts[i].Port = Node.outputPorts[i];
@@ -216,7 +215,6 @@
 				draggingInstance = Instantiate(this, canvasRectTransform);
 				draggingInstance.EnableRaycast(false);
 			}
-
 			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
 		}
 
@@ -276,7 +274,6 @@
 					}
 				}
 			}
-
 			if (!isWorldPos)
 			{
 				Destroy(draggingInstance.gameObject);
@@ -291,16 +288,12 @@
 				draggingInstance.canvasRectTransform = (RectTransform) worldCanvas.transform;
 				draggingInstance.IsSidebarNode = false;
 			}
-
 			draggingInstance = null;
 		}
-
 		#endregion
 
 		#region Implemented members of IBoxSelectable
-
 		bool _selected = false;
-
 		public bool selected
 		{
 			get
@@ -318,7 +311,6 @@
 		}
 
 		bool _preSelected = false;
-
 		public bool preSelected
 		{
 			get
@@ -335,7 +327,6 @@
 				UpdateSelected();
 			}
 		}
-
 		#endregion
 
 		private void UpdateSelected()
@@ -376,7 +367,6 @@
 					pos.x += outPorts[0].RectTransform.sizeDelta.x * 0.25f;
 				}
 			}
-
 			if (selectionInstance != null)
 			{
 				selectionInstance.anchoredPosition = pos;
@@ -390,4 +380,5 @@
 			Camera_ZoomChanged(RRCSManager.Instance.cameraControls.InverseZoom);
 		}
 	}
+
 }
