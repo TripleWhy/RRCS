@@ -136,7 +136,7 @@ namespace AssemblyCSharp
 		public void DisconnectAll()
 		{
 			for (int i = connections.Count - 1; i >= 0; i--)
-				Disconnect(connections[i]);
+				connections[i].Disconnect();
 
 			Debug.Assert(connections.Count == 0);
 		}

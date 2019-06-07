@@ -96,6 +96,8 @@
 				port.Destroy();
 			foreach (InputPort port in inputPorts)
 				port.Destroy();
+			if (statePort != null)
+				statePort.Destroy();
 			if (manager != null)
 				manager.RemoveNode(this);
 		}
