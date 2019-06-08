@@ -145,12 +145,19 @@
 			{
 				typeMap.Add(Enum.GetName(typeof(ChipUi.ChipType), prefab.type), prefab.gameObject);
 			}
+			var gizmoPrefabs = manager.NodeUiPrefabRoot.GetComponentsInChildren<GizmoUi>(true);
+			foreach (var prefab in gizmoPrefabs)
+			{
+				typeMap.Add(Enum.GetName(typeof(GizmoUi.GizmoType), prefab.type), prefab.gameObject);
+			}
 
 
 			foreach (StorageNode storageNode in graph)
 			{
 				var typeKey = storageNode.uiType;
 				if (typeKey == typeof(ChipUi).FullName)
+					typeKey = storageNode.typeParams;
+				if (typeKey == typeof(GizmoUi).FullName)
 					typeKey = storageNode.typeParams;
 
 				if (!typeMap.ContainsKey(typeKey))

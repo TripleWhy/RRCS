@@ -26,6 +26,11 @@
 			StateValue1,
 			StateValue2,
 			StateName,
+			AccelerationTime,
+			MoveToTarget,
+			MaxTravelDistance,
+			TagToFollow
+			
 		};
 
 		[Serializable]
@@ -164,6 +169,14 @@
 					return new NodeSetting(type, "Value 2", typeof(int), 0);
 				case SettingType.StateValue2:
 					return new NodeSetting(type, "Value 3", typeof(int), 0);
+				case SettingType.AccelerationTime:
+					return new NodeSetting(type, "Acceleration Time (ticks)", typeof(int), 0);
+				case SettingType.MoveToTarget:
+					return new NodeSetting(type, "Move To Target", typeof(bool), false);
+				case SettingType.MaxTravelDistance:
+					return new NodeSetting(type, "Max Travel Distance (dm)", typeof(int), 50);
+				case SettingType.TagToFollow:
+					return new NodeSetting(type, "Tag To Follow", typeof(string), "tag");
 			}
 			Debug.Assert(false);
 			return null;

@@ -25,6 +25,8 @@
 				return;
 			nodes[nodeUi.Node] = nodeUi;
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
+			if (nodeUi.GetType() == typeof(GizmoUi))
+				((GizmoUi) nodeUi).TextActive = showPortLabels;
 		}
 
 		public static void Unregister(NodeUi nodeUi)
@@ -135,6 +137,9 @@
 				showPortLabels = value;
 				foreach (PortUi port in ports.Values)
 					port.TextActive = value;
+				foreach (NodeUi node in nodes.Values)
+					if (node.GetType() == typeof(GizmoUi))
+						((GizmoUi) node).TextActive = value;
 			}
 		}
 	}
