@@ -9,8 +9,12 @@
 
 		void Start()
 		{
+			int i = 0;
 			foreach (AccordionSection section in sections)
+			{
 				section.sectionButton.onClick.AddListener(delegate { ExpandSection(section); });
+				section.transform.SetSiblingIndex(i++);
+			}
 			if (sections.Length > 0)
 				ExpandSection(sections[0]);
 		}
