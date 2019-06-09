@@ -11,6 +11,11 @@ There still is a lot to be done. You can request access to the project and brows
 
 Try It
 ------
-The latest WebGl build can be found at [here](https://triplewhy.gitlab.io/rrcs-builds/webgl/rrcs/).
+The latest WebGl build can be found at [here](https://triplewhy.gitlab.io/RRCS/).
 
-A download of all binaries (including windows executables) can be found [here](https://gitlab.com/triplewhy/rrcs-builds/-/jobs/artifacts/master/download?job=pages).
+Windows download can be found [here](https://triplewhy.gitlab.io/RRCS/RRCS_win64.zip).
+
+Brought to You By
+-----------------
+This project is currently led by [_seb](https://gitlab.com/_seb)
+and was was started by [TripleWhy](https://gitlab.com/triplewhy).
