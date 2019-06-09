@@ -27,5 +27,7 @@
         {
             return isActive ? "#" + settings[0].currentValue : "";
         }
+
+        public override void reset() { }
     }
 }

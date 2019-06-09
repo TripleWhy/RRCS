@@ -8,5 +8,7 @@
         }
 
         public abstract string getGizmoValueString();
+
+        public abstract void reset();
     }
 }

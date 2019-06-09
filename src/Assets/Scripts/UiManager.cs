@@ -16,6 +16,13 @@
 				yield return ui;
 		}
 
+		public static IEnumerable<GizmoUi> GetGizmos()
+		{
+			foreach (NodeUi node in nodes.Values)
+				if (node.GetType() == typeof(GizmoUi))
+					yield return (GizmoUi) node;
+		}
+		
 		public static void Register(NodeUi nodeUi)
 		{
 			if (nodeUi.IsSidebarNode)
@@ -137,10 +144,16 @@
 				showPortLabels = value;
 				foreach (PortUi port in ports.Values)
 					port.TextActive = value;
-				foreach (NodeUi node in nodes.Values)
-					if (node.GetType() == typeof(GizmoUi))
-						((GizmoUi) node).TextActive = value;
+				foreach (GizmoUi node in GetGizmos())
+					node.TextActive = value;
 			}
+		}
+
+		public static void ResetGizmos()
+		{
+			foreach (GizmoUi node in GetGizmos())
+				if (node.Node != null)
+					((Gizmo) node.Node).reset();
 		}
 	}
 }

@@ -26,6 +26,7 @@ namespace AssemblyCSharp.gizmos
                     // Instant
                     currentPosition = Mathf.Clamp(targetPosition, 0, getMaxTravelDistance());
                     currentVelocity = 0;
+                    targetVelocity = 0;
                 }
                 else
                 {
@@ -76,6 +77,7 @@ namespace AssemblyCSharp.gizmos
                         if (currentPosition == targetPosition)
                         {
                             currentVelocity = 0;
+                            targetVelocity = 0;
                         }
                     }
                     else
@@ -87,6 +89,7 @@ namespace AssemblyCSharp.gizmos
                     if (currentPosition != clamped)
                     {
                         currentVelocity = 0;
+                        targetVelocity = 0;
                     }
 
                     currentPosition = clamped;
@@ -141,6 +144,13 @@ namespace AssemblyCSharp.gizmos
         public bool isMoveToTarget()
         {
             return (bool) settings[1].currentValue;
+        }
+
+        public override void reset()
+        {
+            currentPosition = 0;
+            currentVelocity = 0;
+            targetVelocity = 0;
         }
     }
 }

@@ -90,6 +90,11 @@
 			}
 		}
 
+		public void ResetGizmos()
+		{
+			UiManager.ResetGizmos();
+		}
+		
 		public void Clear()
 		{
 			// TODO: fix lines container

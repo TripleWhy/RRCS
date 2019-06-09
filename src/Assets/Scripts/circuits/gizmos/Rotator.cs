@@ -25,6 +25,7 @@ namespace AssemblyCSharp.gizmos
                     // Instant
                     currentPosition = Mathf.Repeat(InValue(2), 360);
                     currentVelocity = 0;
+                    targetVelocity = 0;
                 }
                 else
                 {
@@ -86,6 +87,7 @@ namespace AssemblyCSharp.gizmos
                         if (currentPosition == targetPosition)
                         {
                             currentVelocity = 0;
+                            targetVelocity = 0;
                         }
                     }
                     else
@@ -137,6 +139,13 @@ namespace AssemblyCSharp.gizmos
         public bool isMoveToTarget()
         {
             return (bool) settings[1].currentValue;
+        }
+        
+        public override void reset()
+        {
+            currentPosition = 0;
+            currentVelocity = 0;
+            targetVelocity = 0;
         }
     }
 }

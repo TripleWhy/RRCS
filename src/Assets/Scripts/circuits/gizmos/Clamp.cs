@@ -19,5 +19,7 @@
         {
             return isClamped ? "Clamped" : "Released";
         }
+        
+        public override void reset() { }
     }
 }
