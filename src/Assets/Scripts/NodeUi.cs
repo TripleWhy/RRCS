@@ -6,7 +6,8 @@
 	using UnityEngine.UI.Extensions;
 	using System;
 
-	public abstract class NodeUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IBoxSelectable
+	public abstract class NodeUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler,
+		IBoxSelectable
 	{
 		public RectTransform selectionPrefab;
 
@@ -14,6 +15,7 @@
 
 		protected PortUi[] inPorts;
 		protected PortUi[] outPorts;
+		protected PortUi[] statePorts;
 
 		private Vector3 pointerWorldOffset;
 		protected RectTransform rectTransform;
@@ -43,6 +45,7 @@
 		void OnDestroy()
 		{
 			UiManager.Unregister(this);
+			RRCSManager.Instance.cameraControls.ZoomChanged -= Camera_ZoomChanged;
 			if (Node != null)
 				Node.Destroy();
 		}
@@ -98,6 +101,14 @@
 			}
 		}
 
+		public int TotalStatePortCount
+		{
+			get
+			{
+				return Node.statePort != null ? 1 : 0;
+			}
+		}
+
 		public bool HasReset
 		{
 			get
@@ -138,6 +149,13 @@
 					outPorts[i].Port = Node.outputPorts[i];
 					UiManager.Register(outPorts[i]);
 				}
+
+				for (int i = 0; i < statePorts.Length; i++)
+				{
+					statePorts[i].Port = Node.statePort;
+					UiManager.Register(statePorts[i]);
+				}
+
 				Node.Manager = RRCSManager.Instance.circuitManager;
 				UiManager.Register(this);
 			}
@@ -176,8 +194,10 @@
 		public void DoPointerDown(PointerEventData eventData)
 		{
 			Vector2 n_originalLocalPointerPosition;
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out n_originalLocalPointerPosition);
-			pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) - rectTransform.InverseTransformPoint(new Vector3());
+			RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position,
+				eventData.pressEventCamera, out n_originalLocalPointerPosition);
+			pointerWorldOffset = rectTransform.InverseTransformPoint(n_originalLocalPointerPosition) -
+			                     rectTransform.InverseTransformPoint(new Vector3());
 		}
 
 		#endregion
@@ -207,9 +227,10 @@
 			if (eventData.button != 0)
 				return;
 			DoDrag(eventData);
-			foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
-				if (!object.ReferenceEquals(node, this))
-					node.DoDrag(eventData);
+			if (!isSidebarNode)
+				foreach (NodeUi node in RRCSManager.Instance.selectionManager.GetSelectedNodes())
+					if (!object.ReferenceEquals(node, this))
+						node.DoDrag(eventData);
 		}
 
 		private void DoDrag(PointerEventData eventData)
@@ -223,7 +244,7 @@
 			if (eventData.pressEventCamera != null)
 				worldPosition = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position);
 
-			node.rectTransform.position = (Vector3)(worldPosition) - pointerWorldOffset;
+			node.rectTransform.position = (Vector3) (worldPosition) - pointerWorldOffset;
 		}
 
 		#endregion
@@ -261,9 +282,10 @@
 			{
 				Vector2 newPos = worldCanvas.worldCamera.ScreenToWorldPoint(draggingInstance.rectTransform.position);
 				draggingInstance.rectTransform.SetParent(worldCanvas.transform, false);
+				draggingInstance.transform.SetAsFirstSibling();
 				draggingInstance.rectTransform.position = newPos;
 				draggingInstance.canvas = worldCanvas;
-				draggingInstance.canvasRectTransform = (RectTransform)worldCanvas.transform;
+				draggingInstance.canvasRectTransform = (RectTransform) worldCanvas.transform;
 				draggingInstance.IsSidebarNode = false;
 			}
 			draggingInstance = null;

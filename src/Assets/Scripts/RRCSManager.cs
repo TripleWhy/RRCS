@@ -12,9 +12,7 @@
 		public NodeSettingsUi settingsEditor;
 		public int CurrentPlayerId { get; set; }
 
-		public GameObject chipUiPrefab;
-		public GameObject rRButtonPrefab;
-		public GameObject stageLightPrefab;
+		public GameObject NodeUiPrefabRoot;
 
 		private static RRCSManager instance;
 		public static RRCSManager Instance
@@ -92,10 +90,18 @@
 			}
 		}
 
+		public void ResetGizmos()
+		{
+			UiManager.ResetGizmos();
+		}
+		
 		public void Clear()
 		{
+			// TODO: fix lines container
+			var keepAlive = GameObject.Find("WorldCanvas/Lines").transform;
 			foreach (Transform child in WorldCanvas.transform)
-				Destroy(child.gameObject);
+				if (child != keepAlive)
+					Destroy(child.gameObject);
 			//TODO reset camera
 			circuitManager.Clear();
 		}

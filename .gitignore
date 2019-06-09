@@ -1,1 +1,4 @@
 build*/
+src/.idea/
+src/Assets/Plugins/Editor/JetBrains/
+JetBrains.meta

@@ -29,16 +29,22 @@
 			if (Input.GetMouseButton(2))
 			{
 				float speed = cam.orthographicSize;
-				transform.position -= new Vector3(speed * Input.GetAxis("Mouse X") * Time.deltaTime, speed * Input.GetAxis("Mouse Y") * Time.deltaTime, 0f);
+				transform.position -= new Vector3(speed * Input.GetAxis("Mouse X") * Time.deltaTime,
+					speed * Input.GetAxis("Mouse Y") * Time.deltaTime, 0f);
 			}
 
 			float wheel = Input.GetAxis("Mouse ScrollWheel");
 			if (!Mathf.Approximately(wheel, 0f))
 			{
-				if (wheel > 0)
-					InverseZoom *= 0.5f;
-				else
-					InverseZoom *= 2f;
+				var mousePos = cam.ScreenToViewportPoint(Input.mousePosition);
+
+				if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 1 && mousePos.y < 1)
+				{
+					if (wheel > 0)
+						InverseZoom *= 0.5f;
+					else
+						InverseZoom *= 2f;
+				}
 			}
 		}
 

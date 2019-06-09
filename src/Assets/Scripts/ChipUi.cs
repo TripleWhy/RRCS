@@ -19,6 +19,7 @@
 			StartGame, GameState, SetScore, Score,
 			SFX, Random, Selector,
 			Respawn, PlayerHit,
+			StateMachine, State
 		};
 
 		public ChipType type;
@@ -26,6 +27,7 @@
 		public PortUi inR;
 		public PortUi out0;
 		public PortUi outR;
+		public PortUi state;
 		public Image icon;
 
 		[HideInInspector]
@@ -51,10 +53,15 @@
 				if (maxTotalPortCount >= 4)
 				{
 					useCompactFormat = true;
-					rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, ((3 * maxTotalPortCount - 1) * in0.RectTransform.sizeDelta.y) / 2);
+					rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x,
+						((3 * maxTotalPortCount - 1) * in0.RectTransform.sizeDelta.y) / 2);
 				}
+
 				SetupPorts(InPortCount, Chip.inputPorts, useCompactFormat, ref in0, ref inR, ref inPorts);
 				SetupPorts(OutPortCount, Chip.outputPorts, useCompactFormat, ref out0, ref outR, ref outPorts);
+				PortUi nullPort = null;
+				SetupPorts(Chip.statePort != null ? 1 : 0, new Port[] {Chip.statePort}, false, ref state,
+					ref nullPort, ref statePorts);
 				Sprite sprite = GetSprite();
 				if (sprite != null)
 					icon.sprite = sprite;
@@ -65,7 +72,7 @@
 		{
 			get
 			{
-				return (Chip)Node;
+				return (Chip) Node;
 			}
 			set
 			{
@@ -73,7 +80,8 @@
 			}
 		}
 
-		private void SetupPorts(int portCount, Port[] ports, bool useCompactFormat, ref PortUi port0UI, ref PortUi resetPortUi, ref PortUi[] portUIs)
+		private void SetupPorts(int portCount, Port[] ports, bool useCompactFormat, ref PortUi port0UI,
+			ref PortUi resetPortUi, ref PortUi[] portUIs)
 		{
 			Debug.Assert(ports != null);
 			Debug.Assert(portUIs == null);
@@ -87,13 +95,16 @@
 				port0UI.nodeUi = this;
 				port0UI.Port = ports[0];
 				RectTransform tr0 = port0UI.RectTransform;
-				
+
 				if (useCompactFormat)
 				{
 					tr0.anchoredPosition = new Vector2(tr0.anchoredPosition.x, -tr0.sizeDelta.y / 2);
-					((RectTransform)resetPortUi.transform).anchoredPosition = new Vector2(0, tr0.sizeDelta.y / 2);
+					if (resetPortUi != null)
+					{
+						((RectTransform) resetPortUi.transform).anchoredPosition = new Vector2(0, tr0.sizeDelta.y / 2);
+					}
 				}
-				
+
 				Vector2 offset = new Vector2(0, tr0.sizeDelta.y * -3 / 2);
 				for (int i = 1; i < portCount; i++)
 				{
@@ -105,14 +116,21 @@
 					portUi.PortIndex = i;
 				}
 			}
-			if (HasReset)
+
+			if (resetPortUi != null)
 			{
-				portUIs[portCount] = resetPortUi;
-				resetPortUi.nodeUi = this;
-				resetPortUi.Port = ports[portCount];
+				if (HasReset)
+				{
+					portUIs[portCount] = resetPortUi;
+					resetPortUi.nodeUi = this;
+					resetPortUi.Port = ports[portCount];
+				}
+				else
+				{
+					Destroy(resetPortUi.gameObject);
+				}
 			}
-			else
-				Destroy(resetPortUi.gameObject);
+
 			port0UI = null;
 			resetPortUi = null;
 		}
@@ -171,6 +189,10 @@
 					return new RandomChip(manager);
 				case ChipType.Selector:
 					return new SelectorChip(manager);
+				case ChipType.StateMachine:
+					return new StateMachineChip(manager);
+				case ChipType.State:
+					return new StateChip(manager);
 				default:
 					return null;
 			}
@@ -178,6 +200,8 @@
 
 		private Sprite GetSprite()
 		{
+			if (Chip.IconIndex == -1)
+				return null;
 			return icons[Chip.IconIndex];
 		}
 
@@ -189,8 +213,10 @@
 			Debug.Assert(outPorts == null);
 			inPorts = new PortUi[TotalInPortCount];
 			outPorts = new PortUi[TotalOutPortCount];
+			statePorts = new PortUi[TotalStatePortCount];
 			int inPortIndex = 0;
 			int outPortIndex = 0;
+			int statePortIndex = 0;
 			foreach (Transform child in transform)
 			{
 				PortUi port = child.GetComponent<PortUi>();
@@ -203,6 +229,13 @@
 					Debug.Assert(inPorts[index] == null);
 					inPorts[index] = port;
 					port.Port = Node.inputPorts[index];
+				}
+				else if (port.isState)
+				{
+					int index = statePortIndex++;
+					Debug.Assert(statePorts[index] == null);
+					statePorts[index] = port;
+					port.Port = Node.statePort;
 				}
 				else
 				{
@@ -223,8 +256,7 @@
 
 		public override void ParseParams(string parameters)
 		{
-			type = (ChipType)Enum.Parse(typeof(ChipType), parameters);
-			CreateNode();
+			Debug.Assert(type == (ChipType) Enum.Parse(typeof(ChipType), parameters));
 		}
 	}
 }

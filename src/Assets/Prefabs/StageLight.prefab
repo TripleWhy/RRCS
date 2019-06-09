@@ -389,8 +389,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 1
+  isState: 0
   valueText: {fileID: 114150322432169344}
-  linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
+  connectionPrefab: {fileID: 114548207824438036, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114707645812253178
 MonoBehaviour:
@@ -472,8 +473,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 1
+  isState: 0
   valueText: {fileID: 114332584105403496}
-  linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
+  connectionPrefab: {fileID: 114548207824438036, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!114 &114955237602154880
 MonoBehaviour:
@@ -500,8 +502,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInput: 1
+  isState: 0
   valueText: {fileID: 114232939129018200}
-  linePrefab: {fileID: 120503700245213922, guid: 0b7478b5bf1779d458daa48875186995,
+  connectionPrefab: {fileID: 114548207824438036, guid: 0b7478b5bf1779d458daa48875186995,
     type: 2}
 --- !u!222 &222139770654369706
 CanvasRenderer:

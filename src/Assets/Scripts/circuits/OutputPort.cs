@@ -28,6 +28,14 @@
 		{
 			return Value;
 		}
+		
+		public override bool IsState
+		{
+			get
+			{
+				return false;
+			}
+		}
 
 		public override bool IsInput
 		{

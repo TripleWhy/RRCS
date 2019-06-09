@@ -9,16 +9,16 @@
 	public class PortUi : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 	{
 		public bool isInput;
+		public bool isState;
 		public Text valueText;
-		public LineRenderer linePrefab;
+		public ConnectionUi connectionPrefab;
 		private Port port;
 
 		private static Transform linesContainer;
 		public RectTransform RectTransform { get; private set; }
 		public Image Image { get; private set; }
-		private LineRenderer draggingLine;
-		private PortUi draggingOriginalConnectedPort;
-		private readonly Dictionary<PortUi, LineRenderer> connectedLines = new Dictionary<PortUi, LineRenderer>();
+		private ConnectionUi draggingLine;
+		private readonly List<ConnectionUi> connectedLines = new List<ConnectionUi>();
 		internal NodeUi nodeUi;
 
 		private static readonly Color[] portColors =
@@ -38,14 +38,7 @@
 			Image = GetComponent<Image>();
 			if (linesContainer == null)
 			{
-				foreach (GameObject go in gameObject.scene.GetRootGameObjects())
-				{
-					if (go.name == "Lines")
-					{
-						linesContainer = go.transform;
-						break;
-					}
-				}
+				linesContainer = GameObject.Find("WorldCanvas/Lines").transform;
 			}
 		}
 
@@ -91,41 +84,14 @@
 			set
 			{
 				Image.color = portColors[value % portColors.Length];
-				foreach (LineRenderer line in connectedLines.Values)
+				foreach (ConnectionUi line in connectedLines)
 				{
-					if (LineUseStart)
-						line.startColor = Image.color;
-					else
-						line.endColor = Image.color;
+					line.UpdateColors();
 				}
 			}
 		}
 
-		private int LinePositionIndex
-		{
-			get
-			{
-				return LineUseStart ? 0 : 1;
-			}
-		}
-
-		private int LinePositionOtherIndex
-		{
-			get
-			{
-				return LineUseStart ? 1 : 0;
-			}
-		}
-
-		private bool LineUseStart
-		{
-			get
-			{
-				return isInput;
-			}
-		}
-
-		private Vector2 Center
+		public Vector2 Center
 		{
 			get
 			{
@@ -167,23 +133,26 @@
 				return;
 			if (draggingLine != null)
 				return;
-			if (nodeUi.IsSidebarNode)
+			if (nodeUi && nodeUi.IsSidebarNode)
 				return;
+
+			PortUi srcPort = this;
 			if (isInput && HasLines)
 			{
 				//connectedLines should contain exactly 1 entry.
-				foreach (KeyValuePair<PortUi, LineRenderer> entry in connectedLines)
-				{
-					draggingOriginalConnectedPort = entry.Key;
-					draggingLine = entry.Value;
-				}
+				ConnectionUi entry = connectedLines[0];
+				entry.Disconnect();
+				srcPort = entry.sourcePortUi;
 			}
-			else
-			{
-				draggingLine = Instantiate(linePrefab, linesContainer);
-				draggingLine.SetPosition(LinePositionIndex, Center);
-				draggingLine.startColor = draggingLine.endColor = Image.color;
-			}
+
+			draggingLine = Instantiate(connectionPrefab, linesContainer).GetComponent<ConnectionUi>();
+			Debug.Assert(draggingLine != null);
+
+			draggingLine.sourcePortUi = srcPort;
+
+			draggingLine.SetVirtualTargetPosition(Center);
+			draggingLine.UpdateColors();
+
 			RRCSManager.Instance.selectionManager.SelectionEnabled = false;
 		}
 
@@ -195,11 +164,10 @@
 		{
 			if (draggingLine == null)
 				return;
-			Vector2 pos = eventData.pressEventCamera.ScreenToWorldPoint(eventData.position); //Cast Vector3 to Vector2 to discard the z coordinate
-			if (draggingOriginalConnectedPort)
-				draggingLine.SetPosition(LinePositionIndex, pos);
-			else
-				draggingLine.SetPosition(LinePositionOtherIndex, pos);
+			Vector2 pos =
+				eventData.pressEventCamera
+					.ScreenToWorldPoint(eventData.position); //Cast Vector3 to Vector2 to discard the z coordinate
+			draggingLine.SetVirtualTargetPosition(pos);
 		}
 
 		#endregion
@@ -218,43 +186,15 @@
 				if (dstPort != null)
 					break;
 			}
-			if (draggingOriginalConnectedPort != null && object.ReferenceEquals(dstPort, this))
+
+			PortUi srcPort = draggingLine.sourcePortUi ?? this;
+
+			draggingLine.Disconnect();
+			draggingLine = null;
+
+			if (dstPort != null && (dstPort.nodeUi == null || !dstPort.nodeUi.IsSidebarNode))
 			{
-				draggingOriginalConnectedPort = null;
-				draggingLine.SetPosition(LinePositionIndex, Center);
-				draggingLine = null;
-				return;
-			}
-			PortUi srcPort = draggingOriginalConnectedPort ?? this;
-			if (dstPort == null || dstPort.isInput == srcPort.isInput || dstPort.nodeUi.IsSidebarNode || (srcPort.isInput && srcPort.HasLines) || (dstPort.isInput && dstPort.HasLines))
-			{
-				if (draggingOriginalConnectedPort != null)
-				{
-					draggingLine = null;
-					port.Disconnect(draggingOriginalConnectedPort.port);
-					draggingOriginalConnectedPort = null;
-				}
-				else
-				{
-					Destroy(draggingLine.gameObject);
-					draggingLine = null;
-				}
-			}
-			else
-			{
-				if (draggingOriginalConnectedPort != null)
-				{
-					port.Disconnect(draggingOriginalConnectedPort.port);
-					draggingOriginalConnectedPort = null;
-					if (srcPort.draggingLine == null)
-						srcPort.draggingLine = draggingLine;
-					else
-						Destroy(draggingLine.gameObject);
-					draggingLine = null;
-					srcPort.port.Connect(dstPort.port);
-				}
-				else
-					srcPort.port.Connect(dstPort.port);
+				srcPort.port.Connect(dstPort.port);
 			}
 		}
 
@@ -262,15 +202,17 @@
 
 		private Vector3 lastPos;
 		private int lastValue;
+
 		void Update()
 		{
 			if (RectTransform.position != lastPos)
 			{
 				lastPos = RectTransform.position;
-				foreach (LineRenderer line in connectedLines.Values)
-					line.SetPosition(LinePositionIndex, Center);
+				foreach (ConnectionUi connection in connectedLines)
+					connection.UpdatePositions();
 			}
-			if (valueText.gameObject.activeInHierarchy)
+
+			if (valueText != null && valueText.gameObject.activeInHierarchy)
 			{
 				int value = port.GetValue();
 				if (value != lastValue)
@@ -285,60 +227,46 @@
 		{
 			get
 			{
-				return valueText.gameObject.activeSelf;
+				return (valueText != null) && valueText.gameObject.activeSelf;
 			}
 			set
 			{
-				valueText.gameObject.SetActive(value);
+				if (valueText != null) valueText.gameObject.SetActive(value);
 			}
 		}
 
-		internal LineRenderer AddConnection(PortUi otherUi, LineRenderer line)
+		internal ConnectionUi AddConnection(PortUi sourceUi, PortUi targetUi, Connection connection,
+			ConnectionUi connectionUi)
 		{
-			if (line == null)
+			if (connectionUi == null)
 			{
-				if (draggingLine != null)
-				{
-					line = draggingLine;
-					draggingLine = null;
-				}
-				else
-					line = Instantiate(linePrefab, linesContainer);
+				connectionUi = Instantiate(connectionPrefab, linesContainer).GetComponent<ConnectionUi>();
+
+				connectionUi.sourcePortUi = sourceUi;
+				connectionUi.targetPortUi = targetUi;
+				connectionUi.Connection = connection;
 			}
-			if (LineUseStart)
-				line.startColor = Image.color;
-			else
-				line.endColor = Image.color;
-			connectedLines.Add(otherUi, line);
-			line.SetPosition(LinePositionIndex, Center);
-			return line;
+
+			connectedLines.Add(connectionUi);
+			connectionUi.UpdatePositions();
+			connectionUi.UpdateColors();
+			return connectionUi;
 		}
 
-		internal bool RemoveConnection(PortUi otherUi, bool destroyLine)
+		internal bool RemoveConnection(ConnectionUi connection, bool destroyLine)
 		{
-			LineRenderer line = connectedLines[otherUi];
-			connectedLines.Remove(otherUi);
-			if (line != null)
+			connectedLines.Remove(connection);
+			if (connection != null)
 			{
-				if (object.ReferenceEquals(line, draggingLine))
+				if (destroyLine)
 				{
-					if (destroyLine)
-					{
-						Destroy(line.gameObject);
-						draggingLine = null;
-					}
+					Destroy(connection.gameObject);
 					return false;
 				}
-				else
-				{
-					if (destroyLine)
-					{
-						Destroy(line.gameObject);
-						return false;
-					}
-					return true;
-				}
+
+				return true;
 			}
+
 			return true;
 		}
 	}
