@@ -10,7 +10,7 @@
 		public readonly bool hasReset;
 		public readonly InputPort[] inputPorts;
 		public readonly OutputPort[] outputPorts;
-		public readonly StatePort statePort;
+		public StatePort statePort;
 		public readonly NodeSetting[] settings;
 		internal int RingEvaluationPriority { get; set; }
 		private CircuitManager manager;
@@ -96,6 +96,11 @@
 				port.Destroy();
 			foreach (InputPort port in inputPorts)
 				port.Destroy();
+			if (statePort != null)
+			{
+				statePort.Destroy();
+				statePort = null;
+			}
 			if (manager != null)
 				manager.RemoveNode(this);
 		}

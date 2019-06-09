@@ -16,8 +16,8 @@ namespace AssemblyCSharp
 		public override void Disconnect()
 		{
 			transitionEnabledPort.DisconnectAll();
-			targetPort.connections.Remove(this);
-			sourcePort.connections.Remove(this);
+			targetPort.Disconnect(this);
+			sourcePort.Disconnect(this);
 		}
 	}
 }
