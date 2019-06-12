@@ -17,6 +17,7 @@
 
 		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
 		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
+		public event EvaluationRequiredEventHandler ConnectionChanged = delegate { };
 
 		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset,
 			StatePort.StatePortType statePortType = StatePort.StatePortType.None)
@@ -80,6 +81,7 @@
 
 		private void CircuitNode_Connected(Connection connection)
 		{
+			EmitConnectionChanged();
 			EmitEvaluationRequired();
 		}
 
@@ -232,6 +234,11 @@
 		protected void EmitEvaluationRequired()
 		{
 			EvaluationRequired(this);
+		}
+
+		protected void EmitConnectionChanged()
+		{
+			ConnectionChanged(this);
 		}
 	}
 }

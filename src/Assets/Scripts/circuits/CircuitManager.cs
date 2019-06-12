@@ -7,7 +7,9 @@
 	public class CircuitManager
 	{
 		private readonly List<CircuitNode> nodes = new List<CircuitNode>();
-		private bool dirty = true;
+		private readonly List<CircuitNode> nodeOrder = new List<CircuitNode>();
+		private bool graphChanged = true;
+		private bool evaluationRequired = true;
 		public int CurrentTick { get; private set; }
 
 		public void AddNode(CircuitNode node)
@@ -19,8 +21,9 @@
 			node.RingEvaluationPriority = nodes.Count;
 			nodes.Add(node);
 
+			node.ConnectionChanged += Node_ConnectionChanged;
 			node.EvaluationRequired += Node_EvaluationRequired;
-			Invalidate();
+			InvalidateOrder();
 		}
 
 		public void RemoveNode(CircuitNode node)
@@ -35,7 +38,7 @@
 
 			node.EvaluationRequired -= Node_EvaluationRequired;
 			node.RingEvaluationPriority = -1;
-			Invalidate();
+			InvalidateOrder();
 		}
 
 		public List<CircuitNode> Nodes
@@ -63,14 +66,14 @@
 			Debug.Assert(node.RingEvaluationPriority == newPriority);
 		}
 
-		private void Invalidate(Port sender, Port other)
+		private void InvalidateOrder()
 		{
-			Invalidate();
+			graphChanged = true;
 		}
 
-		public void Invalidate()
+		private void Invalidate()
 		{
-			dirty = true;
+			evaluationRequired = true;
 		}
 
 		internal void Clear()
@@ -78,6 +81,11 @@
 			for (int i = nodes.Count - 1; i >= 0; --i)
 				RemoveNode(nodes[i]);
 			Debug.Assert(nodes.Count == 0);
+		}
+
+		private void Node_ConnectionChanged(CircuitNode source)
+		{
+			InvalidateOrder();
 		}
 
 		private void Node_EvaluationRequired(CircuitNode source)
@@ -95,18 +103,32 @@
 
 		private void EvaluateIfNecessary()
 		{
-			if (dirty)
-			{
-				dirty = false; //Clearing the flag before Evaluate() allows Evaluate() to set the flag again.
-				Evaluate();
-			}
-		}
-
-		public void Evaluate()
-		{
-			//TODO this whole evaluation stuff seems overly complicated. Find a better solution?
 			float t0 = Time.realtimeSinceStartup;
 
+			if (graphChanged)
+			{
+				graphChanged = false;
+				EvaluateOrder();
+				Debug.Assert(graphChanged == false);
+				evaluationRequired = true;
+			}
+			if (evaluationRequired)
+			{
+				evaluationRequired = false; //Clearing the flag before Evaluate() allows Evaluate() to set the flag again.
+				Evaluate();
+			}
+			else
+				return;
+
+			float t1 = Time.realtimeSinceStartup;
+			Debug.Log("Time: " + (t1 - t0));
+		}
+
+		public void EvaluateOrder()
+		{
+			//TODO this whole evaluation stuff seems overly complicated. Find a better solution?
+
+			nodeOrder.Clear();
 			HashSet<CircuitNode> pending = new HashSet<CircuitNode>();
 			HashSet<CircuitNode> evaluated = new HashSet<CircuitNode>();
 			List<CircuitNode> selected = new List<CircuitNode>();
@@ -114,7 +136,7 @@
 			int loopRuns = 0;
 			for (; loopRuns < 10000; loopRuns++)
 			{
-				Evaluate1(pending, evaluated);
+				EvaluateOrder1(pending, evaluated, nodeOrder);
 				if (pending.Count == 0)
 					break;
 				while (true)
@@ -123,7 +145,7 @@
 					selected.Add(n);
 					evaluated.Add(n);
 					int evaluatedCount = evaluated.Count;
-					Evaluate1(pending, evaluated);
+					EvaluateOrder1(pending, evaluated, nodeOrder);
 					if (evaluated.Count > evaluatedCount)
 						break;
 				}
@@ -131,9 +153,6 @@
 					evaluated.Remove(selected[i]);
 				selected.Clear();
 			}
-
-			float t1 = Time.realtimeSinceStartup;
-			Debug.Log("Time: " + (t1 - t0) + " loops: " + (loopRuns + 1));
 
 			Debug.Assert(pending.Count == 0);
 		}
@@ -147,7 +166,7 @@
 			return null;
 		}
 
-		private void Evaluate1(HashSet<CircuitNode> pending, HashSet<CircuitNode> evaluated)
+		private void EvaluateOrder1(HashSet<CircuitNode> pending, HashSet<CircuitNode> evaluated, List<CircuitNode> nodeOrder)
 		{
 			pending.Clear();
 			int evaluatedCount;
@@ -155,11 +174,11 @@
 			{
 				evaluatedCount = evaluated.Count;
 				foreach (CircuitNode node in nodes)
-					Evaluate2(node, pending, evaluated);
+					EvaluateOrder2(node, pending, evaluated, nodeOrder);
 			} while (evaluated.Count != evaluatedCount);
 		}
 
-		private bool Evaluate2(CircuitNode node, HashSet<CircuitNode> pending, HashSet<CircuitNode> evaluated)
+		private bool EvaluateOrder2(CircuitNode node, HashSet<CircuitNode> pending, HashSet<CircuitNode> evaluated, List<CircuitNode> nodeOrder)
 		{
 			if (evaluated.Contains(node))
 				return true;
@@ -171,7 +190,7 @@
 			{
 				if (evaluated.Contains(dependency))
 					continue;
-				if (!Evaluate2(dependency, pending, evaluated))
+				if (!EvaluateOrder2(dependency, pending, evaluated, nodeOrder))
 					blocked = true;
 			}
 			if (blocked)
@@ -180,11 +199,17 @@
 			}
 			else
 			{
-				node.Evaluate();
+				nodeOrder.Add(node);
 				pending.Remove(node);
 				evaluated.Add(node);
 				return true;
 			}
+		}
+
+		private void Evaluate()
+		{
+			foreach (CircuitNode node in nodeOrder)
+				node.Evaluate();
 		}
 	}
 }
