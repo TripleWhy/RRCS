@@ -208,6 +208,7 @@
 
 		private void Evaluate()
 		{
+			Debug.Assert(nodeOrder.Count == nodes.Count);
 			foreach (CircuitNode node in nodeOrder)
 				node.Evaluate();
 		}
