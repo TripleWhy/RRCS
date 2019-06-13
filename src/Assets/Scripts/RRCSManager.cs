@@ -15,7 +15,7 @@ namespace AssemblyCSharp
 		public int CurrentPlayerId { get; set; }
 		public ShareFileModal shareFileModal;
 		public LoadingModal loadingModal;
-		public SharedFileLoader sharedFileLoader;
+		public ErrorModal errorModal;
 
 		public GameObject NodeUiPrefabRoot;
 
@@ -37,7 +37,7 @@ namespace AssemblyCSharp
 		
 		public void Start()
 		{
-			sharedFileLoader.ParseShareIdFromApplicationQuery();
+			ShareManager.Instance.ParseShareIdFromApplicationQuery();
 		}
 
 		private void Awake()

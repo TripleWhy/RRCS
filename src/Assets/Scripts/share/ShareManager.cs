@@ -1,14 +1,30 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection.Emit;
 using System.Text;
-using Boo.Lang.Runtime;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace AssemblyCSharp.share
 {
-    public class SharedFileLoader : MonoBehaviour
+    public class ShareManager
     {
+        public static readonly string BLOB_STORE_URL = "https://rrcs.tk/rrcs-blob/";
+        public static readonly string SHARE_BASE_URL = "https://rrcs.tk/circuit/";
+
+        public string lastLoadedId = "";
+        private static ShareManager instance;
+
+        public static ShareManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new ShareManager();
+                return instance;
+            }
+        }
+
         public void ParseShareIdFromApplicationQuery()
         {
             Debug.Log("absoluteUrl: " + Application.absoluteURL);
@@ -26,7 +42,7 @@ namespace AssemblyCSharp.share
                         {
                             if (queryParts[0] == "id")
                             {
-                                StartCoroutine(LoadShareId(queryParts[1]));
+                                RRCSManager.Instance.StartCoroutine(LoadShareId(queryParts[1]));
                             }
                         }
                     }
@@ -34,18 +50,20 @@ namespace AssemblyCSharp.share
             }
         }
 
-        IEnumerator LoadShareId(string id)
+        public IEnumerator LoadShareId(string id)
         {
+            RRCSManager.Instance.loadingModal.Show("Downloading shared file...");
             yield return 0;
             Debug.Log("Fetching Blob: " + id);
-            RRCSManager.Instance.loadingModal.Show("Downloading shared file...");
 
-            UnityWebRequest www = UnityWebRequest.Get(ShareFileModal.BLOB_STORE_URL + id);
+            UnityWebRequest www = UnityWebRequest.Get(BLOB_STORE_URL + id);
             yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError)
             {
                 Debug.Log("Network Error: " + www.error);
+                RRCSManager.Instance.errorModal.Show("Network Error:",
+                    www.error + "\n" + Encoding.UTF8.GetString(www.downloadHandler.data));
             }
             else
             {
@@ -58,6 +76,7 @@ namespace AssemblyCSharp.share
                     blob = JsonUtility.FromJson<ShareBlob>(Encoding.UTF8.GetString(www.downloadHandler.data));
                 } catch (ArgumentException ex)
                 {
+                    RRCSManager.Instance.errorModal.Show("Invalid JSON: ", ex.Message);
                     Debug.Log("Invalid JSON: " + ex.Message);
                     Debug.Log(ex.StackTrace);
                 }
@@ -70,14 +89,17 @@ namespace AssemblyCSharp.share
                     if (www.isNetworkError || www.isHttpError)
                     {
                         Debug.Log("Network Error: " + www.error);
+                        RRCSManager.Instance.errorModal.Show("Network Error:", www.error);
                     }
                     else
                     {
+                        lastLoadedId = id;
                         RRCSManager.Instance.LoadFile(null, Encoding.UTF8.GetString(www.downloadHandler.data));
                     }
                 }
                 else
                 {
+                    RRCSManager.Instance.errorModal.Show("Network Error:", "dataUrl is empty! No file loaded.");
                     Debug.Log("dataUrl is empty! No file loaded.");
                 }
             }
