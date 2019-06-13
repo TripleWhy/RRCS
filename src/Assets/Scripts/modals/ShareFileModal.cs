@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Text;
+using AssemblyCSharp.share;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AssemblyCSharp.share
+namespace AssemblyCSharp.modals
 {
     public class ShareFileModal : Modal
     {

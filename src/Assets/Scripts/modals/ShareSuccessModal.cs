@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace AssemblyCSharp.share
+namespace AssemblyCSharp.modals
 {
     public class ShareSuccessModal: Modal
     {
