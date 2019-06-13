@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using AssemblyCSharp.share;
+
+namespace AssemblyCSharp
 {
 	using UnityEngine;
 
@@ -11,6 +13,9 @@
 		public SelectionManager selectionManager;
 		public NodeSettingsUi settingsEditor;
 		public int CurrentPlayerId { get; set; }
+		public ShareFileModal shareFileModal;
+		public LoadingModal loadingModal;
+		public SharedFileLoader sharedFileLoader;
 
 		public GameObject NodeUiPrefabRoot;
 
@@ -27,6 +32,12 @@
 				}
 				return instance;
 			}
+		}
+
+		
+		public void Start()
+		{
+			sharedFileLoader.ParseShareIdFromApplicationQuery();
 		}
 
 		private void Awake()
@@ -131,6 +142,15 @@
 			Clear();
 			StorageNodeGrahp container = JsonUtility.FromJson<StorageNodeGrahp>(content);
 			container.Restore(this);
+		}
+
+		public void ShareFile()
+		{
+			StorageNodeGrahp container = new StorageNodeGrahp();
+			container.Fill();
+			
+			StartCoroutine(shareFileModal.Show(JsonUtility.ToJson(container, false)))
+			;
 		}
 	}
 }

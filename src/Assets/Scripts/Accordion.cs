@@ -11,13 +11,6 @@ namespace AssemblyCSharp
 
         void Start()
         {
-            // Run delayed to make sure all the chips are loaded
-            StartCoroutine(InitializeSections());
-        }
-
-        IEnumerator InitializeSections()
-        {
-            yield return 0;
             int i = 0;
             foreach (AccordionSection section in sections)
             {
@@ -32,7 +25,23 @@ namespace AssemblyCSharp
         private void ExpandSection(AccordionSection section)
         {
             foreach (AccordionSection s in sections)
-                s.content.SetActive(object.ReferenceEquals(s, section));
+            {
+                if (ReferenceEquals(s, section))
+                {
+                    s.contentLayout.transform.localScale = new Vector3(1, 1, 1);
+                    s.contentLayout.minHeight = -1;
+                    s.contentLayout.preferredHeight = -1;
+                    s.GetComponent<VerticalLayoutGroup>().spacing = 3;
+                }
+                else
+                {
+                    s.contentLayout.transform.localScale = new Vector3(0, 0, 0);
+                    s.contentLayout.minHeight = 0;
+                    s.contentLayout.preferredHeight = 0;
+                    s.GetComponent<VerticalLayoutGroup>().spacing = 0;
+                }
+            }
+
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform) transform);
         }
     }
