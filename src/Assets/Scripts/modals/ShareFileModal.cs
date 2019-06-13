@@ -98,40 +98,33 @@ namespace AssemblyCSharp.share
 
         public void OnSubmit()
         {
-            WWW www;
-            Hashtable postHeader = new Hashtable();
-            postHeader.Add("Content-Type", "application/json");
+            RRCSManager.Instance.StartCoroutine(SubmitShareRequest());
+            RRCSManager.Instance.loadingModal.Show("Uploading...");
+            Hide();
+        }
 
-            // convert json string to byte
-            var formData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new ShareRequest
+        IEnumerator SubmitShareRequest()
+        {
+            ShareRequest request = new ShareRequest
             {
                 data = dataToSubmit,
                 description = descriptionInput.text,
                 name = nameInput.text,
                 thumbnail = thumbnailToSubmit
-            }));
-            Debug.Log(thumbnailToSubmit.Length);
+            };
+            var www = ShareManager.Instance.UploadShareRequest(request);
+            yield return www;
 
-            www = new WWW(ShareManager.BLOB_STORE_URL, formData, postHeader);
-            RRCSManager.Instance.StartCoroutine(WaitForRequest(www));
-
-            RRCSManager.Instance.loadingModal.Show("Uploading...");
-            Hide();
-        }
-
-        IEnumerator WaitForRequest(WWW data)
-        {
-            yield return data; // Wait until the download is done
             RRCSManager.Instance.loadingModal.Hide();
-            if (data.error != null)
+            if (www.error != null)
             {
-                Debug.Log("Upload failed: " + data.error);
-                RRCSManager.Instance.errorModal.Show("Upload failed: ", data.error);
+                Debug.Log("Upload failed: " + www.error);
+                RRCSManager.Instance.errorModal.Show("Upload failed: ", www.error);
             }
             else
             {
-                ShareManager.Instance.lastLoadedId = data.text;
-                shareSuccessModal.Show(ShareManager.SHARE_BASE_URL + data.text);
+                ShareManager.Instance.lastLoadedId = www.text;
+                shareSuccessModal.Show(ShareManager.SHARE_BASE_URL + www.text);
             }
         }
 

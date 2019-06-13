@@ -145,7 +145,7 @@ namespace AssemblyCSharp
             StorageNodeGrahp container = new StorageNodeGrahp();
             container.Fill();
 
-            StartCoroutine(shareFileModal.Show(CompressUtils.Base64GZip(JsonUtility.ToJson(container, false))));
+            StartCoroutine(shareFileModal.Show(FileUtils.CompressGZipBase64(JsonUtility.ToJson(container, false))));
         }
     }
 }

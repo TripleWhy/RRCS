@@ -94,7 +94,7 @@ namespace AssemblyCSharp.share
                     else
                     {
                         lastLoadedId = id;
-                        RRCSManager.Instance.LoadFile(null, CompressUtils.UnGzip(www.downloadHandler.data));
+                        RRCSManager.Instance.LoadFile(null, FileUtils.UncompressGZip(www.downloadHandler.data));
                     }
                 }
                 else
@@ -106,6 +106,18 @@ namespace AssemblyCSharp.share
 
 
             RRCSManager.Instance.loadingModal.Hide();
+        }
+
+        public WWW UploadShareRequest(ShareRequest request)
+        {
+            WWW www;
+            Hashtable postHeader = new Hashtable();
+            postHeader.Add("Content-Type", "application/json");
+
+            var formData = Encoding.UTF8.GetBytes(JsonUtility.ToJson(request));
+
+            www = new WWW(BLOB_STORE_URL, formData, postHeader);
+            return www;
         }
     }
 }
