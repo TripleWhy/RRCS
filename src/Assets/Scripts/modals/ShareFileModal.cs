@@ -8,25 +8,29 @@ namespace AssemblyCSharp.share
 {
     public class ShareFileModal : Modal
     {
-        public static string BLOB_STORE_URL = "https://rrcs-243222.appspot.com/rrcs-blob/";
-        public static string SHARE_BASE_URL = "https://triplewhy.gitlab.io/RRCS/?id=";
-
         public ShareSuccessModal shareSuccessModal;
         public InputField nameInput;
         public InputField descriptionInput;
         public Button submitButton;
         public Button closeButton;
+        public Button loadButton;
         public RectTransform leftSidebarTransform;
         public RectTransform rightSidebarTransform;
         public Canvas uiCanvas;
+        public RawImage thumbnailPreview;
+        public InputField currentUrlInput;
+        public Text currentUrlTitle;
 
         private string dataToSubmit;
+
         private string thumbnailToSubmit;
+        private Texture _previewTex;
 
         public void Start()
         {
             submitButton.onClick.AddListener(OnSubmit);
             closeButton.onClick.AddListener(Hide);
+            loadButton.onClick.AddListener(OnLoad);
         }
 
         public IEnumerator Show(string data)
@@ -52,22 +56,44 @@ namespace AssemblyCSharp.share
             tex.ReadPixels(new Rect(leftSideBarWidth, 0, width, height), 0, 0);
             tex.Apply();
 
-            Debug.Log(width);
-            Debug.Log(height);
-            Debug.Log(leftSideBarWidth);
-            Debug.Log(rightSideBarWidth);
-            Debug.Log(Screen.width);
-            Debug.Log(Screen.height);
+            setThumbnailPreviewTex(tex);
 
             var bytes = tex.EncodeToJPG();
-            Destroy(tex);
+
 
             thumbnailToSubmit = Convert.ToBase64String(bytes);
 
-            Debug.Log(bytes.Length);
-            Debug.Log(thumbnailToSubmit.Length);
+            if (ShareManager.Instance.lastLoadedId.Length > 0)
+            {
+                currentUrlTitle.text = "Current Share Link:";
+                currentUrlInput.text = ShareManager.SHARE_BASE_URL + ShareManager.Instance.lastLoadedId;
+            }
+            else
+                currentUrlTitle.text = "Load Share Link:";
 
             Show();
+        }
+
+        public void OnLoad()
+        {
+            string id = currentUrlInput.text;
+
+            id = id.Replace(" ", "");
+            id = id.Replace("?", "");
+            id = id.Replace("id=", "");
+            id = id.Replace(ShareManager.SHARE_BASE_URL, "");
+            string[] parts = id.Split('/');
+            id = parts[parts.Length - 1];
+
+            if (id.Length == 0)
+                RRCSManager.Instance.errorModal.Show("Error:", "Could not parse circuit id from provided url.");
+            else
+            {
+                id = parts[parts.Length - 1];
+
+                Hide();
+                RRCSManager.Instance.StartCoroutine(ShareManager.Instance.LoadShareId(id));
+            }
         }
 
         public void OnSubmit()
@@ -86,25 +112,39 @@ namespace AssemblyCSharp.share
             }));
             Debug.Log(thumbnailToSubmit.Length);
 
-            www = new WWW(BLOB_STORE_URL, formData, postHeader);
-            StartCoroutine(WaitForRequest(www));
+            www = new WWW(ShareManager.BLOB_STORE_URL, formData, postHeader);
+            RRCSManager.Instance.StartCoroutine(WaitForRequest(www));
 
             RRCSManager.Instance.loadingModal.Show("Uploading...");
+            Hide();
         }
 
         IEnumerator WaitForRequest(WWW data)
         {
             yield return data; // Wait until the download is done
             RRCSManager.Instance.loadingModal.Hide();
-            Hide();
             if (data.error != null)
             {
                 Debug.Log("Upload failed: " + data.error);
+                RRCSManager.Instance.errorModal.Show("Upload failed: ", data.error);
             }
             else
             {
-                shareSuccessModal.Show(SHARE_BASE_URL + data.text);
+                ShareManager.Instance.lastLoadedId = data.text;
+                shareSuccessModal.Show(ShareManager.SHARE_BASE_URL + data.text);
             }
+        }
+
+        private void setThumbnailPreviewTex(Texture tex)
+        {
+            if (_previewTex != null)
+            {
+                Destroy(_previewTex);
+            }
+
+            thumbnailPreview.texture = tex;
+            thumbnailPreview.GetComponent<AspectRatioFitter>().aspectRatio = (float) tex.width / tex.height;
+            _previewTex = tex;
         }
     }
 }
