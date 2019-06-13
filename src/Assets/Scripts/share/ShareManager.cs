@@ -94,7 +94,7 @@ namespace AssemblyCSharp.share
                     else
                     {
                         lastLoadedId = id;
-                        RRCSManager.Instance.LoadFile(null, Encoding.UTF8.GetString(www.downloadHandler.data));
+                        RRCSManager.Instance.LoadFile(null, CompressUtils.UnGzip(www.downloadHandler.data));
                     }
                 }
                 else
