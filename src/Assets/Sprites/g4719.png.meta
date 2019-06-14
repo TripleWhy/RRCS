@@ -8,6 +8,7 @@ TextureImporter:
     21300006: g4719_3
     21300008: g4719_4
     21300010: g4719_5
+    21300012: g4719_6
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -231,13 +232,33 @@ TextureImporter:
         width: 56
         height: 164
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: d813023d4094b324f8edc3b39cb09dc6
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: g4719_6
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 403
+        width: 380
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e8963973f63e7947b9a872dede80741
       vertices: []
       indices: 
       edges: []

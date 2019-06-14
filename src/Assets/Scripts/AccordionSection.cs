@@ -8,7 +8,7 @@
 	public class AccordionSection : MonoBehaviour
 	{
 		public Button sectionButton;
-		public GameObject content;
+		public LayoutElement contentLayout; 
 
 		private void Awake()
 		{

@@ -29,7 +29,13 @@
 			AccelerationTime,
 			MoveToTarget,
 			MaxTravelDistance,
-			TagToFollow
+			TagToFollow,
+			Message0,
+			Message1,
+			Message2,
+			Message3,
+			Message4,
+			LimitMessage,
 			
 		};
 
@@ -177,6 +183,19 @@
 					return new NodeSetting(type, "Max Travel Distance (dm)", typeof(int), 50);
 				case SettingType.TagToFollow:
 					return new NodeSetting(type, "Tag To Follow", typeof(string), "tag");
+				case SettingType.Message0:
+					return new NodeSetting(type, "Message 0:", typeof(string), "RRCS");
+				case SettingType.Message1:
+					return new NodeSetting(type, "Message 1:", typeof(string), "RRCS");
+				case SettingType.Message2:
+					return new NodeSetting(type, "Message 2:", typeof(string), "RRCS");
+				case SettingType.Message3:
+					return new NodeSetting(type, "Message 3:", typeof(string), "RRCS");
+				case SettingType.Message4:
+					return new NodeSetting(type, "Message 4:", typeof(string), "RRCS");
+				case SettingType.LimitMessage:
+					return new NodeSetting(type, "Limit Length", typeof(bool), true);
+					
 			}
 			Debug.Assert(false);
 			return null;

@@ -140,6 +140,8 @@
 				manager.NodeUiPrefabRoot.GetComponentInChildren<RRButtonUi>(true).gameObject);
 			typeMap.Add(typeof(StageLightUi).FullName,
 				manager.NodeUiPrefabRoot.GetComponentInChildren<StageLightUi>(true).gameObject);
+			typeMap.Add(typeof(SignUi).FullName,
+				manager.NodeUiPrefabRoot.GetComponentInChildren<SignUi>(true).gameObject);
 			var chipPrefabs = manager.NodeUiPrefabRoot.GetComponentsInChildren<ChipUi>(true);
 			foreach (var prefab in chipPrefabs)
 			{

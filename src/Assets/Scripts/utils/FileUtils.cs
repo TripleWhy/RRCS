@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using AssemblyCSharp.share;
+
+namespace AssemblyCSharp
 {
 	using System;
 	using System.IO;
@@ -99,5 +101,37 @@
 			}
 		}
 		// <--
+
+
+		public static string CompressGZipBase64(string str)
+		{
+			return Convert.ToBase64String(CompressGZip(str));
+		}
+
+		public static byte[] CompressGZip(string str)
+		{
+			var bytes = Encoding.UTF8.GetBytes(str);
+
+			using (var msi = new MemoryStream(bytes))
+			using (var mso = new MemoryStream())
+			{
+				using (var gs = new GZipStream(mso, CompressionMode.Compress))
+					CopyTo(msi, gs);
+
+				return mso.ToArray();
+			}
+		}
+
+		public static string UncompressGZip(byte[] bytes)
+		{
+			using (var msi = new MemoryStream(bytes))
+			using (var mso = new MemoryStream())
+			{
+				using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+					CopyTo(gs, mso);
+
+				return Encoding.UTF8.GetString(mso.ToArray());
+			}
+		}
 	}
 }
