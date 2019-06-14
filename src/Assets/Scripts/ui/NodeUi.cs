@@ -42,7 +42,7 @@
 
 		protected abstract CircuitNode CreateNode(CircuitManager manager);
 
-		void OnDestroy()
+		protected void OnDestroy()
 		{
 			UiManager.Unregister(this);
 			RRCSManager.Instance.cameraControls.ZoomChanged -= Camera_ZoomChanged;
