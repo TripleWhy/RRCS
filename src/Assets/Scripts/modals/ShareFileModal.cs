@@ -81,7 +81,7 @@ namespace AssemblyCSharp.modals
 
             id = id.Replace(" ", "");
             id = id.Replace("?", "");
-            id = id.Replace("id=", "");
+            id = id.Replace("circuit=", "");
             id = id.Replace(ShareManager.SHARE_BASE_URL, "");
             string[] parts = id.Split('/');
             id = parts[parts.Length - 1];
@@ -124,7 +124,11 @@ namespace AssemblyCSharp.modals
             }
             else
             {
-                ShareManager.Instance.lastLoadedId = www.text;
+                if (nameInput.text.Length > 0)
+                    ShareManager.Instance.SetLastLoadedId(www.text, nameInput.text);
+                else
+                    ShareManager.Instance.SetLastLoadedId(www.text, "Unnamed Circuit");
+                
                 shareSuccessModal.Show(ShareManager.SHARE_BASE_URL + www.text);
             }
         }

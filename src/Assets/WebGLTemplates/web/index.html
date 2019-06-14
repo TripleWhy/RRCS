@@ -100,6 +100,23 @@
 
   <script src="%UNITY_WEBGL_LOADER_URL%"></script>
   <script>
+  
+  var DEFAULT_RUNTIME_CONFIG = {
+		BLOB_URL: "https://rrcs.tk/rrcs-blob/",
+		SHARE_URL_BASE: "https://rrcs.tk/circuit/",
+		STATE_REPLACE_BASE: "/RRCS/?id="
+	};
+  
+  if (!window.runtimeConfig){
+	window.runtimeConfig = DEFAULT_RUNTIME_CONFIG;
+  }else{
+	for (var key in DEFAULT_RUNTIME_CONFIG){
+		if (!window.runtimeConfig[key]){
+			console.error("key", key, "not in runtimeConfig");
+		}
+	}
+  }
+  
   var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%", {onProgress: UnityProgress});
   function UnityProgress(gameInstance, progress) {
     if (!gameInstance.Module) {
