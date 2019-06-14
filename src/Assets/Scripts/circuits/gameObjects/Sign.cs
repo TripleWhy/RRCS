@@ -6,7 +6,7 @@ namespace AssemblyCSharp
 {
     public class Sign : CircuitNode
     {
-        public delegate void TextChangedEventHandler(string message);
+        public delegate void TextChangedEventHandler(string message, bool limitLength);
 
         public event TextChangedEventHandler TextChanged = delegate { };
 
@@ -43,7 +43,7 @@ namespace AssemblyCSharp
             if (limit)
                 message = message.Substring(0, Math.Min(message.Length, 20));
 
-            TextChanged(message);
+            TextChanged(message, limit);
         }
     }
 }

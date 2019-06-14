@@ -36,9 +36,10 @@ namespace AssemblyCSharp
             return sign;
         }
 
-        private void Sign_TextChanged(string message)
+        private void Sign_TextChanged(string message, bool limitLength)
         {
             text.text = message;
+            text.enableWordWrapping = !limitLength;
         }
 
         protected override void OnMovedToWorld()
