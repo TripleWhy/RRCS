@@ -11,9 +11,9 @@ There still is a lot to be done. You can request access to the project and brows
 
 Try It
 ------
-The latest WebGl build can be found at [here](https://triplewhy.gitlab.io/RRCS/).
+The latest WebGl build can be found at [here](https://rrcs.gitlab.io/RRCS/).
 
-Windows download can be found [here](https://triplewhy.gitlab.io/RRCS/RRCS_win64.zip).
+Windows download can be found [here](https://rrcs.gitlab.io/RRCS/RRCS_win64.zip).
 
 Circuit Sharing
 ------
