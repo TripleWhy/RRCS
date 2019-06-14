@@ -17,7 +17,7 @@ Windows download can be found [here](https://triplewhy.gitlab.io/RRCS/RRCS_win64
 
 Circuit Sharing
 ------
-The circuit sharing functionality is powered by the [rrcs-backend](https://gitlab.com/_seb/rrcs-backend) and currently hosted by [_seb](https://gitlab.com/_seb).
+The circuit sharing functionality is powered by the [rrcs-backend](https://gitlab.com/rrcs/rrcs-backend) and currently hosted by [_seb](https://gitlab.com/_seb).
 
 Brought to You By
 -----------------
