@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using System.Collections;
+
+namespace AssemblyCSharp
 {
 	using System;
 	using System.Collections.Generic;
@@ -131,7 +133,7 @@
 			}
 		}
 
-		public void Restore(RRCSManager manager)
+		public IEnumerator Restore(RRCSManager manager)
 		{
 			Dictionary<string, GameObject> typeMap = new Dictionary<string, GameObject>();
 
@@ -186,6 +188,8 @@
 			}
 			Debug.Assert(manager.circuitManager.Nodes.Count == graph.Length);
 
+			yield return 0;
+			
 			List<CircuitNode> nodes = manager.circuitManager.Nodes;
 			for (int nodeIndex = 0; nodeIndex < graph.Length; nodeIndex++)
 			{

@@ -138,7 +138,7 @@ namespace AssemblyCSharp
         {
             Clear();
             StorageNodeGrahp container = JsonUtility.FromJson<StorageNodeGrahp>(content);
-            container.Restore(this);
+            StartCoroutine(container.Restore(this));
         }
 
         public void ShareFile()
