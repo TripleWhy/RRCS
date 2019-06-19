@@ -64,6 +64,7 @@
 
 			Debug.Assert(object.Equals(nodes[newPriority], node));
 			Debug.Assert(node.RingEvaluationPriority == newPriority);
+			InvalidateOrder();
 		}
 
 		private void InvalidateOrder()
