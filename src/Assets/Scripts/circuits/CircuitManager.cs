@@ -7,7 +7,7 @@
 	public class CircuitManager
 	{
 		private readonly List<CircuitNode> nodes = new List<CircuitNode>();
-		private readonly List<CircuitNode> nodeOrder = new List<CircuitNode>();
+		private readonly List<CircuitNode> cachedEvaluationOrder = new List<CircuitNode>();
 		private bool graphChanged = true;
 		private bool evaluationRequired = true;
 		public int CurrentTick { get; private set; }
@@ -129,7 +129,7 @@
 		{
 			//TODO this whole evaluation stuff seems overly complicated. Find a better solution?
 
-			nodeOrder.Clear();
+			cachedEvaluationOrder.Clear();
 			HashSet<CircuitNode> pending = new HashSet<CircuitNode>();
 			HashSet<CircuitNode> evaluated = new HashSet<CircuitNode>();
 			List<CircuitNode> selected = new List<CircuitNode>();
@@ -137,7 +137,7 @@
 			int loopRuns = 0;
 			for (; loopRuns < 10000; loopRuns++)
 			{
-				EvaluateOrder1(pending, evaluated, nodeOrder);
+				EvaluateOrder1(pending, evaluated, cachedEvaluationOrder);
 				if (pending.Count == 0)
 					break;
 				while (true)
@@ -146,7 +146,7 @@
 					selected.Add(n);
 					evaluated.Add(n);
 					int evaluatedCount = evaluated.Count;
-					EvaluateOrder1(pending, evaluated, nodeOrder);
+					EvaluateOrder1(pending, evaluated, cachedEvaluationOrder);
 					if (evaluated.Count > evaluatedCount)
 						break;
 				}
@@ -209,8 +209,8 @@
 
 		private void Evaluate()
 		{
-			Debug.Assert(nodeOrder.Count == nodes.Count);
-			foreach (CircuitNode node in nodeOrder)
+			Debug.Assert(cachedEvaluationOrder.Count == nodes.Count);
+			foreach (CircuitNode node in cachedEvaluationOrder)
 				node.Evaluate();
 		}
 	}
