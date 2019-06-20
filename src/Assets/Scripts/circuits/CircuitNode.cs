@@ -2,6 +2,8 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
 
 	public abstract class CircuitNode : IComparable<CircuitNode>
 	{
@@ -12,12 +14,13 @@
 		public readonly OutputPort[] outputPorts;
 		public StatePort statePort;
 		public readonly NodeSetting[] settings;
-		internal int RingEvaluationPriority { get; set; }
+		private int ringEvaluationPriority;
 		private CircuitManager manager;
 
-		public delegate void EvaluationRequiredEventHandler(CircuitNode source);
-		public event EvaluationRequiredEventHandler EvaluationRequired = delegate { };
-		public event EvaluationRequiredEventHandler ConnectionChanged = delegate { };
+		public delegate void CircuitNodeChangedEventHandler(CircuitNode source);
+		public event CircuitNodeChangedEventHandler EvaluationRequired = delegate { };
+		public event CircuitNodeChangedEventHandler ConnectionChanged = delegate { };
+		public event CircuitNodeChangedEventHandler RingEvaluationPriorityChanged = delegate { };
 
 		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset,
 			StatePort.StatePortType statePortType = StatePort.StatePortType.None)
@@ -33,14 +36,14 @@
 				inputPorts[i] = new InputPort(this, false);
 				inputPorts[i].ValueChanged += CircuitNode_ValueChanged;
 				inputPorts[i].Connected += CircuitNode_Connected;
-				inputPorts[i].Disconnected += CircuitNode_Connected;
+				inputPorts[i].Disconnected += CircuitNode_Disconnected;
 			}
 			if (hasReset)
 			{
 				inputPorts[inputCount] = new InputPort(this, true);
 				inputPorts[inputCount].ValueChanged += CircuitNode_ValueChanged;
 				inputPorts[inputCount].Connected += CircuitNode_Connected;
-				inputPorts[inputCount].Disconnected += CircuitNode_Connected;
+				inputPorts[inputCount].Disconnected += CircuitNode_Disconnected;
 			}
 			
 			int totalOutputCount = outputCount + (hasReset ? 1 : 0);
@@ -49,13 +52,13 @@
 			{
 				outputPorts[i] = new OutputPort(this, false);
 				outputPorts[i].Connected += CircuitNode_Connected;
-				outputPorts[i].Disconnected += CircuitNode_Connected;
+				outputPorts[i].Disconnected += CircuitNode_Disconnected;
 			}
 			if (hasReset)
 			{
 				outputPorts[outputCount] = new OutputPort(this, true);
 				outputPorts[outputCount].Connected += CircuitNode_Connected;
-				outputPorts[outputCount].Disconnected += CircuitNode_Connected;
+				outputPorts[outputCount].Disconnected += CircuitNode_Disconnected;
 			}
 
 			switch (statePortType)
@@ -79,17 +82,6 @@
 			Destroy();
 		}
 
-		private void CircuitNode_Connected(Connection connection)
-		{
-			EmitConnectionChanged();
-			EmitEvaluationRequired();
-		}
-
-		private void CircuitNode_ValueChanged(Port sender)
-		{
-			EmitEvaluationRequired();
-		}
-
 		public virtual void Destroy()
 		{
 			if (RingEvaluationPriority < 0)
@@ -107,6 +99,25 @@
 				manager.RemoveNode(this);
 		}
 
+		private void CircuitNode_Connected(Connection connection)
+		{
+			Debug.Assert(connection.targetPort.IsInput);
+			connection.targetPort.node.MabeAlignPriority();
+			EmitConnectionChanged();
+			EmitEvaluationRequired();
+		}
+
+		private void CircuitNode_Disconnected(Connection connection)
+		{
+			EmitConnectionChanged();
+			EmitEvaluationRequired();
+		}
+
+		private void CircuitNode_ValueChanged(Port sender)
+		{
+			EmitEvaluationRequired();
+		}
+
 		public CircuitManager Manager
 		{
 			get
@@ -122,6 +133,32 @@
 				manager = value;
 				if (manager != null)
 					manager.AddNode(this);
+			}
+		}
+
+		public int RingEvaluationPriority
+		{
+			get
+			{
+				return ringEvaluationPriority;
+			}
+			internal set
+			{
+				ringEvaluationPriority = value;
+				EmitRingEvaluationPriorityChanged();
+			}
+		}
+
+		private void MabeAlignPriority()
+		{
+			int dependsCount = DependsOn().Count();
+			if (dependsCount == 1)
+			{
+				foreach (CircuitNode dep in DependsOn())
+				{
+					manager.UpdateNodePriority(this, dep.RingEvaluationPriority + 1);
+					break;
+				}
 			}
 		}
 
@@ -239,6 +276,11 @@
 		protected void EmitConnectionChanged()
 		{
 			ConnectionChanged(this);
+		}
+
+		protected void EmitRingEvaluationPriorityChanged()
+		{
+			RingEvaluationPriorityChanged(this);
 		}
 	}
 }

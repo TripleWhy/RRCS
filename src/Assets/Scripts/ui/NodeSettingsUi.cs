@@ -39,6 +39,8 @@
 				Destroy(go);
 			editors.Clear();
 
+			if (selectedNodes.Count == 1)
+				selectedNodes[0].Node.RingEvaluationPriorityChanged -= Node_RingEvaluationPriorityChanged;
 			selectedNodes.Clear();
 			foreach (NodeUi nodeUi in nodes)
 				selectedNodes.Add(nodeUi);
@@ -57,6 +59,7 @@
 			{
 				priorityEditor.gameObject.SetActive(true);
 				priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
+				selectedNodes[0].Node.RingEvaluationPriorityChanged += Node_RingEvaluationPriorityChanged;
 			}
 
 			Dictionary<NodeSetting.SettingType, int> typeUsages = new Dictionary<NodeSetting.SettingType, int>();
@@ -76,6 +79,11 @@
 					continue;
 				editors.Add(CreateSettingEditor(setting));
 			}
+		}
+
+		private void Node_RingEvaluationPriorityChanged(CircuitNode source)
+		{
+			priorityEditor.Value = source.RingEvaluationPriority;
 		}
 
 		private GameObject CreateSettingEditor(NodeSetting setting)
