@@ -30,7 +30,6 @@
 		{
 			Debug.Assert(selectedNodes.Count == 1);
 			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
-			priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
 		}
 
 		public void SetSelectedNodes(IEnumerable<NodeUi> nodes)
