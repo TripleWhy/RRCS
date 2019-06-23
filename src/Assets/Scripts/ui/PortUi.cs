@@ -11,6 +11,7 @@
 		public bool isInput;
 		public bool isState;
 		public Text valueText;
+		public Image delayIcon;
 		public ConnectionUi connectionPrefab;
 		private Port port;
 
@@ -220,6 +221,20 @@
 					lastValue = value;
 					valueText.text = value.ToString();
 				}
+			}
+
+			if (delayIcon != null)
+			{
+				bool delayed;
+				if (Port.IsConnected)
+				{
+					CircuitNode srcNode = Port.connections[0].sourcePort.node;
+					CircuitNode dstNode = Port.node;
+					delayed = srcNode.RingEvaluationPriority >= dstNode.RingEvaluationPriority;
+				}
+				else
+					delayed = false;
+				delayIcon.gameObject.SetActive(delayed);
 			}
 		}
 
