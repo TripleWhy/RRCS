@@ -19,8 +19,11 @@
 		public static IEnumerable<GizmoUi> GetGizmos()
 		{
 			foreach (NodeUi node in nodes.Values)
-				if (node.GetType() == typeof(GizmoUi))
-					yield return (GizmoUi) node;
+			{
+				GizmoUi gizmo = node as GizmoUi;
+				if (gizmo != null)
+					yield return gizmo;
+			}
 		}
 		
 		public static void Register(NodeUi nodeUi)
@@ -32,8 +35,9 @@
 				return;
 			nodes[nodeUi.Node] = nodeUi;
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
-			if (nodeUi.GetType() == typeof(GizmoUi))
-				((GizmoUi) nodeUi).TextActive = showPortLabels;
+			GizmoUi gimoUi = nodeUi as GizmoUi;
+			if (gimoUi != null)
+				gimoUi.TextActive = showPortLabels;
 		}
 
 		public static void Unregister(NodeUi nodeUi)
@@ -151,9 +155,8 @@
 
 		public static void ResetGizmos()
 		{
-			foreach (GizmoUi node in GetGizmos())
-				if (node.Node != null)
-					((Gizmo) node.Node).reset();
+			foreach (GizmoUi gizmo in GetGizmos())
+				gizmo.Gizmo.reset();
 		}
 	}
 }
