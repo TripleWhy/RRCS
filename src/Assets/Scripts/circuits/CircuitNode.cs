@@ -186,17 +186,19 @@
 
 		public virtual void Evaluate()
 		{
-			if (hasReset)
+			if (!hasReset)
+				EvaluateOutputs();
+			else if (!IsResetSet)
+			{
+				EvaluateOutputs();
+				outputPorts[outputPortCount].Value = 0;
+			}
+			else
 			{
 				outputPorts[outputPortCount].Value = ResetValue;
-				if (IsResetSet)
-				{
-					for (int i = 0; i < outputPortCount; ++i)
-						outputPorts[i].Value = 0;
-					return;
-				}
+				for (int i = 0; i < outputPortCount; ++i)
+					outputPorts[i].Value = 0;
 			}
-			EvaluateOutputs();
 		}
 
 		protected abstract void EvaluateOutputs();
