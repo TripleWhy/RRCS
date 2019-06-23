@@ -6,8 +6,7 @@
 
 	public class CircuitManager
 	{
-		private readonly List<CircuitNode> nodes = new List<CircuitNode>();
-		private readonly List<CircuitNode> cachedEvaluationOrder = new List<CircuitNode>();
+		private List<CircuitNode> nodes = new List<CircuitNode>();
 		private bool graphChanged = true;
 		private bool evaluationRequired = true;
 		public int CurrentTick { get; private set; }
@@ -65,6 +64,14 @@
 			Debug.Assert(object.Equals(nodes[newPriority], node));
 			Debug.Assert(node.RingEvaluationPriority == newPriority);
 			InvalidateOrder();
+		}
+
+		private void ReplaceNodePriorities(List<CircuitNode> newNodes)
+		{
+			Debug.Assert(newNodes.Count == nodes.Count);
+			nodes = newNodes;
+			for (int i = 0; i < nodes.Count; i++)
+				nodes[i].RingEvaluationPriority = i;
 		}
 
 		private void InvalidateOrder()
@@ -129,15 +136,15 @@
 		{
 			//TODO this whole evaluation stuff seems overly complicated. Find a better solution?
 
-			cachedEvaluationOrder.Clear();
+			List<CircuitNode> newEvaluationOrder = new List<CircuitNode>(nodes.Count);
 			HashSet<CircuitNode> pending = new HashSet<CircuitNode>();
 			HashSet<CircuitNode> evaluated = new HashSet<CircuitNode>();
-			List<CircuitNode> selected = new List<CircuitNode>();
+			List<CircuitNode> selected = new List<CircuitNode>(nodes.Count);
 
 			int loopRuns = 0;
 			for (; loopRuns < 10000; loopRuns++)
 			{
-				EvaluateOrder1(pending, evaluated, cachedEvaluationOrder);
+				EvaluateOrder1(pending, evaluated, newEvaluationOrder);
 				if (pending.Count == 0)
 					break;
 				while (true)
@@ -146,7 +153,7 @@
 					selected.Add(n);
 					evaluated.Add(n);
 					int evaluatedCount = evaluated.Count;
-					EvaluateOrder1(pending, evaluated, cachedEvaluationOrder);
+					EvaluateOrder1(pending, evaluated, newEvaluationOrder);
 					if (evaluated.Count > evaluatedCount)
 						break;
 				}
@@ -156,6 +163,8 @@
 			}
 
 			Debug.Assert(pending.Count == 0);
+
+			ReplaceNodePriorities(newEvaluationOrder);
 		}
 
 		private CircuitNode SelectPending(HashSet<CircuitNode> pending)
@@ -209,8 +218,7 @@
 
 		private void Evaluate()
 		{
-			Debug.Assert(cachedEvaluationOrder.Count == nodes.Count);
-			foreach (CircuitNode node in cachedEvaluationOrder)
+			foreach (CircuitNode node in nodes)
 				node.Evaluate();
 		}
 	}

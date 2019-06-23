@@ -102,7 +102,6 @@
 		private void CircuitNode_Connected(Connection connection)
 		{
 			Debug.Assert(connection.targetPort.IsInput);
-			connection.targetPort.node.MabeAlignPriority();
 			EmitConnectionChanged();
 			EmitEvaluationRequired();
 		}
@@ -146,19 +145,6 @@
 			{
 				ringEvaluationPriority = value;
 				EmitRingEvaluationPriorityChanged();
-			}
-		}
-
-		private void MabeAlignPriority()
-		{
-			int dependsCount = DependsOn().Count();
-			if (dependsCount == 1)
-			{
-				foreach (CircuitNode dep in DependsOn())
-				{
-					manager.UpdateNodePriority(this, dep.RingEvaluationPriority + 1);
-					break;
-				}
 			}
 		}
 

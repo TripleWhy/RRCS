@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using UnityEngine;
+	using UnityEngine.UI;
 
 	public class NodeSettingsUi : MonoBehaviour
 	{
@@ -11,6 +12,7 @@
 		public StringEditor stringEditorPrefab;
 		public SelectorConditionEditor selectorConditionEditorPrefab;
 
+		private Text effectiveEvaluationIndexText;
 		private IntEditor priorityEditor;
 		private List<NodeUi> selectedNodes = new List<NodeUi>();
 		private List<GameObject> editors = new List<GameObject>();
@@ -21,6 +23,7 @@
 			{
 				if (priorityEditor == null)
 					priorityEditor = child.GetComponent<IntEditor>();
+				effectiveEvaluationIndexText = child.GetComponent<Text>() ?? effectiveEvaluationIndexText;
 			}
 			Debug.Assert(priorityEditor != null);
 			priorityEditor.ValueChanged += PriorityEditor_ValueChanged;
@@ -30,7 +33,6 @@
 		{
 			Debug.Assert(selectedNodes.Count == 1);
 			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
-			priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
 		}
 
 		public void SetSelectedNodes(IEnumerable<NodeUi> nodes)
@@ -54,11 +56,14 @@
 			if (selectedNodes.Count > 1)
 			{
 				priorityEditor.gameObject.SetActive(false);
+				effectiveEvaluationIndexText.gameObject.SetActive(false);
 			}
 			else
 			{
 				priorityEditor.gameObject.SetActive(true);
+				effectiveEvaluationIndexText.gameObject.SetActive(true);
 				priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
+				effectiveEvaluationIndexText.text = EffectiveEvaluationIndexString(selectedNodes[0].Node.RingEvaluationPriority);
 				selectedNodes[0].Node.RingEvaluationPriorityChanged += Node_RingEvaluationPriorityChanged;
 			}
 
@@ -83,7 +88,13 @@
 
 		private void Node_RingEvaluationPriorityChanged(CircuitNode source)
 		{
-			priorityEditor.Value = source.RingEvaluationPriority;
+			effectiveEvaluationIndexText.text = EffectiveEvaluationIndexString(source.RingEvaluationPriority);
+		}
+
+		//TODO this function should not exist, or simply return intex.ToString().
+		private string EffectiveEvaluationIndexString(int index)
+		{
+			return "Effective Index: " + index;
 		}
 
 		private GameObject CreateSettingEditor(NodeSetting setting)
