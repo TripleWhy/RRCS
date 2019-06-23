@@ -9,6 +9,7 @@
 		private static readonly Dictionary<Port, PortUi> ports = new Dictionary<Port, PortUi>();
 		private static readonly Dictionary<Connection, ConnectionUi> connections = new Dictionary<Connection, ConnectionUi>();
 		private static bool showPortLabels = false;
+		private static bool showOrderLabels = false;
 
 		public static IEnumerable<MonoBehaviour> GetSelectables()
 		{
@@ -35,6 +36,8 @@
 				return;
 			nodes[nodeUi.Node] = nodeUi;
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
+
+			nodeUi.IndexTextActive = showOrderLabels;
 			GizmoUi gimoUi = nodeUi as GizmoUi;
 			if (gimoUi != null)
 				gimoUi.TextActive = showPortLabels;
@@ -150,6 +153,22 @@
 					port.TextActive = value;
 				foreach (GizmoUi node in GetGizmos())
 					node.TextActive = value;
+			}
+		}
+
+		public static bool ShowEvaluationOrderLabels
+		{
+			get
+			{
+				return showOrderLabels;
+			}
+			set
+			{
+				if (value == showOrderLabels)
+					return;
+				showOrderLabels = value;
+				foreach (NodeUi node in nodes.Values)
+					node.IndexTextActive = value;
 			}
 		}
 

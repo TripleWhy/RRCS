@@ -29,6 +29,7 @@
 		public PortUi outR;
 		public PortUi state;
 		public Image icon;
+		private int lastPriority;
 
 		[HideInInspector]
 		[SerializeField]
@@ -65,6 +66,19 @@
 				Sprite sprite = GetSprite();
 				if (sprite != null)
 					icon.sprite = sprite;
+			}
+		}
+
+		void Update()
+		{
+			if (evaluationIndexText != null && evaluationIndexText.gameObject.activeInHierarchy)
+			{
+				int priority = Chip.RingEvaluationPriority;
+				if (priority != lastPriority)
+				{
+					lastPriority = priority;
+					evaluationIndexText.text = priority.ToString();
+				}
 			}
 		}
 

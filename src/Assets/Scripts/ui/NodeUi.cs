@@ -10,6 +10,7 @@
 		IBoxSelectable
 	{
 		public RectTransform selectionPrefab;
+		public Text evaluationIndexText;
 
 		private CircuitNode node;
 
@@ -66,6 +67,18 @@
 				if (!IsSidebarNode)
 					OnMovedToWorld();
 				UiManager.Register(this);
+			}
+		}
+
+		public bool IndexTextActive
+		{
+			get
+			{
+				return (evaluationIndexText != null) && evaluationIndexText.gameObject.activeSelf;
+			}
+			set
+			{
+				if (evaluationIndexText != null) evaluationIndexText.gameObject.SetActive(value);
 			}
 		}
 
