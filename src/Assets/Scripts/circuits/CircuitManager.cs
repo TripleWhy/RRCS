@@ -139,40 +139,55 @@
 			List<CircuitNode> newEvaluationOrder = new List<CircuitNode>(nodes.Count);
 			HashSet<CircuitNode> pending = new HashSet<CircuitNode>();
 			HashSet<CircuitNode> evaluated = new HashSet<CircuitNode>();
-			List<CircuitNode> selected = new List<CircuitNode>(nodes.Count);
+			HashSet<CircuitNode> visited = new HashSet<CircuitNode>();
 
-			int loopRuns = 0;
-			for (; loopRuns < 10000; loopRuns++)
+			while (true)
 			{
 				EvaluateOrder1(pending, evaluated, newEvaluationOrder);
 				if (pending.Count == 0)
 					break;
-				while (true)
-				{
-					CircuitNode n = SelectPending(pending);
-					selected.Add(n);
-					evaluated.Add(n);
-					int evaluatedCount = evaluated.Count;
-					EvaluateOrder1(pending, evaluated, newEvaluationOrder);
-					if (evaluated.Count > evaluatedCount)
-						break;
-				}
-				for (int i = selected.Count - 1; i >= 0; --i)
-					evaluated.Remove(selected[i]);
-				selected.Clear();
+
+				CircuitNode n = SelectPending(pending, visited);
+				if (n == null)
+					return;
+				Debug.Assert(pending.Contains(n));
+				Debug.Assert(!evaluated.Contains(n));
+				evaluated.Add(n);
+				newEvaluationOrder.Add(n);
 			}
-
-			Debug.Assert(pending.Count == 0);
-
 			ReplaceNodePriorities(newEvaluationOrder);
 		}
 
-		private CircuitNode SelectPending(HashSet<CircuitNode> pending)
+		private CircuitNode SelectPending(HashSet<CircuitNode> pending, HashSet<CircuitNode> visited)
 		{
+			visited.Clear();
 			for (int i = nodes.Count - 1; i >= 0; i--)
-				if (pending.Contains(nodes[i]))
-					return nodes[i];
+			{
+				CircuitNode node = nodes[i];
+				if (!pending.Contains(node))
+					continue;
+
+				CircuitNode n = Visit(node, pending, visited);
+				if (n != null)
+					return n;
+			}
 			Debug.Assert(false);
+			return null;
+		}
+
+		private CircuitNode Visit(CircuitNode node, HashSet<CircuitNode> pending, HashSet<CircuitNode> visited)
+		{
+			visited.Add(node);
+			foreach (CircuitNode dependency in node.DependsOn())
+			{
+				if (!pending.Contains(dependency))
+					continue;
+				if (visited.Contains(dependency))
+					return node;
+				CircuitNode n = Visit(dependency, pending, visited);
+				if (n != null)
+					return n;
+			}
 			return null;
 		}
 
