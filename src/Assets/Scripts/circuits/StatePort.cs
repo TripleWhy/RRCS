@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using System.Collections.Generic;
+
 	public class StatePort : Port
 	{
 		public enum StatePortType
@@ -99,7 +97,7 @@ namespace AssemblyCSharp
 
 		public StateChip getNextState()
 		{
-			Debug.Assert(connections.Count <= 1);
+			DebugUtils.Assert(connections.Count <= 1);
 			if (connections.Count == 1)
 				return (StateChip) connections[0].targetPort.node;
 			return null;

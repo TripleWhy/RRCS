@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using System.Collections.Generic;
+
 	public class StateMachineChip : Chip
 	{
 		private int timeInState = 0;
@@ -38,7 +37,7 @@ namespace AssemblyCSharp
 
 		public override void Evaluate()
 		{
-			Debug.Assert(statePort != null);
+			DebugUtils.Assert(statePort != null);
 
 
 			if (IsResetSet)

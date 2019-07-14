@@ -2,7 +2,6 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using UnityEngine;
 
 	public class CircuitManager
 	{
@@ -13,7 +12,7 @@
 
 		public void AddNode(CircuitNode node)
 		{
-			Debug.Assert(!nodes.Contains(node));
+			DebugUtils.Assert(!nodes.Contains(node));
 			if (nodes.Contains(node))
 				return;
 
@@ -27,11 +26,11 @@
 
 		public void RemoveNode(CircuitNode node)
 		{
-			Debug.Assert(object.ReferenceEquals(nodes[node.RingEvaluationPriority], node));
+			DebugUtils.Assert(object.ReferenceEquals(nodes[node.RingEvaluationPriority], node));
 			nodes.RemoveAt(node.RingEvaluationPriority);
 			for (int i = node.RingEvaluationPriority, s = nodes.Count; i < s; i++)
 			{
-				Debug.Assert(nodes[i].RingEvaluationPriority == i + 1);
+				DebugUtils.Assert(nodes[i].RingEvaluationPriority == i + 1);
 				nodes[i].RingEvaluationPriority = i;
 			}
 
@@ -52,7 +51,7 @@
 		{
 			newPriority = Math.Min(Math.Max(newPriority, 0), nodes.Count - 1);
 			int oldPriority = node.RingEvaluationPriority;
-			Debug.Assert(object.Equals(nodes[oldPriority], node));
+			DebugUtils.Assert(object.Equals(nodes[oldPriority], node));
 			if (newPriority == oldPriority)
 				return;
 			nodes.RemoveAt(oldPriority);
@@ -61,14 +60,14 @@
 			for (int i = Math.Min(oldPriority, newPriority), max = Math.Max(oldPriority, newPriority); i <= max; i++)
 				nodes[i].RingEvaluationPriority = i;
 
-			Debug.Assert(object.Equals(nodes[newPriority], node));
-			Debug.Assert(node.RingEvaluationPriority == newPriority);
+			DebugUtils.Assert(object.Equals(nodes[newPriority], node));
+			DebugUtils.Assert(node.RingEvaluationPriority == newPriority);
 			InvalidateOrder();
 		}
 
 		private void ReplaceNodePriorities(List<CircuitNode> newNodes)
 		{
-			Debug.Assert(newNodes.Count == nodes.Count);
+			DebugUtils.Assert(newNodes.Count == nodes.Count);
 			nodes = newNodes;
 			for (int i = 0; i < nodes.Count; i++)
 				nodes[i].RingEvaluationPriority = i;
@@ -88,7 +87,7 @@
 		{
 			for (int i = nodes.Count - 1; i >= 0; --i)
 				RemoveNode(nodes[i]);
-			Debug.Assert(nodes.Count == 0);
+			DebugUtils.Assert(nodes.Count == 0);
 		}
 
 		private void Node_ConnectionChanged(CircuitNode source)
@@ -111,13 +110,13 @@
 
 		private void EvaluateIfNecessary()
 		{
-			float t0 = Time.realtimeSinceStartup;
+			float t0 = UnityEngine.Time.realtimeSinceStartup;
 
 			if (graphChanged)
 			{
 				graphChanged = false;
 				EvaluateOrder();
-				Debug.Assert(graphChanged == false);
+				DebugUtils.Assert(graphChanged == false);
 				evaluationRequired = true;
 			}
 			if (evaluationRequired)
@@ -128,8 +127,8 @@
 			else
 				return;
 
-			float t1 = Time.realtimeSinceStartup;
-			Debug.Log("Time: " + (t1 - t0));
+			float t1 = UnityEngine.Time.realtimeSinceStartup;
+			UnityEngine.Debug.Log("Time: " + (t1 - t0));
 		}
 
 		public void EvaluateOrder()
@@ -150,8 +149,8 @@
 				CircuitNode n = SelectPending(pending, visited);
 				if (n == null)
 					return;
-				Debug.Assert(pending.Contains(n));
-				Debug.Assert(!evaluated.Contains(n));
+				DebugUtils.Assert(pending.Contains(n));
+				DebugUtils.Assert(!evaluated.Contains(n));
 				evaluated.Add(n);
 				newEvaluationOrder.Add(n);
 			}
@@ -171,7 +170,7 @@
 				if (n != null)
 					return n;
 			}
-			Debug.Assert(false);
+			DebugUtils.Assert(false);
 			return null;
 		}
 

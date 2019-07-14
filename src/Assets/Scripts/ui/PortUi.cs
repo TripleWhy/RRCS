@@ -62,8 +62,8 @@
 						return;
 					throw new InvalidOperationException();
 				}
-				Debug.Assert(value.IsInput == isInput);
-				Debug.Assert(value.isReset == IsReset);
+				DebugUtils.Assert(value.IsInput == isInput);
+				DebugUtils.Assert(value.isReset == IsReset);
 				port = value;
 				UiManager.Register(this);
 			}
@@ -147,7 +147,7 @@
 			}
 
 			draggingLine = Instantiate(connectionPrefab, linesContainer).GetComponent<ConnectionUi>();
-			Debug.Assert(draggingLine != null);
+			DebugUtils.Assert(draggingLine != null);
 
 			draggingLine.sourcePortUi = srcPort;
 

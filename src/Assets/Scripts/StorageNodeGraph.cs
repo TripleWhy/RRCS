@@ -51,7 +51,7 @@ namespace AssemblyCSharp
 			for (int i = 0; i < graph.Length; i++)
 			{
 				CircuitNode node = nodes[i];
-				Debug.Assert(node.RingEvaluationPriority == i);
+				DebugUtils.Assert(node.RingEvaluationPriority == i);
 
 				StorageNode storageNode = new StorageNode();
 				NodeUi ui = UiManager.GetUi(node);
@@ -186,7 +186,7 @@ namespace AssemblyCSharp
 					setting.ParseValue(settingContainer.value);
 				}
 			}
-			Debug.Assert(manager.circuitManager.Nodes.Count == graph.Length);
+			DebugUtils.Assert(manager.circuitManager.Nodes.Count == graph.Length);
 
 			yield return 0;
 			

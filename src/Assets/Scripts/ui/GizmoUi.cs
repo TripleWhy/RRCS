@@ -79,8 +79,8 @@ namespace AssemblyCSharp
 
 		private void SetupPorts(int portCount, Port[] ports, ref PortUi port0Ui, ref PortUi[] portUis)
 		{
-			Debug.Assert(ports != null);
-			Debug.Assert(portUis == null);
+			DebugUtils.Assert(ports != null);
+			DebugUtils.Assert(portUis == null);
 			portUis = new PortUi[ports.Length];
 
 			if (portCount <= 0)
@@ -129,7 +129,7 @@ namespace AssemblyCSharp
 		{
 			if (!skipSetup)
 				return;
-			Debug.Assert(inPorts == null);
+			DebugUtils.Assert(inPorts == null);
 			inPorts = new PortUi[TotalInPortCount];
 			outPorts = new PortUi[0];
 			statePorts = new PortUi[0];
@@ -143,13 +143,13 @@ namespace AssemblyCSharp
 				if (port.isInput)
 				{
 					int index = port.IsReset ? InPortCount : (inPortIndex++);
-					Debug.Assert(inPorts[index] == null);
+					DebugUtils.Assert(inPorts[index] == null);
 					inPorts[index] = port;
 					port.Port = Node.inputPorts[index];
 				}
 			}
 
-			Debug.Assert(!Array.Exists(inPorts, element => element == null));
+			DebugUtils.Assert(!Array.Exists(inPorts, element => element == null));
 		}
 
 		public override string GetParams()
@@ -159,7 +159,7 @@ namespace AssemblyCSharp
 
 		public override void ParseParams(string parameters)
 		{
-			Debug.Assert(type == (GizmoType) Enum.Parse(typeof(GizmoType), parameters));
+			DebugUtils.Assert(type == (GizmoType) Enum.Parse(typeof(GizmoType), parameters));
 		}
 
 		public bool TextActive

@@ -25,13 +25,13 @@
 					priorityEditor = child.GetComponent<IntEditor>();
 				effectiveEvaluationIndexText = child.GetComponent<Text>() ?? effectiveEvaluationIndexText;
 			}
-			Debug.Assert(priorityEditor != null);
+			DebugUtils.Assert(priorityEditor != null);
 			priorityEditor.ValueChanged += PriorityEditor_ValueChanged;
 		}
 
 		private void PriorityEditor_ValueChanged(IntEditor sender, int value)
 		{
-			Debug.Assert(selectedNodes.Count == 1);
+			DebugUtils.Assert(selectedNodes.Count == 1);
 			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
 		}
 
@@ -129,7 +129,7 @@
 			}
 			else
 			{
-				Debug.Assert(false);
+				DebugUtils.Assert(false);
 				return null;
 			}
 		}

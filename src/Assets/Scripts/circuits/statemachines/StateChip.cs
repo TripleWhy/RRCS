@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using System.Collections.Generic;
+
 	public class StateChip : Chip
 	{
 		private bool isActive = false;

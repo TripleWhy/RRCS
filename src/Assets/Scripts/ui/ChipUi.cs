@@ -97,8 +97,8 @@
 		private void SetupPorts(int portCount, Port[] ports, bool useCompactFormat, ref PortUi port0UI,
 			ref PortUi resetPortUi, ref PortUi[] portUIs)
 		{
-			Debug.Assert(ports != null);
-			Debug.Assert(portUIs == null);
+			DebugUtils.Assert(ports != null);
+			DebugUtils.Assert(portUIs == null);
 			portUIs = new PortUi[ports.Length];
 
 			if (portCount <= 0)
@@ -223,8 +223,8 @@
 		{
 			if (!skipSetup)
 				return;
-			Debug.Assert(inPorts == null);
-			Debug.Assert(outPorts == null);
+			DebugUtils.Assert(inPorts == null);
+			DebugUtils.Assert(outPorts == null);
 			inPorts = new PortUi[TotalInPortCount];
 			outPorts = new PortUi[TotalOutPortCount];
 			statePorts = new PortUi[TotalStatePortCount];
@@ -240,27 +240,27 @@
 				if (port.isInput)
 				{
 					int index = port.IsReset ? InPortCount : (inPortIndex++);
-					Debug.Assert(inPorts[index] == null);
+					DebugUtils.Assert(inPorts[index] == null);
 					inPorts[index] = port;
 					port.Port = Node.inputPorts[index];
 				}
 				else if (port.isState)
 				{
 					int index = statePortIndex++;
-					Debug.Assert(statePorts[index] == null);
+					DebugUtils.Assert(statePorts[index] == null);
 					statePorts[index] = port;
 					port.Port = Node.statePort;
 				}
 				else
 				{
 					int index = port.IsReset ? OutPortCount : (outPortIndex++);
-					Debug.Assert(outPorts[index] == null);
+					DebugUtils.Assert(outPorts[index] == null);
 					outPorts[index] = port;
 					port.Port = Node.outputPorts[index];
 				}
 			}
-			Debug.Assert(!Array.Exists(inPorts, element => element == null));
-			Debug.Assert(!Array.Exists(outPorts, element => element == null));
+			DebugUtils.Assert(!Array.Exists(inPorts, element => element == null));
+			DebugUtils.Assert(!Array.Exists(outPorts, element => element == null));
 		}
 
 		public override string GetParams()
@@ -270,7 +270,7 @@
 
 		public override void ParseParams(string parameters)
 		{
-			Debug.Assert(type == (ChipType) Enum.Parse(typeof(ChipType), parameters));
+			DebugUtils.Assert(type == (ChipType) Enum.Parse(typeof(ChipType), parameters));
 		}
 	}
 }

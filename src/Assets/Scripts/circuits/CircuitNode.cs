@@ -2,8 +2,6 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
 
 	public abstract class CircuitNode : IComparable<CircuitNode>
 	{
@@ -101,7 +99,7 @@
 
 		private void CircuitNode_Connected(Connection connection)
 		{
-			Debug.Assert(connection.targetPort.IsInput);
+			DebugUtils.Assert(connection.targetPort.IsInput);
 			EmitConnectionChanged();
 			EmitEvaluationRequired();
 		}

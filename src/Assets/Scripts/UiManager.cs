@@ -31,7 +31,7 @@
 		{
 			if (nodeUi.IsSidebarNode)
 				return;
-			Debug.Assert(!nodes.ContainsKey(nodeUi.Node));
+			DebugUtils.Assert(!nodes.ContainsKey(nodeUi.Node));
 			if (nodes.ContainsKey(nodeUi.Node))
 				return;
 			nodes[nodeUi.Node] = nodeUi;
@@ -83,7 +83,7 @@
 		
 		public static void Register(ConnectionUi connectionUi)
 		{
-			Debug.Assert(!connections.ContainsKey(connectionUi.Connection));
+			DebugUtils.Assert(!connections.ContainsKey(connectionUi.Connection));
 			if (connections.ContainsKey(connectionUi.Connection))
 				return;
 			connections[connectionUi.Connection] = connectionUi;

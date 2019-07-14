@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
 	using System.Collections.Generic;
 
@@ -76,8 +74,8 @@ namespace AssemblyCSharp
 
 				var targetRootPorts = target.getAllConnectedRootPorts();
 				var sourceRootPorts = source.getAllConnectedRootPorts();
-				Debug.Assert(targetRootPorts.Count <= 1);
-				Debug.Assert(sourceRootPorts.Count <= 1);
+				DebugUtils.Assert(targetRootPorts.Count <= 1);
+				DebugUtils.Assert(sourceRootPorts.Count <= 1);
 
 				// Only one StateChip is allowed in a network
 				if (sourceRootPorts.Count == 1 &&
@@ -138,7 +136,7 @@ namespace AssemblyCSharp
 			for (int i = connections.Count - 1; i >= 0; i--)
 				connections[i].Disconnect();
 
-			Debug.Assert(connections.Count == 0);
+			DebugUtils.Assert(connections.Count == 0);
 		}
 
 		protected void EmitValueChanged()

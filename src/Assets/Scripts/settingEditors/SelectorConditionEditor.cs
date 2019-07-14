@@ -1,11 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
-	using System;
 	using UnityEngine;
 	using UnityEngine.Events;
-	using UnityEngine.EventSystems;
 	using UnityEngine.UI;
-	using UnityEngine.UI.Extensions;
 
 	public class SelectorConditionEditor : MonoBehaviour
 	{
@@ -46,11 +43,11 @@
 				else if (plusButton == null)
 					plusButton = child.GetComponent<Button>();
 			}
-			Debug.Assert(operationButton != null);
-			Debug.Assert(operationButtonText != null);
-			Debug.Assert(input != null);
-			Debug.Assert(plusButton != null);
-			Debug.Assert(minusButton != null);
+			DebugUtils.Assert(operationButton != null);
+			DebugUtils.Assert(operationButtonText != null);
+			DebugUtils.Assert(input != null);
+			DebugUtils.Assert(plusButton != null);
+			DebugUtils.Assert(minusButton != null);
 
 			input.text = RhsArgument.ToString();
 
