@@ -146,13 +146,55 @@
 			}
 		}
 
-		public virtual IEnumerable<CircuitNode> DependsOn()
+		public SortedSet<CircuitNode> DependsOn()
+		{
+			SortedSet<CircuitNode> dependencies = new SortedSet<CircuitNode>(SimpleDependsOn());
+			return dependencies;
+		}
+
+		public void DependsOn(SortedSet<CircuitNode> depedencies)
+		{
+			depedencies.Clear();
+			depedencies.UnionWith(SimpleDependsOn());
+		}
+
+		public virtual IEnumerable<CircuitNode> SimpleDependsOn()
+		{
+			foreach (Connection connection in IncomingConnections())
+				yield return connection.sourcePort.node;
+		}
+
+		public SortedSet<CircuitNode> DependingOnThis()
+		{
+			SortedSet<CircuitNode> dependants = new SortedSet<CircuitNode>(SimpleDependingOnThis());
+			return dependants;
+		}
+
+		public void DependingOnThis(SortedSet<CircuitNode> dependants)
+		{
+			dependants.Clear();
+			dependants.UnionWith(SimpleDependingOnThis());
+		}
+
+		public virtual IEnumerable<CircuitNode> SimpleDependingOnThis()
+		{
+			foreach (Connection connection in OutgoingConnections())
+				yield return connection.targetPort.node;
+		}
+
+		public virtual IEnumerable<Connection> IncomingConnections()
 		{
 			foreach (InputPort port in inputPorts)
-			{
 				if (port.IsConnected && !ReferenceEquals(port.connections[0].sourcePort.node, this))
-					yield return port.connections[0].sourcePort.node;
-			}
+					yield return port.connections[0];
+		}
+
+		public virtual IEnumerable<Connection> OutgoingConnections()
+		{
+			foreach (OutputPort port in outputPorts)
+				foreach (Connection connection in port.connections)
+					if (!ReferenceEquals(connection.targetPort.node, this))
+						yield return connection;
 		}
 
 		public static int ToInt(bool b)

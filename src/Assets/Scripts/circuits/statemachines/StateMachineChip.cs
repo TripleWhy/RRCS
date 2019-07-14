@@ -96,7 +96,7 @@
 			outputPorts[4].Value = prevActiveState != activeState ? 1 : 0;
 		}
 
-		public override IEnumerable<CircuitNode> DependsOn()
+		public override IEnumerable<CircuitNode> SimpleDependsOn()
 		{
 			var transitionPorts = statePort.getAllTransitionEnabledPorts();
 			foreach (var port in transitionPorts)
@@ -104,6 +104,12 @@
 				if (port.IsConnected && !ReferenceEquals(port.connections[0].sourcePort.node, this))
 					yield return port.connections[0].sourcePort.node;
 			}
+		}
+
+		public override IEnumerable<CircuitNode> SimpleDependingOnThis()
+		{
+			//TODO
+			throw new System.NotImplementedException();
 		}
 	}
 }
