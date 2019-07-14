@@ -2,9 +2,12 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 
 	public class CircuitManager
 	{
+		private const bool dbgForceReEvaluation = false;
+
 		private List<CircuitNode> nodes = new List<CircuitNode>();
 		private bool graphChanged = true;
 		private bool evaluationRequired = true;
@@ -112,7 +115,7 @@
 		{
 			float t0 = UnityEngine.Time.realtimeSinceStartup;
 
-			if (graphChanged)
+			if (graphChanged || dbgForceReEvaluation)
 			{
 				graphChanged = false;
 				EvaluateOrder();
@@ -133,101 +136,128 @@
 
 		public void EvaluateOrder()
 		{
-			//TODO this whole evaluation stuff seems overly complicated. Find a better solution?
+			ReplaceNodePriorities(OrderDfsR());
+		}
 
-			List<CircuitNode> newEvaluationOrder = new List<CircuitNode>(nodes.Count);
-			HashSet<CircuitNode> pending = new HashSet<CircuitNode>();
-			HashSet<CircuitNode> evaluated = new HashSet<CircuitNode>();
-			HashSet<CircuitNode> visited = new HashSet<CircuitNode>();
+		private class EdgeComparer : IComparer<Connection>
+		{
+			public int Compare(Connection x, Connection y)
+			{
+				int xTargetPrio = x.targetPort.node.RingEvaluationPriority;
+				int yTargetPrio = y.targetPort.node.RingEvaluationPriority;
+				if (xTargetPrio != yTargetPrio)
+					return xTargetPrio.CompareTo(yTargetPrio);
+				int xSourcePrio = x.sourcePort.node.RingEvaluationPriority;
+				int ySourcePrio = y.sourcePort.node.RingEvaluationPriority;
+				return ySourcePrio.CompareTo(xSourcePrio);
+			}
+		}
 
+		private enum DfsMark
+		{
+			Unmarked,
+			Temmporary,
+			Permanent,
+		}
+		//Based on https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search, but with reversed logic and loop resolution.
+		private List<CircuitNode> OrderDfsR()
+		{
+			Dictionary<CircuitNode, DfsMark> marks = new Dictionary<CircuitNode, DfsMark>(); //A simple array should work too
+			foreach (CircuitNode n in nodes)
+				marks.Add(n, DfsMark.Unmarked);
+
+			List<CircuitNode> L = new List<CircuitNode>();
+			Stack<CircuitNode> path = new Stack<CircuitNode>();
+			HashSet<Connection> removedEdges = new HashSet<Connection>();
+			foreach (CircuitNode n in nodes)
+			{
+				if (marks[n] != DfsMark.Unmarked)
+					continue;
+				DebugUtils.Assert(ReferenceEquals(n, nodes.First(cn => marks[cn] == DfsMark.Unmarked)));
+				OrderDfsRVisit0(n, marks, L, path, removedEdges);
+				DebugUtils.Assert(marks[n] == DfsMark.Permanent);
+			}
+			DebugUtils.Assert(!nodes.Any((CircuitNode n) => marks[n] != DfsMark.Permanent));
+
+			return L;
+		}
+		private CircuitNode OrderDfsRVisit0(CircuitNode n, Dictionary<CircuitNode, DfsMark> marks, List<CircuitNode> L, Stack<CircuitNode> path, HashSet<Connection> removedEdges)
+		{
+			path.Push(n);
+			CircuitNode result = OrderDfsRVisit1(n, marks, L, path, removedEdges);
+			CircuitNode popped = path.Pop();
+			DebugUtils.Assert(ReferenceEquals(popped, n));
+			return result;
+		}
+
+		private CircuitNode OrderDfsRVisit1(CircuitNode n, Dictionary<CircuitNode, DfsMark> marks, List<CircuitNode> L, Stack<CircuitNode> path, HashSet<Connection> removedEdges)
+		{
+			switch (marks[n])
+			{
+				case DfsMark.Unmarked:
+					break;
+				case DfsMark.Permanent:
+					return null;
+				case DfsMark.Temmporary:
+					throw new InvalidOperationException();
+			}
+
+			marks[n] = DfsMark.Temmporary;
 			while (true)
 			{
-				EvaluateOrder1(pending, evaluated, newEvaluationOrder);
-				if (pending.Count == 0)
+				CircuitNode backtrackTo = null;
+				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.sourcePort.node)) //inefficent?
+				{
+					CircuitNode m = e.sourcePort.node;
+					if (marks[m] == DfsMark.Temmporary)
+					{
+						SortedSet<CircuitNode> loop = new SortedSet<CircuitNode>();
+						foreach (CircuitNode cn in path)
+						{
+							loop.Add(cn);
+							if (ReferenceEquals(cn, m))
+								break;
+						}
+						foreach (CircuitNode cn in loop)
+						{
+							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, new EdgeComparer())) //inefficent?
+							{
+								DebugUtils.Assert(ReferenceEquals(c.targetPort.node, cn));
+								CircuitNode src = c.sourcePort.node;
+								if (!loop.Contains(src))
+									continue;
+								removedEdges.Add(c);
+								backtrackTo = cn;
+								goto afterLoop;
+								//marks[n] = DfsMark.Unmarked;
+								//return cn;
+							}
+						}
+						throw new InvalidOperationException();
+					}
+
+					backtrackTo = OrderDfsRVisit0(m, marks, L, path, removedEdges);
+					if (backtrackTo != null)
+						break;
+				}
+				afterLoop:
+				if (backtrackTo == null)
 					break;
-
-				CircuitNode n = SelectPending(pending, visited);
-				if (n == null)
-					return;
-				DebugUtils.Assert(pending.Contains(n));
-				DebugUtils.Assert(!evaluated.Contains(n));
-				evaluated.Add(n);
-				newEvaluationOrder.Add(n);
+				else if (!ReferenceEquals(backtrackTo, n))
+				{
+					marks[n] = DfsMark.Unmarked;
+					return backtrackTo;
+				}
 			}
-			ReplaceNodePriorities(newEvaluationOrder);
-		}
 
-		private CircuitNode SelectPending(HashSet<CircuitNode> pending, HashSet<CircuitNode> visited)
-		{
-			visited.Clear();
-			for (int i = nodes.Count - 1; i >= 0; i--)
+			if (marks[n] == DfsMark.Temmporary)
 			{
-				CircuitNode node = nodes[i];
-				if (!pending.Contains(node))
-					continue;
-
-				CircuitNode n = Visit(node, pending, visited);
-				if (n != null)
-					return n;
-			}
-			DebugUtils.Assert(false);
-			return null;
-		}
-
-		private CircuitNode Visit(CircuitNode node, HashSet<CircuitNode> pending, HashSet<CircuitNode> visited)
-		{
-			visited.Add(node);
-			foreach (CircuitNode dependency in node.DependsOn())
-			{
-				if (!pending.Contains(dependency))
-					continue;
-				if (visited.Contains(dependency))
-					return node;
-				CircuitNode n = Visit(dependency, pending, visited);
-				if (n != null)
-					return n;
-			}
-			return null;
-		}
-
-		private void EvaluateOrder1(HashSet<CircuitNode> pending, HashSet<CircuitNode> evaluated, List<CircuitNode> nodeOrder)
-		{
-			pending.Clear();
-			int evaluatedCount;
-			do
-			{
-				evaluatedCount = evaluated.Count;
-				foreach (CircuitNode node in nodes)
-					EvaluateOrder2(node, pending, evaluated, nodeOrder);
-			} while (evaluated.Count != evaluatedCount);
-		}
-
-		private bool EvaluateOrder2(CircuitNode node, HashSet<CircuitNode> pending, HashSet<CircuitNode> evaluated, List<CircuitNode> nodeOrder)
-		{
-			if (evaluated.Contains(node))
-				return true;
-			if (pending.Contains(node))
-				return false;
-			pending.Add(node);
-			bool blocked = false;
-			foreach (CircuitNode dependency in node.DependsOn())
-			{
-				if (evaluated.Contains(dependency))
-					continue;
-				if (!EvaluateOrder2(dependency, pending, evaluated, nodeOrder))
-					blocked = true;
-			}
-			if (blocked)
-			{
-				return false;
+				marks[n] = DfsMark.Permanent;
+				L.Add(n);
 			}
 			else
-			{
-				nodeOrder.Add(node);
-				pending.Remove(node);
-				evaluated.Add(node);
-				return true;
-			}
+				throw new InvalidOperationException();
+			return null;
 		}
 
 		private void Evaluate()
