@@ -19,7 +19,9 @@
 			StartGame, GameState, SetScore, Score,
 			SFX, Random, Selector,
 			Respawn, PlayerHit,
-			StateMachine, State
+			StateMachine, State,
+
+			ExtBreakpoint,
 		};
 
 		public ChipType type;
@@ -193,6 +195,8 @@
 					return new StateMachineChip(manager);
 				case ChipType.State:
 					return new StateChip(manager);
+				case ChipType.ExtBreakpoint:
+					return new BreakpointChip(manager);
 				default:
 					return null;
 			}

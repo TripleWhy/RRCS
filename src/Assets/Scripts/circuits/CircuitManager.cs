@@ -12,6 +12,14 @@
 		private bool evaluationRequired = true;
 		public int CurrentTick { get; private set; }
 
+		public delegate void VoidEventHandler();
+		public event VoidEventHandler SimulationPauseRequested = delegate { };
+
+		internal void RequestSimulationPause()
+		{
+			SimulationPauseRequested();
+		}
+
 		public void AddNode(CircuitNode node)
 		{
 			Debug.Assert(!nodes.Contains(node));
