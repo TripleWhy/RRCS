@@ -223,7 +223,7 @@
 				}
 			}
 
-			if (delayIcon != null)
+			if (Port != null && delayIcon != null)
 			{
 				bool delayed;
 				if (Port.IsConnected)
