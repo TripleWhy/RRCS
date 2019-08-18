@@ -49,6 +49,7 @@ namespace AssemblyCSharp
 			{
 				settingsEditor.SetSelectedNodes(selectionManager.GetSelectedNodes());
 			});
+			circuitManager.SimulationPauseRequested += SimulationPause;
 		}
 
 		void FixedUpdate()
