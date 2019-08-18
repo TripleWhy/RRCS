@@ -9,6 +9,7 @@
 		private static readonly Dictionary<Port, PortUi> ports = new Dictionary<Port, PortUi>();
 		private static readonly Dictionary<Connection, ConnectionUi> connections = new Dictionary<Connection, ConnectionUi>();
 		private static bool showPortLabels = false;
+		private static bool showOrderLabels = false;
 
 		public static IEnumerable<MonoBehaviour> GetSelectables()
 		{
@@ -19,21 +20,27 @@
 		public static IEnumerable<GizmoUi> GetGizmos()
 		{
 			foreach (NodeUi node in nodes.Values)
-				if (node.GetType() == typeof(GizmoUi))
-					yield return (GizmoUi) node;
+			{
+				GizmoUi gizmo = node as GizmoUi;
+				if (gizmo != null)
+					yield return gizmo;
+			}
 		}
 		
 		public static void Register(NodeUi nodeUi)
 		{
 			if (nodeUi.IsSidebarNode)
 				return;
-			Debug.Assert(!nodes.ContainsKey(nodeUi.Node));
+			DebugUtils.Assert(!nodes.ContainsKey(nodeUi.Node));
 			if (nodes.ContainsKey(nodeUi.Node))
 				return;
 			nodes[nodeUi.Node] = nodeUi;
 			RRCSManager.Instance.selectionManager.SetSelectables(GetSelectables());
-			if (nodeUi.GetType() == typeof(GizmoUi))
-				((GizmoUi) nodeUi).TextActive = showPortLabels;
+
+			nodeUi.IndexTextActive = showOrderLabels;
+			GizmoUi gimoUi = nodeUi as GizmoUi;
+			if (gimoUi != null)
+				gimoUi.TextActive = showPortLabels;
 		}
 
 		public static void Unregister(NodeUi nodeUi)
@@ -76,7 +83,7 @@
 		
 		public static void Register(ConnectionUi connectionUi)
 		{
-			Debug.Assert(!connections.ContainsKey(connectionUi.Connection));
+			DebugUtils.Assert(!connections.ContainsKey(connectionUi.Connection));
 			if (connections.ContainsKey(connectionUi.Connection))
 				return;
 			connections[connectionUi.Connection] = connectionUi;
@@ -149,11 +156,26 @@
 			}
 		}
 
+		public static bool ShowEvaluationOrderLabels
+		{
+			get
+			{
+				return showOrderLabels;
+			}
+			set
+			{
+				if (value == showOrderLabels)
+					return;
+				showOrderLabels = value;
+				foreach (NodeUi node in nodes.Values)
+					node.IndexTextActive = value;
+			}
+		}
+
 		public static void ResetGizmos()
 		{
-			foreach (GizmoUi node in GetGizmos())
-				if (node.Node != null)
-					((Gizmo) node.Node).reset();
+			foreach (GizmoUi gizmo in GetGizmos())
+				gizmo.Gizmo.reset();
 		}
 	}
 }

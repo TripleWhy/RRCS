@@ -1,11 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
-    using System;
     using UnityEngine;
     using UnityEngine.Events;
-    using UnityEngine.EventSystems;
     using UnityEngine.UI;
-    using UnityEngine.UI.Extensions;
 
     public class StringEditor : MonoBehaviour
     {
@@ -35,7 +32,7 @@
                     input = child.GetComponent<InputField>();
             }
 
-            Debug.Assert(input != null);
+            DebugUtils.Assert(input != null);
 
             input.text = Value;
 

@@ -197,7 +197,7 @@
 					return new NodeSetting(type, "Limit Length", typeof(bool), true);
 					
 			}
-			Debug.Assert(false);
+			DebugUtils.Assert(false);
 			return null;
 		}
 

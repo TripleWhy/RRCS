@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using UnityEngine;
+	using UnityEngine.UI;
 
 	public class NodeSettingsUi : MonoBehaviour
 	{
@@ -11,6 +12,7 @@
 		public StringEditor stringEditorPrefab;
 		public SelectorConditionEditor selectorConditionEditorPrefab;
 
+		private Text effectiveEvaluationIndexText;
 		private IntEditor priorityEditor;
 		private List<NodeUi> selectedNodes = new List<NodeUi>();
 		private List<GameObject> editors = new List<GameObject>();
@@ -21,16 +23,16 @@
 			{
 				if (priorityEditor == null)
 					priorityEditor = child.GetComponent<IntEditor>();
+				effectiveEvaluationIndexText = child.GetComponent<Text>() ?? effectiveEvaluationIndexText;
 			}
-			Debug.Assert(priorityEditor != null);
+			DebugUtils.Assert(priorityEditor != null);
 			priorityEditor.ValueChanged += PriorityEditor_ValueChanged;
 		}
 
 		private void PriorityEditor_ValueChanged(IntEditor sender, int value)
 		{
-			Debug.Assert(selectedNodes.Count == 1);
+			DebugUtils.Assert(selectedNodes.Count == 1);
 			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
-			priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
 		}
 
 		public void SetSelectedNodes(IEnumerable<NodeUi> nodes)
@@ -39,6 +41,8 @@
 				Destroy(go);
 			editors.Clear();
 
+			if (selectedNodes.Count == 1)
+				selectedNodes[0].Node.RingEvaluationPriorityChanged -= Node_RingEvaluationPriorityChanged;
 			selectedNodes.Clear();
 			foreach (NodeUi nodeUi in nodes)
 				selectedNodes.Add(nodeUi);
@@ -52,11 +56,15 @@
 			if (selectedNodes.Count > 1)
 			{
 				priorityEditor.gameObject.SetActive(false);
+				effectiveEvaluationIndexText.gameObject.SetActive(false);
 			}
 			else
 			{
 				priorityEditor.gameObject.SetActive(true);
+				effectiveEvaluationIndexText.gameObject.SetActive(true);
 				priorityEditor.Value = selectedNodes[0].Node.RingEvaluationPriority;
+				effectiveEvaluationIndexText.text = EffectiveEvaluationIndexString(selectedNodes[0].Node.RingEvaluationPriority);
+				selectedNodes[0].Node.RingEvaluationPriorityChanged += Node_RingEvaluationPriorityChanged;
 			}
 
 			Dictionary<NodeSetting.SettingType, int> typeUsages = new Dictionary<NodeSetting.SettingType, int>();
@@ -76,6 +84,17 @@
 					continue;
 				editors.Add(CreateSettingEditor(setting));
 			}
+		}
+
+		private void Node_RingEvaluationPriorityChanged(CircuitNode source)
+		{
+			effectiveEvaluationIndexText.text = EffectiveEvaluationIndexString(source.RingEvaluationPriority);
+		}
+
+		//TODO this function should not exist, or simply return intex.ToString().
+		private string EffectiveEvaluationIndexString(int index)
+		{
+			return "Effective Index: " + index;
 		}
 
 		private GameObject CreateSettingEditor(NodeSetting setting)
@@ -110,7 +129,7 @@
 			}
 			else
 			{
-				Debug.Assert(false);
+				DebugUtils.Assert(false);
 				return null;
 			}
 		}

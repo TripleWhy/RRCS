@@ -32,8 +32,8 @@
 
 		void Start()
 		{
-			Debug.Assert(inPorts == null);
-			Debug.Assert(outPorts == null);
+			DebugUtils.Assert(inPorts == null);
+			DebugUtils.Assert(outPorts == null);
 			inPorts = new PortUi[3];
 			outPorts = new PortUi[0];
 			statePorts = new PortUi[0];
@@ -64,9 +64,9 @@
 				inPorts[portIndex] = port;
 				portIndex++;
 			}
-			Debug.Assert(lightCone != null);
-			Debug.Assert(lamp != null);
-			Debug.Assert(portIndex == 3);
+			DebugUtils.Assert(lightCone != null);
+			DebugUtils.Assert(lamp != null);
+			DebugUtils.Assert(portIndex == 3);
 
 			stageLight.ColorChanged += StageLight_ColorChanged;
 			StageLight_ColorChanged(stageLight, stageLight.color);

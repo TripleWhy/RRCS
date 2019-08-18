@@ -116,7 +116,7 @@ namespace AssemblyCSharp
 			using (var mso = new MemoryStream())
 			{
 				using (var gs = new GZipStream(mso, CompressionMode.Compress))
-					CopyTo(msi, gs);
+					msi.CopyTo(gs);
 
 				return mso.ToArray();
 			}
@@ -128,7 +128,7 @@ namespace AssemblyCSharp
 			using (var mso = new MemoryStream())
 			{
 				using (var gs = new GZipStream(msi, CompressionMode.Decompress))
-					CopyTo(gs, mso);
+					gs.CopyTo(mso);
 
 				return Encoding.UTF8.GetString(mso.ToArray());
 			}

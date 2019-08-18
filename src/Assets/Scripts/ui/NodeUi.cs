@@ -1,15 +1,16 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using UnityEngine;
 	using UnityEngine.UI;
 	using UnityEngine.EventSystems;
 	using UnityEngine.UI.Extensions;
-	using System;
 
 	public abstract class NodeUi : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler,
 		IBoxSelectable
 	{
 		public RectTransform selectionPrefab;
+		public Text evaluationIndexText;
 
 		private CircuitNode node;
 
@@ -66,6 +67,18 @@
 				if (!IsSidebarNode)
 					OnMovedToWorld();
 				UiManager.Register(this);
+			}
+		}
+
+		public bool IndexTextActive
+		{
+			get
+			{
+				return (evaluationIndexText != null) && evaluationIndexText.gameObject.activeSelf;
+			}
+			set
+			{
+				if (evaluationIndexText != null) evaluationIndexText.gameObject.SetActive(value);
 			}
 		}
 
@@ -135,10 +148,10 @@
 				EnableRaycast(true);
 				OnMovedToWorld();
 
-				Debug.Assert(inPorts != null);
-				Debug.Assert(inPorts.Length == Node.inputPorts.Length);
-				Debug.Assert(outPorts != null);
-				Debug.Assert(outPorts.Length == Node.outputPorts.Length);
+				DebugUtils.Assert(inPorts != null);
+				DebugUtils.Assert(inPorts.Length == Node.inputPorts.Length);
+				DebugUtils.Assert(outPorts != null);
+				DebugUtils.Assert(outPorts.Length == Node.outputPorts.Length);
 				for (int i = 0; i < inPorts.Length; i++)
 				{
 					inPorts[i].Port = Node.inputPorts[i];
@@ -237,8 +250,8 @@
 		{
 			NodeUi node = draggingInstance ?? this;
 
-			Debug.Assert(node.rectTransform != null);
-			Debug.Assert(node.canvasRectTransform != null);
+			DebugUtils.Assert(node.rectTransform != null);
+			DebugUtils.Assert(node.canvasRectTransform != null);
 
 			Vector2 worldPosition = eventData.position;
 			if (eventData.pressEventCamera != null)
@@ -302,7 +315,7 @@
 			}
 			set
 			{
-				Debug.Assert(!IsSidebarNode);
+				DebugUtils.Assert(!IsSidebarNode);
 				if (value == _selected)
 					return;
 				_selected = value;

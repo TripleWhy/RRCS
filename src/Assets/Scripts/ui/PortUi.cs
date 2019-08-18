@@ -11,6 +11,7 @@
 		public bool isInput;
 		public bool isState;
 		public Text valueText;
+		public Image delayIcon;
 		public ConnectionUi connectionPrefab;
 		private Port port;
 
@@ -61,8 +62,8 @@
 						return;
 					throw new InvalidOperationException();
 				}
-				Debug.Assert(value.IsInput == isInput);
-				Debug.Assert(value.isReset == IsReset);
+				DebugUtils.Assert(value.IsInput == isInput);
+				DebugUtils.Assert(value.isReset == IsReset);
 				port = value;
 				UiManager.Register(this);
 			}
@@ -146,7 +147,7 @@
 			}
 
 			draggingLine = Instantiate(connectionPrefab, linesContainer).GetComponent<ConnectionUi>();
-			Debug.Assert(draggingLine != null);
+			DebugUtils.Assert(draggingLine != null);
 
 			draggingLine.sourcePortUi = srcPort;
 
@@ -220,6 +221,20 @@
 					lastValue = value;
 					valueText.text = value.ToString();
 				}
+			}
+
+			if (Port != null && delayIcon != null)
+			{
+				bool delayed;
+				if (Port.IsConnected)
+				{
+					CircuitNode srcNode = Port.connections[0].sourcePort.node;
+					CircuitNode dstNode = Port.node;
+					delayed = srcNode.RingEvaluationPriority >= dstNode.RingEvaluationPriority;
+				}
+				else
+					delayed = false;
+				delayIcon.gameObject.SetActive(delayed);
 			}
 		}
 

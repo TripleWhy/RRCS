@@ -99,6 +99,12 @@ namespace AssemblyCSharp
 			set { UiManager.ShowPortLabels = value; }
 		}
 
+		public bool ShowEvaluationOrderLabels
+		{
+			get { return UiManager.ShowEvaluationOrderLabels; }
+			set { UiManager.ShowEvaluationOrderLabels = value; }
+		}
+
 		public void ResetGizmos()
 		{
 			UiManager.ResetGizmos();

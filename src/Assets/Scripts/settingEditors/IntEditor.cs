@@ -3,9 +3,7 @@
 	using System;
 	using UnityEngine;
 	using UnityEngine.Events;
-	using UnityEngine.EventSystems;
 	using UnityEngine.UI;
-	using UnityEngine.UI.Extensions;
 
 	public class IntEditor : MonoBehaviour
 	{
@@ -43,9 +41,9 @@
 				else if (plusButton == null)
 					plusButton = child.GetComponent<Button>();
 			}
-			Debug.Assert(input != null);
-			Debug.Assert(plusButton != null);
-			Debug.Assert(minusButton != null);
+			DebugUtils.Assert(input != null);
+			DebugUtils.Assert(plusButton != null);
+			DebugUtils.Assert(minusButton != null);
 
 			plusButton.interactable = Value < maximum;
 			minusButton.interactable = Value > minimum;

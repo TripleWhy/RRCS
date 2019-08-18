@@ -9,8 +9,8 @@
 
 		void Start()
 		{
-			Debug.Assert(inPorts == null);
-			Debug.Assert(outPorts == null);
+			DebugUtils.Assert(inPorts == null);
+			DebugUtils.Assert(outPorts == null);
 			inPorts = new PortUi[0];
 			outPorts = new PortUi[3];
 			statePorts = new PortUi[0];
@@ -29,7 +29,7 @@
 				outPorts[portIndex] = port;
 				portIndex++;
 			}
-			Debug.Assert(portIndex == 3);
+			DebugUtils.Assert(portIndex == 3);
 		}
 
 		protected override CircuitNode CreateNode(CircuitManager manager)

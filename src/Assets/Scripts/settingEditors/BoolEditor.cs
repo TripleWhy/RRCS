@@ -1,8 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
-	using System;
 	using UnityEngine;
 	using UnityEngine.UI;
+	using Debug = System.Diagnostics.Debug;
 
 	public class BoolEditor : MonoBehaviour
 	{
@@ -17,8 +17,8 @@
 		{
 			toggle = GetComponent<Toggle>();
 			settingNameText = GetComponentInChildren<Text>();
-			Debug.Assert(toggle != null);
-			Debug.Assert(settingNameText != null);
+			DebugUtils.Assert(toggle != null);
+			DebugUtils.Assert(settingNameText != null);
 			toggle.onValueChanged.AddListener(OnToggleChanged);
 		}
 

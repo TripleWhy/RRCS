@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using System.Collections.Generic;
+
 	public class StateMachineChip : Chip
 	{
 		private int timeInState = 0;
@@ -38,7 +37,7 @@ namespace AssemblyCSharp
 
 		public override void Evaluate()
 		{
-			Debug.Assert(statePort != null);
+			DebugUtils.Assert(statePort != null);
 
 
 			if (IsResetSet)
@@ -97,7 +96,7 @@ namespace AssemblyCSharp
 			outputPorts[4].Value = prevActiveState != activeState ? 1 : 0;
 		}
 
-		public override IEnumerable<CircuitNode> DependsOn()
+		public override IEnumerable<CircuitNode> SimpleDependsOn()
 		{
 			var transitionPorts = statePort.getAllTransitionEnabledPorts();
 			foreach (var port in transitionPorts)
@@ -105,6 +104,12 @@ namespace AssemblyCSharp
 				if (port.IsConnected && !ReferenceEquals(port.connections[0].sourcePort.node, this))
 					yield return port.connections[0].sourcePort.node;
 			}
+		}
+
+		public override IEnumerable<CircuitNode> SimpleDependingOnThis()
+		{
+			//TODO
+			throw new System.NotImplementedException();
 		}
 	}
 }
