@@ -24,6 +24,7 @@ variables:
     - ./src/Builds/
   only:
   - release
+  - ci
 
 build-StandaloneWindows64:
   <<: *build
