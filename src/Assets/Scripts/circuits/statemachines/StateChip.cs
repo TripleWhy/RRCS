@@ -7,6 +7,11 @@
 		private bool isActive = false;
 		public bool prevActive = false;
 
+		public delegate void StateNameChangedEventHandler(StateChip source, string stateName);
+		public event StateNameChangedEventHandler StateNameChanged = delegate { };
+		public delegate void StateActiveChangedEventHandler(StateChip source, bool stateActive);
+		public event StateActiveChangedEventHandler StateActiveChanged = delegate { };
+
 		public StateChip(CircuitManager manager) : base(manager, 0, 3, false, StatePort.StatePortType.Node)
 		{
 			EmitEvaluationRequired();
@@ -55,6 +60,30 @@
 			};
 		}
 
+		public string StateName
+		{
+			get
+			{
+				return (string)settings[4].currentValue;
+			}
+		}
+
+		public override void SetSetting(NodeSetting setting, object value)
+		{
+			if (setting.type != NodeSetting.SettingType.StateName)
+			{
+				base.SetSetting(setting, value);
+			}
+			else
+			{
+				if (value == setting.currentValue)
+					return;
+				setting.currentValue = value;
+				StateNameChanged(this, (string)value);
+			}
+		}
+
+
 		public bool Active
 		{
 			get
@@ -63,7 +92,10 @@
 			}
 			set
 			{
+				if (value == isActive)
+					return;
 				isActive = value;
+				StateActiveChanged(this, value);
 				EmitEvaluationRequired();
 			}
 		}
