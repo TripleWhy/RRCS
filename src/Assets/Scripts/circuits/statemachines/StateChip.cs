@@ -60,6 +60,38 @@
 			};
 		}
 
+		public int MinTimeInState
+		{
+			get
+			{
+				return (int)settings[0].currentValue;
+			}
+		}
+
+		public int Value0
+		{
+			get
+			{
+				return (int)settings[1].currentValue;
+			}
+		}
+
+		public int Value1
+		{
+			get
+			{
+				return (int)settings[2].currentValue;
+			}
+		}
+
+		public int Value2
+		{
+			get
+			{
+				return (int)settings[3].currentValue;
+			}
+		}
+
 		public string StateName
 		{
 			get
@@ -102,11 +134,9 @@
 
 		public override IEnumerable<CircuitNode> SimpleDependsOn()
 		{
-			var rootPorts = statePort.getAllConnectedRootPorts();
-			foreach (var port in rootPorts)
-			{
-				yield return port.node;
-			}
+			StatePort rootPort = statePort.FindConnectedRootPort();
+			if (rootPort != null)
+				yield return rootPort.node;
 		}
 
 		public override IEnumerable<CircuitNode> SimpleDependingOnThis()

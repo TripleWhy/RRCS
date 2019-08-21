@@ -11,7 +11,7 @@
 		public event ConnectionEventHandler Disconnected = delegate {};
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 
-		public readonly List<Connection> connections = new List<Connection>();
+		public readonly List<Connection> connections = new List<Connection>(); //TODO: make this a SortedSet?
 
 		public readonly CircuitNode node;
 		public readonly bool isReset;
@@ -62,8 +62,7 @@
 					source = swap;
 				}
 
-				StateMachineTransition transition =
-					new StateMachineTransition(source, target, new InputPort(null, false));
+				StateMachineTransition transition = new StateMachineTransition(source, target);
 				Connection existingTransition = connections.Find(t => t.connectsSamePorts(transition));
 				if (existingTransition != null)
 				{
@@ -72,15 +71,15 @@
 					return true;
 				}
 
-				var targetRootPorts = target.getAllConnectedRootPorts();
-				var sourceRootPorts = source.getAllConnectedRootPorts();
-				DebugUtils.Assert(targetRootPorts.Count <= 1);
-				DebugUtils.Assert(sourceRootPorts.Count <= 1);
+				StatePort targetRootPort;
+				StatePort sourceRootPort;
+				{
+					HashSet<StatePort> visited = new HashSet<StatePort>();
+					targetRootPort = target.FindConnectedRootPort(visited);
+					sourceRootPort = source.FindConnectedRootPort(visited);
+				}
 
-				// Only one StateChip is allowed in a network
-				if (sourceRootPorts.Count == 1 &&
-				    targetRootPorts.Count == 1 &&
-				    sourceRootPorts[0] != targetRootPorts[0])
+				if (sourceRootPort != null && targetRootPort != null && !object.ReferenceEquals(sourceRootPort, targetRootPort))
 					return false;
 
 				if (source.isRootPort)

@@ -6,16 +6,22 @@ namespace AssemblyCSharp
 	{
 		public InputPort transitionEnabledPort;
 
-		public StateMachineTransition(StatePort source, StatePort target, InputPort transitionEnabled) : base(source, target)
+		public StateMachineTransition(StatePort source, StatePort target) : base(source, target)
 		{
+			DebugUtils.Assert(!target.isRootPort);
 			sourcePort = source;
 			targetPort = target;
-			transitionEnabledPort = transitionEnabled;
+			if (!source.isRootPort)
+			{
+				transitionEnabledPort = new InputPort(null, false);
+				transitionEnabledPort.UnconnectedValue = 1;
+			}
 		}
 
 		public override void Disconnect()
 		{
-			transitionEnabledPort.DisconnectAll();
+			if (transitionEnabledPort != null)
+				transitionEnabledPort.DisconnectAll();
 			targetPort.Disconnect(this);
 			sourcePort.Disconnect(this);
 		}

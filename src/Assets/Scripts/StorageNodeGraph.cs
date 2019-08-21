@@ -1,9 +1,9 @@
-﻿using System.Collections;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
+	using System.Linq;
 	using UnityEngine;
 
 	[Serializable]
@@ -97,25 +97,21 @@ namespace AssemblyCSharp
 
 				if (node.statePort != null)
 				{
-					var outgoingTransitions = node.statePort.getAllOutgoingTransitions();
-					storageNode.transitions = new NodeTransition[outgoingTransitions.Length];
+					List<StateMachineTransition> outgoingTransitions = node.statePort.GetOutgoingTransitions().ToList();
+					storageNode.transitions = new NodeTransition[outgoingTransitions.Count];
 
-
-					for (int transitionIndex = 0; transitionIndex < outgoingTransitions.Length; transitionIndex++)
+					for (int transitionIndex = 0; transitionIndex < storageNode.transitions.Length; transitionIndex++)
 					{
-						var outgoingTransition = outgoingTransitions[transitionIndex];
-
-						NodeTransition transition = new NodeTransition();
-						transition.sourceNodeIndex =
-							outgoingTransition.sourcePort.node.RingEvaluationPriority;
-						transition.targetNodeIndex =
-							outgoingTransition.targetPort.node.RingEvaluationPriority;
-
-						if (outgoingTransition.transitionEnabledPort != null &&
-						    outgoingTransition.transitionEnabledPort.IsConnected)
+						StateMachineTransition outgoingTransition = outgoingTransitions[transitionIndex];
+						NodeTransition transition = new NodeTransition
 						{
-							OutputPort connectedPort =
-								(OutputPort) outgoingTransition.transitionEnabledPort.connections[0].sourcePort;
+							sourceNodeIndex = outgoingTransition.sourcePort.node.RingEvaluationPriority,
+							targetNodeIndex = outgoingTransition.targetPort.node.RingEvaluationPriority
+						};
+
+						if (outgoingTransition.transitionEnabledPort != null && outgoingTransition.transitionEnabledPort.IsConnected)
+						{
+							OutputPort connectedPort = (OutputPort)outgoingTransition.transitionEnabledPort.connections[0].sourcePort;
 							NodeConnection connection = new NodeConnection
 							{
 								nodeIndex = connectedPort.node.RingEvaluationPriority,
@@ -123,10 +119,10 @@ namespace AssemblyCSharp
 							};
 							transition.transitionEnabledConnection = connection;
 						}
-
 						storageNode.transitions[transitionIndex] = transition;
 					}
-				} else
+				}
+				else
 				{
 					storageNode.transitions = new NodeTransition[0];
 				}
