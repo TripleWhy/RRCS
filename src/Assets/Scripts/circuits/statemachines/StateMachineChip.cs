@@ -22,12 +22,20 @@
 			}
 		}
 
-		private void resetActiveState()
+		private void ResetActiveState()
 		{
-			activeState = statePort.getNextState();
+			activeState = InitialState();
 			if (activeState != null)
 				activeState.Active = true;
 			timeInState = 0;
+		}
+
+		public StateChip InitialState()
+		{
+			DebugUtils.Assert(statePort.connections.Count <= 1);
+			if (statePort.connections.Count > 0)
+				return (StateChip)statePort.connections[0].targetPort.node;
+			return null;
 		}
 
 		private bool isActive()
@@ -39,7 +47,6 @@
 		{
 			DebugUtils.Assert(statePort != null);
 
-
 			if (IsResetSet)
 			{
 				for (int i = 0; i < outputPortCount; ++i)
@@ -48,17 +55,16 @@
 			else if (isActive())
 			{
 				prevActiveState = activeState;
-				activeState = statePort.getConnectedActiveState();
+				activeState = FindActiveState();
 
 				timeInState++;
 
 				if (activeState == null)
-					resetActiveState();
+					ResetActiveState();
 
-				if (activeState != null && timeInState > 0 &&
-				    timeInState >= (int) activeState.settings[0].currentValue)
+				if (activeState != null && timeInState > 0 && timeInState >= activeState.MinTimeInState)
 				{
-					var nextState = activeState.statePort.getNextStateAfterValidTransition();
+					StateChip nextState = NextStateAfterValidTransition();
 					if (nextState != null)
 					{
 						activeState.Active = false;
@@ -80,9 +86,9 @@
 		{
 			if (activeState != null)
 			{
-				outputPorts[0].Value = (int) activeState.settings[1].currentValue;
-				outputPorts[1].Value = (int) activeState.settings[2].currentValue;
-				outputPorts[2].Value = (int) activeState.settings[3].currentValue;
+				outputPorts[0].Value = activeState.Value0;
+				outputPorts[1].Value = activeState.Value1;
+				outputPorts[2].Value = activeState.Value2;
 				outputPorts[3].Value = timeInState * 100;
 			}
 			else
@@ -96,10 +102,58 @@
 			outputPorts[4].Value = prevActiveState != activeState ? 1 : 0;
 		}
 
+		private StateChip FindActiveState()
+		{
+			if (statePort.connections.Count == 0)
+				return null;
+			HashSet<StatePort> visited = new HashSet<StatePort>();
+			visited.Add(statePort);
+			return FindActiveState((StatePort)statePort.connections[0].targetPort, visited);
+		}
+
+		private StateChip FindActiveState(StatePort port, HashSet<StatePort> visited)
+		{
+			if (visited.Contains(port))
+				return null;
+			DebugUtils.Assert(!port.isRootPort);
+			visited.Add(port);
+
+			if (((StateChip)port.node).Active)
+				return (StateChip)port.node;
+
+			foreach (Connection connection in port.connections)
+			{
+				var otherPort = connection.getOtherPort(port);
+				if (otherPort != null && otherPort.IsState)
+				{
+					StateChip active = FindActiveState((StatePort)otherPort, visited);
+					if (active != null)
+						return active;
+				}
+			}
+			return null;
+		}
+
+		public StateChip NextStateAfterValidTransition()
+		{
+			StatePort port = activeState.statePort;
+			//TODO: Sort port.connections or make connections generally sorted.
+			foreach (StateMachineTransition connection in port.connections)
+			{
+				if (object.ReferenceEquals(connection.sourcePort, port))
+				{
+					DebugUtils.Assert(connection.targetPort != null);
+					DebugUtils.Assert(connection.targetPort.IsState);
+					if (ToBool(connection.transitionEnabledPort))
+						return (StateChip)connection.targetPort.node;
+				}
+			}
+			return null;
+		}
+
 		public override IEnumerable<CircuitNode> SimpleDependsOn()
 		{
-			var transitionPorts = statePort.getAllTransitionEnabledPorts();
-			foreach (var port in transitionPorts)
+			foreach (var port in FindTransitionEnabledPorts())
 			{
 				if (port.IsConnected && !ReferenceEquals(port.connections[0].sourcePort.node, this))
 					yield return port.connections[0].sourcePort.node;
@@ -110,6 +164,34 @@
 		{
 			//TODO
 			throw new System.NotImplementedException();
+		}
+
+		public IEnumerable<InputPort> FindTransitionEnabledPorts()
+		{
+			return FindTransitionEnabledPorts(statePort, new HashSet<StatePort>());
+		}
+
+		private IEnumerable<InputPort> FindTransitionEnabledPorts(StatePort port, HashSet<StatePort> visited)
+		{
+			visited.Add(port);
+			if (visited.Contains(port))
+				yield break;
+
+			foreach (StateMachineTransition transition in port.connections)
+			{
+				if (object.ReferenceEquals(transition.sourcePort, port))
+				{
+					if (transition.transitionEnabledPort != null)
+						yield return transition.transitionEnabledPort;
+				}
+				else
+				{
+					DebugUtils.Assert(transition.targetPort != null);
+					DebugUtils.Assert(transition.targetPort.IsState);
+					foreach (InputPort result in FindTransitionEnabledPorts((StatePort)transition.targetPort, visited))
+						yield return result;
+				}
+			}
 		}
 	}
 }

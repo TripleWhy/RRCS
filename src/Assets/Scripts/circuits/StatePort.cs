@@ -41,126 +41,35 @@
 			}
 		}
 
-		public List<StatePort> getAllConnectedRootPorts()
+		public StatePort FindConnectedRootPort()
 		{
-			List<StatePort> found = new List<StatePort>();
-			getAllConnectedRootPorts(new List<Port>(), found);
-			return found;
+			return FindConnectedRootPort(new HashSet<StatePort>());
 		}
 
-		private void getAllConnectedRootPorts(List<Port> checkedPorts, List<StatePort> foundPorts)
+		public StatePort FindConnectedRootPort(HashSet<StatePort> visited)
 		{
 			if (isRootPort)
-				foundPorts.Add(this);
-			checkedPorts.Add(this);
+				return this;
+			visited.Add(this);
 
 			foreach (Connection connection in connections)
 			{
-				var otherPort = connection.getOtherPort(this);
-				if (otherPort != null && otherPort.IsState && !checkedPorts.Contains(otherPort))
+				StatePort otherPort = (StatePort)connection.getOtherPort(this);
+				if (otherPort != null && otherPort.IsState && !visited.Contains(otherPort))
 				{
-					((StatePort) otherPort).getAllConnectedRootPorts(checkedPorts, foundPorts);
+					StatePort root = otherPort.FindConnectedRootPort(visited);
+					if (root != null)
+						return root;
 				}
 			}
-		}
-
-		public StateChip getConnectedActiveState()
-		{
-			return searchActiveState(new List<Port>());
-		}
-
-		private StateChip searchActiveState(List<Port> checkedPorts)
-		{
-			if (!isRootPort && ((StateChip) node).Active)
-				return (StateChip) node;
-
-			checkedPorts.Add(this);
-
-			foreach (Connection connection in connections)
-			{
-				var otherPort = connection.getOtherPort(this);
-				if (
-					otherPort != null &&
-					otherPort.IsState &&
-					!((StatePort) otherPort).isRootPort &&
-					!checkedPorts.Contains(otherPort)
-				)
-				{
-					var active = ((StatePort) otherPort).searchActiveState(checkedPorts);
-					if (active != null)
-						return active;
-				}
-			}
-
 			return null;
 		}
 
-		public StateChip getNextState()
+		public IEnumerable<StateMachineTransition> GetOutgoingTransitions()
 		{
-			DebugUtils.Assert(connections.Count <= 1);
-			if (connections.Count == 1)
-				return (StateChip) connections[0].targetPort.node;
-			return null;
-		}
-
-		public StateChip getNextStateAfterValidTransition()
-		{
-			foreach (Connection connection in connections)
-			{
-				if (connection.sourcePort == this)
-				{
-					if (connection.targetPort != null && connection.targetPort.IsState &&
-					    (!((StateMachineTransition) connection).transitionEnabledPort.IsConnected ||
-					     ((StateMachineTransition) connection).transitionEnabledPort.GetValue() != 0))
-					{
-						return (StateChip) connection.targetPort.node;
-					}
-				}
-			}
-
-			return null;
-		}
-
-		public List<InputPort> getAllTransitionEnabledPorts()
-		{
-			List<InputPort> found = new List<InputPort>();
-			searchTransitionEnabledPorts(new List<Port>(), found);
-			return found;
-		}
-
-		private void searchTransitionEnabledPorts(List<Port> checkedPorts, List<InputPort> foundPorts)
-		{
-			checkedPorts.Add(this);
-
-			foreach (var connection in connections)
-			{
-				var transition = (StateMachineTransition) connection;
-				if (transition.sourcePort == this)
-				{
-					if (transition.transitionEnabledPort != null)
-						foundPorts.Add(transition.transitionEnabledPort);
-				}
-				else if (transition.targetPort != null && transition.targetPort.IsState &&
-				         !checkedPorts.Contains(transition.targetPort))
-				{
-					((StatePort) transition.targetPort).searchTransitionEnabledPorts(checkedPorts, foundPorts);
-				}
-			}
-		}
-
-		public StateMachineTransition[] getAllOutgoingTransitions()
-		{
-			List<StateMachineTransition> outgoing = new List<StateMachineTransition>();
-
-			foreach (var connection in connections)
-			{
-				if (connection.sourcePort == this)
-				{
-					outgoing.Add((StateMachineTransition) connection);
-				}
-			}
-
-			return outgoing.ToArray();
+			foreach (StateMachineTransition connection in connections)
+				if (object.ReferenceEquals(connection.sourcePort, this))
+					yield return connection;
 		}
 	}
 }
