@@ -5,7 +5,6 @@
 	public class StateChip : Chip
 	{
 		private bool isActive = false;
-		public bool prevActive = false;
 
 		public delegate void StateNameChangedEventHandler(StateChip source, string stateName);
 		public event StateNameChangedEventHandler StateNameChanged = delegate { };
@@ -29,21 +28,20 @@
 		public override void Evaluate()
 		{
 			EvaluateOutputs();
-
-			prevActive = isActive;
 		}
 
 		protected override void EvaluateOutputs()
 		{
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
+			bool wasActive = isActive;
 
+			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
 			if (isActive)
 			{
 				outputPorts[1].Value = 1;
-				if (!prevActive)
+				if (!wasActive)
 					outputPorts[0].Value = 1;
 			}
-			else if (prevActive)
+			else if (wasActive)
 			{
 				outputPorts[2].Value = 1;
 			}

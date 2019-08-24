@@ -5,9 +5,7 @@
 	public class StateMachineChip : Chip
 	{
 		private int timeInState = 0;
-
 		private StateChip activeState;
-		private StateChip prevActiveState;
 
 		public StateMachineChip(CircuitManager manager)
 			: base(manager, 1, 5, true, Port.PortType.StateRoot)
@@ -58,7 +56,7 @@
 			}
 			else if (IsActive)
 			{
-				prevActiveState = activeState;
+				StateChip lastActiveState = activeState;
 				activeState = FindActiveState();
 
 				timeInState++;
@@ -79,6 +77,7 @@
 				}
 
 				EvaluateOutputs();
+				outputPorts[4].Value = object.ReferenceEquals(lastActiveState, activeState) ? 0 : 1;
 
 				EmitEvaluationRequired();
 			}
@@ -102,8 +101,6 @@
 				outputPorts[2].Value = 0;
 				outputPorts[3].Value = 0;
 			}
-
-			outputPorts[4].Value = prevActiveState != activeState ? 1 : 0;
 		}
 
 		private StateChip FindActiveState()
