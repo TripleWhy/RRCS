@@ -1,29 +1,53 @@
-using System.Collections.Generic;
-
 namespace AssemblyCSharp
 {
 	public class StateMachineTransition : Connection
 	{
-		public InputPort transitionEnabledPort;
+		public StatePort SourceStatePort { get; private set; }
+		public StatePort TargetStatePort { get; private set; }
+		public InputPort TransitionEnabledPort { get; private set; }
 
-		public StateMachineTransition(StatePort source, StatePort target) : base(source, target)
+		public override Port SourcePort
 		{
-			DebugUtils.Assert(!target.isRootPort);
-			sourcePort = source;
-			targetPort = target;
-			if (!source.isRootPort)
+			get
 			{
-				transitionEnabledPort = new InputPort(null, false);
-				transitionEnabledPort.UnconnectedValue = 1;
+				return SourceStatePort;
+			}
+		}
+
+		public override Port TargetPort
+		{
+			get
+			{
+				return TargetStatePort;
+			}
+		}
+
+		public StateMachineTransition(StatePort source, StatePort target)
+		{
+			DebugUtils.Assert(!target.IsStateRootPort);
+			SourceStatePort = source;
+			TargetStatePort = target;
+			if (!source.IsStateRootPort)
+			{
+				TransitionEnabledPort = new InputPort(null, false)
+				{
+					UnconnectedValue = 1
+				};
 			}
 		}
 
 		public override void Disconnect()
 		{
-			if (transitionEnabledPort != null)
-				transitionEnabledPort.DisconnectAll();
-			targetPort.Disconnect(this);
-			sourcePort.Disconnect(this);
+			if (TransitionEnabledPort != null)
+				TransitionEnabledPort.DisconnectAll();
+			base.Disconnect();
+		}
+
+		public StatePort GetOtherPort(StatePort port)
+		{
+			if (object.ReferenceEquals(port, SourcePort))
+				return TargetStatePort;
+			return SourceStatePort;
 		}
 	}
 }

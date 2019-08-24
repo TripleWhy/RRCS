@@ -62,8 +62,8 @@
 						return;
 					throw new InvalidOperationException();
 				}
-				DebugUtils.Assert(value.IsInput == isInput);
-				DebugUtils.Assert(value.isReset == IsReset);
+				DebugUtils.Assert(value.IsDataInput == isInput);
+				DebugUtils.Assert(value.IsResetPort == IsReset);
 				port = value;
 				UiManager.Register(this);
 			}
@@ -74,7 +74,7 @@
 			get
 			{
 				if (port != null)
-					return port.isReset;
+					return port.IsResetPort;
 				// :-/
 				return GetComponentsInChildren<Text>().Length == 1;
 			}
@@ -215,7 +215,7 @@
 
 			if (valueText != null && valueText.gameObject.activeInHierarchy)
 			{
-				int value = port.GetValue();
+				int value = ((DataPort)Port).GetValue();
 				if (value != lastValue)
 				{
 					lastValue = value;
@@ -228,7 +228,7 @@
 				bool delayed;
 				if (Port.IsConnected)
 				{
-					CircuitNode srcNode = Port.connections[0].sourcePort.node;
+					CircuitNode srcNode = Port.connections[0].SourcePort.node;
 					CircuitNode dstNode = Port.node;
 					delayed = srcNode.RingEvaluationPriority >= dstNode.RingEvaluationPriority;
 				}

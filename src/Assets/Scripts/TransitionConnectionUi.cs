@@ -65,12 +65,8 @@ namespace AssemblyCSharp
 				}
 
 				if (enabledPort != null)
-				{
-					enabledPort.Port = ((StateMachineTransition) value).transitionEnabledPort;
-				}
-
+					enabledPort.Port = ((StateMachineTransition)value).TransitionEnabledPort;
 				connection = value;
-
 				UiManager.Register(this);
 			}
 		}

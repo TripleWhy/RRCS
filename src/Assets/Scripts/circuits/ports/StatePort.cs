@@ -4,41 +4,58 @@
 
 	public class StatePort : Port
 	{
-		public enum StatePortType
+		public StatePort(CircuitNode node, bool isRoot) : base(node, isRoot ? PortType.StateRoot : PortType.StatePort)
 		{
-			None,
-			Root,
-			Node,
-		};
-
-		public int UnconnectedValue { get; set; }
-
-		public readonly bool isRootPort = false;
-
-		public StatePort(CircuitNode node, bool isRoot) : base(node, false)
-		{
-			isRootPort = isRoot;
 		}
 
-		public override int GetValue()
+		public override bool Connect(Port port)
 		{
-			return -1;
-		}
-
-		public override bool IsInput
-		{
-			get
-			{
+			if (!port.IsStatePort)
 				return false;
-			}
-		}
+			if (object.ReferenceEquals(port, this))
+				return false;
+			if (port.IsStateRootPort)
+				return port.Connect(this);
 
-		public override bool IsState
-		{
-			get
+			StatePort source = this;
+			StatePort target = (StatePort)port;
+
+			Connection existingTransition = connections.Find(t => object.ReferenceEquals(t.SourcePort, source) && object.ReferenceEquals(t.TargetPort, target));
+			if (existingTransition != null)
 			{
+				existingTransition.Disconnect();
+				EmitDisconnected(existingTransition);
 				return true;
 			}
+
+			StatePort targetRootPort;
+			StatePort sourceRootPort;
+			{
+				HashSet<StatePort> visited = new HashSet<StatePort>();
+				targetRootPort = target.FindConnectedRootPort(visited);
+				visited.Clear();
+				sourceRootPort = source.FindConnectedRootPort(visited);
+			}
+
+			if (sourceRootPort != null && targetRootPort != null && !object.ReferenceEquals(sourceRootPort, targetRootPort))
+				return false;
+
+			if (source.IsStateRootPort)
+			{
+				// Only one connection from a root state is allowed at a time
+				for (int i = source.connections.Count - 1; i >= 0; i--)
+				{
+					var connection = source.connections[i];
+					connection.Disconnect();
+					EmitDisconnected(connection);
+				}
+			}
+
+			StateMachineTransition transition = new StateMachineTransition(source, target);
+			connections.Add(transition);
+			port.connections.Add(transition);
+			EmitConnected(transition);
+			return true;
 		}
 
 		public StatePort FindConnectedRootPort()
@@ -48,14 +65,14 @@
 
 		public StatePort FindConnectedRootPort(HashSet<StatePort> visited)
 		{
-			if (isRootPort)
+			if (IsStateRootPort)
 				return this;
 			visited.Add(this);
 
-			foreach (Connection connection in connections)
+			foreach (StateMachineTransition connection in connections)
 			{
-				StatePort otherPort = (StatePort)connection.getOtherPort(this);
-				if (otherPort != null && otherPort.IsState && !visited.Contains(otherPort))
+				StatePort otherPort = connection.GetOtherPort(this);
+				if (otherPort != null && otherPort.IsStatePort && !visited.Contains(otherPort))
 				{
 					StatePort root = otherPort.FindConnectedRootPort(visited);
 					if (root != null)
@@ -68,7 +85,7 @@
 		public IEnumerable<StateMachineTransition> GetOutgoingTransitions()
 		{
 			foreach (StateMachineTransition connection in connections)
-				if (object.ReferenceEquals(connection.sourcePort, this))
+				if (object.ReferenceEquals(connection.SourcePort, this))
 					yield return connection;
 		}
 	}

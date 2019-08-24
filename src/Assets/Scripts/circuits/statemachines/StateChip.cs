@@ -12,7 +12,8 @@
 		public delegate void StateActiveChangedEventHandler(StateChip source, bool stateActive);
 		public event StateActiveChangedEventHandler StateActiveChanged = delegate { };
 
-		public StateChip(CircuitManager manager) : base(manager, 0, 3, false, StatePort.StatePortType.Node)
+		public StateChip(CircuitManager manager)
+			: base(manager, 0, 3, false, Port.PortType.StatePort)
 		{
 			EmitEvaluationRequired();
 		}

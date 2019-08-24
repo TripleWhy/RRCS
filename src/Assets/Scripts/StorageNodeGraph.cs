@@ -62,10 +62,11 @@
 				for (int j = 0; j < storageNode.settings.Length; j++)
 				{
 					NodeSetting setting = node.settings[j];
-					NodeSettingContainer settingContainer = new NodeSettingContainer();
-					settingContainer.type = setting.type;
-					settingContainer.value = setting.currentValue.ToString();
-					storageNode.settings[j] = settingContainer;
+					storageNode.settings[j] = new NodeSettingContainer
+					{
+						type = setting.type,
+						value = setting.currentValue.ToString()
+					};
 				}
 
 				graph[i] = storageNode;
@@ -82,7 +83,7 @@
 					if (port.IsConnected)
 					{
 						NodeConnection connection = new NodeConnection();
-						OutputPort connectedPort = (OutputPort) port.connections[0].sourcePort;
+						OutputPort connectedPort = ((DataConnection)port.connections[0]).SourceDataPort;
 						connection.nodeIndex = connectedPort.node.RingEvaluationPriority;
 						connection.portIndex = Array.IndexOf(connectedPort.node.outputPorts, connectedPort);
 						storageNode.connections[portIndex] = connection;
@@ -105,13 +106,13 @@
 						StateMachineTransition outgoingTransition = outgoingTransitions[transitionIndex];
 						NodeTransition transition = new NodeTransition
 						{
-							sourceNodeIndex = outgoingTransition.sourcePort.node.RingEvaluationPriority,
-							targetNodeIndex = outgoingTransition.targetPort.node.RingEvaluationPriority
+							sourceNodeIndex = outgoingTransition.SourceStatePort.node.RingEvaluationPriority,
+							targetNodeIndex = outgoingTransition.TargetStatePort.node.RingEvaluationPriority
 						};
 
-						if (outgoingTransition.transitionEnabledPort != null && outgoingTransition.transitionEnabledPort.IsConnected)
+						if (outgoingTransition.TransitionEnabledPort != null && outgoingTransition.TransitionEnabledPort.IsConnected)
 						{
-							OutputPort connectedPort = (OutputPort)outgoingTransition.transitionEnabledPort.connections[0].sourcePort;
+							OutputPort connectedPort = ((DataConnection)outgoingTransition.TransitionEnabledPort.connections[0]).SourceDataPort;
 							NodeConnection connection = new NodeConnection
 							{
 								nodeIndex = connectedPort.node.RingEvaluationPriority,
@@ -220,7 +221,7 @@
 							var connectedNode = nodes[transition.transitionEnabledConnection.nodeIndex];
 							var connectedPort =
 								connectedNode.outputPorts[transition.transitionEnabledConnection.portIndex];
-							newTransition.transitionEnabledPort.Connect(connectedPort);
+							newTransition.TransitionEnabledPort.Connect(connectedPort);
 						}
 					}
 				}
