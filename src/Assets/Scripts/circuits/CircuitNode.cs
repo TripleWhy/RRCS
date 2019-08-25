@@ -20,8 +20,7 @@
 		public event CircuitNodeChangedEventHandler ConnectionChanged = delegate { };
 		public event CircuitNodeChangedEventHandler RingEvaluationPriorityChanged = delegate { };
 
-		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset,
-			StatePort.StatePortType statePortType = StatePort.StatePortType.None)
+		protected CircuitNode(CircuitManager manager, int inputCount, int outputCount, bool hasReset, Port.PortType statePortType = StatePort.PortType.None)
 		{
 			this.inputPortCount = inputCount;
 			this.outputPortCount = outputCount;
@@ -59,17 +58,9 @@
 				outputPorts[outputCount].Disconnected += CircuitNode_Disconnected;
 			}
 
-			switch (statePortType)
+			if ((statePortType & Port.PortType.StatePort) != 0)
 			{
-				case StatePort.StatePortType.Root:
-					statePort = new StatePort(this, true);
-					break;
-				case StatePort.StatePortType.Node:
-					statePort = new StatePort(this, false);
-					break;
-				default:
-					statePort = null;
-					break;
+				statePort = new StatePort(this, (statePortType & Port.PortType.StateRoot) == Port.PortType.StateRoot);
 			}
 
 			Manager = manager;
@@ -99,7 +90,7 @@
 
 		private void CircuitNode_Connected(Connection connection)
 		{
-			DebugUtils.Assert(connection.targetPort.IsInput);
+			DebugUtils.Assert(connection.TargetPort.IsDataInput);
 			EmitConnectionChanged();
 			EmitEvaluationRequired();
 		}
@@ -161,7 +152,7 @@
 		public virtual IEnumerable<CircuitNode> SimpleDependsOn()
 		{
 			foreach (Connection connection in IncomingConnections())
-				yield return connection.sourcePort.node;
+				yield return connection.SourcePort.node;
 		}
 
 		public SortedSet<CircuitNode> DependingOnThis()
@@ -179,13 +170,13 @@
 		public virtual IEnumerable<CircuitNode> SimpleDependingOnThis()
 		{
 			foreach (Connection connection in OutgoingConnections())
-				yield return connection.targetPort.node;
+				yield return connection.TargetPort.node;
 		}
 
 		public virtual IEnumerable<Connection> IncomingConnections()
 		{
 			foreach (InputPort port in inputPorts)
-				if (port.IsConnected && !ReferenceEquals(port.connections[0].sourcePort.node, this))
+				if (port.IsConnected && !ReferenceEquals(port.connections[0].SourcePort.node, this))
 					yield return port.connections[0];
 		}
 
@@ -193,7 +184,7 @@
 		{
 			foreach (OutputPort port in outputPorts)
 				foreach (Connection connection in port.connections)
-					if (!ReferenceEquals(connection.targetPort.node, this))
+					if (!ReferenceEquals(connection.TargetPort.node, this))
 						yield return connection;
 		}
 
@@ -207,12 +198,12 @@
 			return i != 0;
 		}
 
-		public static int ToInt(Port p)
+		public static int ToInt(DataPort p)
 		{
 			return p.GetValue();
 		}
 
-		public static bool ToBool(Port p)
+		public static bool ToBool(DataPort p)
 		{
 			return ToBool(ToInt(p));
 		}

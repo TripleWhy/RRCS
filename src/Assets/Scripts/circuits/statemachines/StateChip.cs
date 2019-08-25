@@ -5,9 +5,15 @@
 	public class StateChip : Chip
 	{
 		private bool isActive = false;
-		public bool prevActive = false;
+		private StateMachineChip stateMachine;
 
-		public StateChip(CircuitManager manager) : base(manager, 0, 3, false, StatePort.StatePortType.Node)
+		public delegate void StateNameChangedEventHandler(StateChip source, string stateName);
+		public event StateNameChangedEventHandler StateNameChanged = delegate { };
+		public delegate void StateActiveChangedEventHandler(StateChip source, bool stateActive);
+		public event StateActiveChangedEventHandler StateActiveChanged = delegate { };
+
+		public StateChip(CircuitManager manager)
+			: base(manager, 0, 3, false, Port.PortType.StatePort)
 		{
 			EmitEvaluationRequired();
 		}
@@ -23,21 +29,20 @@
 		public override void Evaluate()
 		{
 			EvaluateOutputs();
-
-			prevActive = isActive;
 		}
 
 		protected override void EvaluateOutputs()
 		{
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
+			bool wasActive = isActive;
 
+			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
 			if (isActive)
 			{
 				outputPorts[1].Value = 1;
-				if (!prevActive)
+				if (!wasActive)
 					outputPorts[0].Value = 1;
 			}
-			else if (prevActive)
+			else if (wasActive)
 			{
 				outputPorts[2].Value = 1;
 			}
@@ -55,6 +60,62 @@
 			};
 		}
 
+		public int MinTimeInState
+		{
+			get
+			{
+				return (int)settings[0].currentValue;
+			}
+		}
+
+		public int Value0
+		{
+			get
+			{
+				return (int)settings[1].currentValue;
+			}
+		}
+
+		public int Value1
+		{
+			get
+			{
+				return (int)settings[2].currentValue;
+			}
+		}
+
+		public int Value2
+		{
+			get
+			{
+				return (int)settings[3].currentValue;
+			}
+		}
+
+		public string StateName
+		{
+			get
+			{
+				return (string)settings[4].currentValue;
+			}
+		}
+
+		public override void SetSetting(NodeSetting setting, object value)
+		{
+			if (setting.type != NodeSetting.SettingType.StateName)
+			{
+				base.SetSetting(setting, value);
+			}
+			else
+			{
+				if (value == setting.currentValue)
+					return;
+				setting.currentValue = value;
+				StateNameChanged(this, (string)value);
+			}
+		}
+
+
 		public bool Active
 		{
 			get
@@ -63,24 +124,82 @@
 			}
 			set
 			{
+				if (value == isActive)
+					return;
 				isActive = value;
+				StateActiveChanged(this, value);
 				EmitEvaluationRequired();
 			}
 		}
 
-		public override IEnumerable<CircuitNode> SimpleDependsOn()
+		internal StateMachineChip StateMachineUnchecked
 		{
-			var rootPorts = statePort.getAllConnectedRootPorts();
-			foreach (var port in rootPorts)
+			get
 			{
-				yield return port.node;
+				return stateMachine;
 			}
 		}
 
-		public override IEnumerable<CircuitNode> SimpleDependingOnThis()
+		public StateMachineChip StateMachine
 		{
-			//TODO
+			get
+			{
+				CheckStateMachine();
+				return stateMachine;
+			}
+			set
+			{
+				stateMachine = value;
+				if (stateMachine == null)
+					Active = false;
+			}
+		}
+
+		internal void CheckStateMachine()
+		{
+			DebugUtils.Assert(object.ReferenceEquals(stateMachine, FindConnectedRoot()));
+		}
+
+		public override IEnumerable<Connection> IncomingConnections()
+		{
+			foreach (StateMachineTransition transition in statePort.connections)
+			{
+				if (!object.ReferenceEquals(transition.TargetStatePort.node, this))
+					continue;
+				if (transition.TransitionEnabledPort != null)
+					foreach (DataConnection transitionEnabledConnection in transition.TransitionEnabledPort.connections)
+						yield return transitionEnabledConnection;
+				yield return transition;
+			}
+		}
+
+		public override IEnumerable<Connection> OutgoingConnections()
+		{
 			throw new System.NotImplementedException();
+		}
+
+		private StateMachineChip FindConnectedRoot()
+		{
+			return FindConnectedRoot(statePort, new HashSet<StatePort>());
+		}
+
+		private StateMachineChip FindConnectedRoot(StatePort port, HashSet<StatePort> visited)
+		{
+			if (port.IsStateRootPort)
+				return (StateMachineChip)port.node;
+			visited.Add(port);
+
+			foreach (StateMachineTransition connection in port.connections)
+			{
+				StatePort otherPort = connection.GetOtherPort(port);
+				if (otherPort != null && otherPort.IsStatePort && !visited.Contains(otherPort))
+				{
+					StateMachineChip root = FindConnectedRoot(otherPort, visited);
+					if (root != null)
+						return root;
+				}
+			}
+			return null;
 		}
 	}
 }

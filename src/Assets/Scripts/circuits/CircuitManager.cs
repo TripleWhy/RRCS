@@ -151,16 +151,16 @@
 		{
 			public int Compare(Connection x, Connection y)
 			{
-				int xTargetPrio = x.targetPort.node.RingEvaluationPriority;
-				int yTargetPrio = y.targetPort.node.RingEvaluationPriority;
+				int xTargetPrio = x.TargetPort.node.RingEvaluationPriority;
+				int yTargetPrio = y.TargetPort.node.RingEvaluationPriority;
 				if (xTargetPrio != yTargetPrio)
 					return xTargetPrio.CompareTo(yTargetPrio);
-				int xSourcePrio = x.sourcePort.node.RingEvaluationPriority;
-				int ySourcePrio = y.sourcePort.node.RingEvaluationPriority;
+				int xSourcePrio = x.SourcePort.node.RingEvaluationPriority;
+				int ySourcePrio = y.SourcePort.node.RingEvaluationPriority;
 				return ySourcePrio.CompareTo(xSourcePrio);
 			}
 		}
-
+		private static readonly EdgeComparer edgeComparer = new EdgeComparer();
 		private enum DfsMark
 		{
 			Unmarked,
@@ -214,9 +214,10 @@
 			while (true)
 			{
 				CircuitNode backtrackTo = null;
-				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.sourcePort.node)) //inefficent?
+				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.SourcePort.node))
 				{
-					CircuitNode m = e.sourcePort.node;
+					DebugUtils.Assert(ReferenceEquals(e.TargetPort.node, n));
+					CircuitNode m = e.SourcePort.node;
 					if (marks[m] == DfsMark.Temmporary)
 					{
 						SortedSet<CircuitNode> loop = new SortedSet<CircuitNode>();
@@ -226,19 +227,18 @@
 							if (ReferenceEquals(cn, m))
 								break;
 						}
+						DebugUtils.Assert(loop.Count > 1);
 						foreach (CircuitNode cn in loop)
 						{
-							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, new EdgeComparer())) //inefficent?
+							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, edgeComparer))
 							{
-								DebugUtils.Assert(ReferenceEquals(c.targetPort.node, cn));
-								CircuitNode src = c.sourcePort.node;
+								DebugUtils.Assert(ReferenceEquals(c.TargetPort.node, cn));
+								CircuitNode src = c.SourcePort.node;
 								if (!loop.Contains(src))
 									continue;
 								removedEdges.Add(c);
 								backtrackTo = cn;
 								goto afterLoop;
-								//marks[n] = DfsMark.Unmarked;
-								//return cn;
 							}
 						}
 						throw new InvalidOperationException();

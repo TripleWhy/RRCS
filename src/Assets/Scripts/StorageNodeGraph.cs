@@ -1,9 +1,9 @@
-﻿using System.Collections;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
+	using System.Linq;
 	using UnityEngine;
 
 	[Serializable]
@@ -62,10 +62,11 @@ namespace AssemblyCSharp
 				for (int j = 0; j < storageNode.settings.Length; j++)
 				{
 					NodeSetting setting = node.settings[j];
-					NodeSettingContainer settingContainer = new NodeSettingContainer();
-					settingContainer.type = setting.type;
-					settingContainer.value = setting.currentValue.ToString();
-					storageNode.settings[j] = settingContainer;
+					storageNode.settings[j] = new NodeSettingContainer
+					{
+						type = setting.type,
+						value = setting.currentValue.ToString()
+					};
 				}
 
 				graph[i] = storageNode;
@@ -82,7 +83,7 @@ namespace AssemblyCSharp
 					if (port.IsConnected)
 					{
 						NodeConnection connection = new NodeConnection();
-						OutputPort connectedPort = (OutputPort) port.connections[0].sourcePort;
+						OutputPort connectedPort = ((DataConnection)port.connections[0]).SourceDataPort;
 						connection.nodeIndex = connectedPort.node.RingEvaluationPriority;
 						connection.portIndex = Array.IndexOf(connectedPort.node.outputPorts, connectedPort);
 						storageNode.connections[portIndex] = connection;
@@ -97,25 +98,21 @@ namespace AssemblyCSharp
 
 				if (node.statePort != null)
 				{
-					var outgoingTransitions = node.statePort.getAllOutgoingTransitions();
-					storageNode.transitions = new NodeTransition[outgoingTransitions.Length];
+					List<StateMachineTransition> outgoingTransitions = node.statePort.GetOutgoingTransitions().ToList();
+					storageNode.transitions = new NodeTransition[outgoingTransitions.Count];
 
-
-					for (int transitionIndex = 0; transitionIndex < outgoingTransitions.Length; transitionIndex++)
+					for (int transitionIndex = 0; transitionIndex < storageNode.transitions.Length; transitionIndex++)
 					{
-						var outgoingTransition = outgoingTransitions[transitionIndex];
-
-						NodeTransition transition = new NodeTransition();
-						transition.sourceNodeIndex =
-							outgoingTransition.sourcePort.node.RingEvaluationPriority;
-						transition.targetNodeIndex =
-							outgoingTransition.targetPort.node.RingEvaluationPriority;
-
-						if (outgoingTransition.transitionEnabledPort != null &&
-						    outgoingTransition.transitionEnabledPort.IsConnected)
+						StateMachineTransition outgoingTransition = outgoingTransitions[transitionIndex];
+						NodeTransition transition = new NodeTransition
 						{
-							OutputPort connectedPort =
-								(OutputPort) outgoingTransition.transitionEnabledPort.connections[0].sourcePort;
+							sourceNodeIndex = outgoingTransition.SourceStatePort.node.RingEvaluationPriority,
+							targetNodeIndex = outgoingTransition.TargetStatePort.node.RingEvaluationPriority
+						};
+
+						if (outgoingTransition.TransitionEnabledPort != null && outgoingTransition.TransitionEnabledPort.IsConnected)
+						{
+							OutputPort connectedPort = ((DataConnection)outgoingTransition.TransitionEnabledPort.connections[0]).SourceDataPort;
 							NodeConnection connection = new NodeConnection
 							{
 								nodeIndex = connectedPort.node.RingEvaluationPriority,
@@ -123,10 +120,10 @@ namespace AssemblyCSharp
 							};
 							transition.transitionEnabledConnection = connection;
 						}
-
 						storageNode.transitions[transitionIndex] = transition;
 					}
-				} else
+				}
+				else
 				{
 					storageNode.transitions = new NodeTransition[0];
 				}
@@ -224,7 +221,7 @@ namespace AssemblyCSharp
 							var connectedNode = nodes[transition.transitionEnabledConnection.nodeIndex];
 							var connectedPort =
 								connectedNode.outputPorts[transition.transitionEnabledConnection.portIndex];
-							newTransition.transitionEnabledPort.Connect(connectedPort);
+							newTransition.TransitionEnabledPort.Connect(connectedPort);
 						}
 					}
 				}

@@ -63,7 +63,7 @@
 			portUi.TextActive = showPortLabels;
 
 			foreach (Connection c in portUi.Port.connections)
-				if (ports.ContainsKey(c.sourcePort) && ports.ContainsKey(c.targetPort))
+				if (ports.ContainsKey(c.SourcePort) && ports.ContainsKey(c.TargetPort))
 					Port_Connected(c);
 		}
 
@@ -75,7 +75,7 @@
 			portUi.Port.Disconnected -= Port_Disconnected;
 
 			foreach (Connection c in portUi.Port.connections)
-				if (ports.ContainsKey(c.sourcePort) && ports.ContainsKey(c.targetPort))
+				if (ports.ContainsKey(c.SourcePort) && ports.ContainsKey(c.TargetPort))
 					Port_Disconnected(c);
 
 			ports.Remove(portUi.Port);
@@ -99,16 +99,16 @@
 
 		private static void Port_Connected(Connection connection)
 		{
-			PortUi sourceUi = GetUi(connection.sourcePort);
-			PortUi targetUi = GetUi(connection.targetPort);
+			PortUi sourceUi = GetUi(connection.SourcePort);
+			PortUi targetUi = GetUi(connection.TargetPort);
 			ConnectionUi connectionUi = sourceUi.AddConnection(sourceUi, targetUi, connection, null);
 			targetUi.AddConnection(sourceUi, targetUi, connection, connectionUi);
 		}
 
 		private static void Port_Disconnected(Connection connection)
 		{
-			PortUi senderUi = GetUi(connection.sourcePort);
-			PortUi otherUi = GetUi(connection.targetPort);
+			PortUi senderUi = GetUi(connection.SourcePort);
+			PortUi otherUi = GetUi(connection.TargetPort);
 			bool destroy = senderUi.RemoveConnection(GetUi(connection), false);
 			otherUi.RemoveConnection(GetUi(connection), destroy);
 		}
