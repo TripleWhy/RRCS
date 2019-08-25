@@ -12,7 +12,7 @@
 		public StateMachineChip(CircuitManager manager)
 			: base(manager, 1, 5, true, Port.PortType.StateRoot)
 		{
-			EmitEvaluationRequired();
+			inputPorts[0].UnconnectedValue = 1;
 		}
 
 		override public int IconIndex
@@ -43,7 +43,7 @@
 		{
 			get
 			{
-				return !IsResetSet && !inputPorts[0].IsConnected || inputPorts[0].GetValue() != 0;
+				return ToBool(inputPorts[0]);
 			}
 		}
 
@@ -53,6 +53,9 @@
 
 			if (IsResetSet)
 			{
+				if (activeState != null)
+					activeState.Active = false;
+				ResetActiveState();
 				for (int i = 0; i < outputPortCount; ++i)
 					outputPorts[i].Value = 0;
 			}
