@@ -5,6 +5,7 @@
 	public class StateChip : Chip
 	{
 		private bool isActive = false;
+		private StateMachineChip stateMachine;
 
 		public delegate void StateNameChangedEventHandler(StateChip source, string stateName);
 		public event StateNameChangedEventHandler StateNameChanged = delegate { };
@@ -131,17 +132,68 @@
 			}
 		}
 
+		internal StateMachineChip StateMachineUnchecked
+		{
+			get
+			{
+				return stateMachine;
+			}
+		}
+
+		public StateMachineChip StateMachine
+		{
+			get
+			{
+				CheckStateMachine();
+				return stateMachine;
+			}
+			set
+			{
+				stateMachine = value;
+				if (stateMachine == null)
+					Active = false;
+			}
+		}
+
+		internal void CheckStateMachine()
+		{
+			DebugUtils.Assert(object.ReferenceEquals(stateMachine, FindConnectedRoot()));
+		}
+
 		public override IEnumerable<CircuitNode> SimpleDependsOn()
 		{
-			StatePort rootPort = statePort.FindConnectedRootPort();
-			if (rootPort != null)
-				yield return rootPort.node;
+			if (StateMachine != null)
+				yield return StateMachine;
 		}
 
 		public override IEnumerable<CircuitNode> SimpleDependingOnThis()
 		{
 			//TODO
 			throw new System.NotImplementedException();
+		}
+
+		private StateMachineChip FindConnectedRoot()
+		{
+			return FindConnectedRoot(statePort, new HashSet<StatePort>());
+		}
+
+		private StateMachineChip FindConnectedRoot(StatePort port, HashSet<StatePort> visited)
+		{
+			if (port.IsStateRootPort)
+				return (StateMachineChip)port.node;
+			visited.Add(port);
+
+			foreach (StateMachineTransition connection in port.connections)
+			{
+				StatePort otherPort = connection.GetOtherPort(port);
+				if (otherPort != null && otherPort.IsStatePort && !visited.Contains(otherPort))
+				{
+					StateMachineChip root = FindConnectedRoot(otherPort, visited);
+					if (root != null)
+						return root;
+				}
+			}
+			return null;
 		}
 	}
 }

@@ -1,11 +1,13 @@
 ﻿namespace AssemblyCSharp
 {
+	using System.Linq;
 	using System.Collections.Generic;
 
 	public class StateMachineChip : Chip
 	{
 		private int timeInState = 0;
 		private StateChip activeState;
+		public List<StateChip> connectedStates = new List<StateChip>();
 
 		public StateMachineChip(CircuitManager manager)
 			: base(manager, 1, 5, true, Port.PortType.StateRoot)
@@ -105,32 +107,50 @@
 
 		private StateChip FindActiveState()
 		{
-			if (statePort.connections.Count == 0)
-				return null;
-			return FindActiveState((StatePort)statePort.connections[0].TargetPort, new HashSet<StatePort>{statePort});
+			foreach (StateChip state in connectedStates)
+				if (state.Active)
+					return state;
+			return null;
 		}
 
-		private StateChip FindActiveState(StatePort port, HashSet<StatePort> visited)
+		public void UpdateConnectedStates()
+		{
+			foreach (StateChip state in connectedStates)
+				state.StateMachine = null;
+			connectedStates = FindConnectedStates().ToList();
+			foreach (StateChip state in connectedStates)
+			{
+				state.StateMachine = this;
+				if (object.ReferenceEquals(state, activeState))
+					state.Active = true;
+			}
+		}
+
+		private IEnumerable<StateChip> FindConnectedStates()
+		{
+			if (statePort.connections.Count == 0)
+				yield break;
+			else
+				foreach (StateChip state in FindConnectedStates((StatePort)statePort.connections[0].TargetPort, new HashSet<StatePort> { statePort }))
+					yield return state;
+		}
+
+		private IEnumerable<StateChip> FindConnectedStates(StatePort port, HashSet<StatePort> visited)
 		{
 			if (visited.Contains(port))
-				return null;
+				yield break;
 			DebugUtils.Assert(!port.IsStateRootPort);
 			visited.Add(port);
 
-			if (((StateChip)port.node).Active)
-				return (StateChip)port.node;
+			yield return (StateChip)port.node;
 
 			foreach (StateMachineTransition connection in port.connections)
 			{
 				StatePort otherPort = connection.GetOtherPort(port);
-				if (otherPort != null)
-				{
-					StateChip active = FindActiveState(otherPort, visited);
-					if (active != null)
-						return active;
-				}
+				DebugUtils.Assert(otherPort != null);
+				foreach (StateChip state in FindConnectedStates(otherPort, visited))
+					yield return state;
 			}
-			return null;
 		}
 
 		public StateChip NextStateAfterValidTransition()
