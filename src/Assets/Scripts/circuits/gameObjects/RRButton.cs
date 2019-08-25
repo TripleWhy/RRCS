@@ -6,13 +6,37 @@
 		private bool pressed = false;
 		private bool released = false;
 
+		public delegate void ButtonTextChangedEventHandler(RRButton source, string text);
+		public event ButtonTextChangedEventHandler ButtonTextChanged = delegate { };
+
 		public RRButton(CircuitManager manager) : base(manager, 0, 3, false)
 		{
 		}
 
 		protected override NodeSetting[] CreateSettings()
 		{
-			return new NodeSetting[] { NodeSetting.CreateSetting(NodeSetting.SettingType.SendPlayerId) };
+			NodeSetting textSetting = NodeSetting.CreateSetting(NodeSetting.SettingType.Text);
+			textSetting.currentValue = "Press Me!";
+			return new NodeSetting[]
+			{
+				NodeSetting.CreateSetting(NodeSetting.SettingType.SendPlayerId),
+				textSetting,
+			};
+		}
+
+		public override void SetSetting(NodeSetting setting, object value)
+		{
+			if (setting.type != NodeSetting.SettingType.Text)
+			{
+				base.SetSetting(setting, value);
+			}
+			else
+			{
+				if (value == setting.currentValue)
+					return;
+				setting.currentValue = value;
+				ButtonTextChanged(this, (string)value);
+			}
 		}
 
 		protected override void EvaluateOutputs()

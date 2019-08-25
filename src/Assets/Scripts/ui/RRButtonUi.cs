@@ -1,11 +1,13 @@
 ﻿namespace AssemblyCSharp
 {
 	using UnityEngine;
+	using UnityEngine.UI;
 
 	public class RRButtonUi : NodeUi
 	{
 		internal RRButton button;
 		private RRButtonCenterUi centerUi;
+		public Text buttonText;
 
 		void Start()
 		{
@@ -30,6 +32,13 @@
 				portIndex++;
 			}
 			DebugUtils.Assert(portIndex == 3);
+
+			button.ButtonTextChanged += Button_ButtonTextChanged;
+		}
+
+		private void Button_ButtonTextChanged(RRButton source, string text)
+		{
+			buttonText.text = text;
 		}
 
 		protected override CircuitNode CreateNode(CircuitManager manager)
