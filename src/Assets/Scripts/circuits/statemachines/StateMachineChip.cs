@@ -156,15 +156,11 @@
 		public StateChip NextStateAfterValidTransition()
 		{
 			StatePort port = activeState.statePort;
-			//TODO: Sort port.connections or make connections generally sorted.
-			foreach (StateMachineTransition connection in port.connections)
+			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.node))
 			{
-				if (object.ReferenceEquals(connection.SourcePort, port))
-				{
-					DebugUtils.Assert(connection.TargetStatePort != null);
-					if (ToBool(connection.TransitionEnabledPort))
-						return (StateChip)connection.TargetStatePort.node;
-				}
+				DebugUtils.Assert(transition.TargetStatePort != null);
+				if (ToBool(transition.TransitionEnabledPort))
+					return (StateChip)transition.TargetStatePort.node;
 			}
 			return null;
 		}
