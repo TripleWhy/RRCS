@@ -169,46 +169,9 @@
 			return null;
 		}
 
-		public override IEnumerable<CircuitNode> SimpleDependsOn()
+		public override IEnumerable<Connection> OutgoingConnections()
 		{
-			foreach (var port in FindTransitionEnabledPorts())
-			{
-				if (port.IsConnected && !ReferenceEquals(port.connections[0].SourcePort.node, this))
-					yield return port.connections[0].SourcePort.node;
-			}
-		}
-
-		public override IEnumerable<CircuitNode> SimpleDependingOnThis()
-		{
-			//TODO
 			throw new System.NotImplementedException();
-		}
-
-		public IEnumerable<InputPort> FindTransitionEnabledPorts()
-		{
-			return FindTransitionEnabledPorts(statePort, new HashSet<StatePort>());
-		}
-
-		private IEnumerable<InputPort> FindTransitionEnabledPorts(StatePort port, HashSet<StatePort> visited)
-		{
-			visited.Add(port);
-			if (visited.Contains(port))
-				yield break;
-
-			foreach (StateMachineTransition transition in port.connections)
-			{
-				if (object.ReferenceEquals(transition.SourcePort, port))
-				{
-					if (transition.TransitionEnabledPort != null)
-						yield return transition.TransitionEnabledPort;
-				}
-				else
-				{
-					DebugUtils.Assert(transition.TargetPort != null);
-					foreach (InputPort result in FindTransitionEnabledPorts(transition.TargetStatePort, visited))
-						yield return result;
-				}
-			}
 		}
 	}
 }

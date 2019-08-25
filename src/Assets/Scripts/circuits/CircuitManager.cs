@@ -216,6 +216,7 @@
 				CircuitNode backtrackTo = null;
 				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.SourcePort.node)) //inefficent?
 				{
+					DebugUtils.Assert(ReferenceEquals(e.TargetPort.node, n));
 					CircuitNode m = e.SourcePort.node;
 					if (marks[m] == DfsMark.Temmporary)
 					{
@@ -226,6 +227,7 @@
 							if (ReferenceEquals(cn, m))
 								break;
 						}
+						DebugUtils.Assert(loop.Count > 1);
 						foreach (CircuitNode cn in loop)
 						{
 							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, new EdgeComparer())) //inefficent?
@@ -237,8 +239,6 @@
 								removedEdges.Add(c);
 								backtrackTo = cn;
 								goto afterLoop;
-								//marks[n] = DfsMark.Unmarked;
-								//return cn;
 							}
 						}
 						throw new InvalidOperationException();

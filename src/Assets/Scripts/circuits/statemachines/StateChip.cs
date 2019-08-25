@@ -160,15 +160,21 @@
 			DebugUtils.Assert(object.ReferenceEquals(stateMachine, FindConnectedRoot()));
 		}
 
-		public override IEnumerable<CircuitNode> SimpleDependsOn()
+		public override IEnumerable<Connection> IncomingConnections()
 		{
-			if (StateMachine != null)
-				yield return StateMachine;
+			foreach (StateMachineTransition transition in statePort.connections)
+			{
+				if (!object.ReferenceEquals(transition.TargetStatePort.node, this))
+					continue;
+				if (transition.TransitionEnabledPort != null)
+					foreach (DataConnection transitionEnabledConnection in transition.TransitionEnabledPort.connections)
+						yield return transitionEnabledConnection;
+				yield return transition;
+			}
 		}
 
-		public override IEnumerable<CircuitNode> SimpleDependingOnThis()
+		public override IEnumerable<Connection> OutgoingConnections()
 		{
-			//TODO
 			throw new System.NotImplementedException();
 		}
 
