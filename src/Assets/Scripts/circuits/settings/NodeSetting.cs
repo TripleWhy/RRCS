@@ -36,7 +36,7 @@
 			Message3,
 			Message4,
 			LimitMessage,
-			
+			Text,
 		};
 
 		[Serializable]
@@ -195,7 +195,9 @@
 					return new NodeSetting(type, "Message 4:", typeof(string), "RRCS");
 				case SettingType.LimitMessage:
 					return new NodeSetting(type, "Limit Length", typeof(bool), true);
-					
+				case SettingType.Text:
+					return new NodeSetting(type, "Text", typeof(string), "Text");
+
 			}
 			DebugUtils.Assert(false);
 			return null;
