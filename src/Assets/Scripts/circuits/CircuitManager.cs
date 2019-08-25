@@ -160,7 +160,7 @@
 				return ySourcePrio.CompareTo(xSourcePrio);
 			}
 		}
-
+		private static readonly EdgeComparer edgeComparer = new EdgeComparer();
 		private enum DfsMark
 		{
 			Unmarked,
@@ -214,7 +214,7 @@
 			while (true)
 			{
 				CircuitNode backtrackTo = null;
-				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.SourcePort.node)) //inefficent?
+				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.SourcePort.node))
 				{
 					DebugUtils.Assert(ReferenceEquals(e.TargetPort.node, n));
 					CircuitNode m = e.SourcePort.node;
@@ -230,7 +230,7 @@
 						DebugUtils.Assert(loop.Count > 1);
 						foreach (CircuitNode cn in loop)
 						{
-							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, new EdgeComparer())) //inefficent?
+							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, edgeComparer))
 							{
 								DebugUtils.Assert(ReferenceEquals(c.TargetPort.node, cn));
 								CircuitNode src = c.SourcePort.node;
