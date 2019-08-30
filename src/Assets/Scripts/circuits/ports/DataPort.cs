@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public abstract class DataPort : Port
 	{
 		public delegate void ValueChangedEventHandler(DataPort sender);
@@ -10,7 +12,7 @@
 		{
 		}
 
-		public abstract int GetValue();
+		public abstract IConvertible GetValue();
 
 		public override bool Connect(Port port)
 		{

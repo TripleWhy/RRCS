@@ -1,15 +1,17 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class OutputPort : DataPort
 	{
-		private int value;
+		private IConvertible value;
 
 		public OutputPort(CircuitNode node, bool isReset)
 			: base(node, false, isReset)
 		{
 		}
 
-		public int Value
+		public IConvertible Value
 		{
 			get
 			{
@@ -25,7 +27,7 @@
 		}
 
 		#region implemented abstract members of Port
-		public override int GetValue()
+		public override IConvertible GetValue()
 		{
 			return Value;
 		}

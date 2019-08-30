@@ -202,7 +202,7 @@
 		#endregion
 
 		private Vector3 lastPos;
-		private int lastValue;
+		private IConvertible lastValue;
 
 		void Update()
 		{
@@ -215,11 +215,16 @@
 
 			if (valueText != null && valueText.gameObject.activeInHierarchy)
 			{
-				int value = ((DataPort)Port).GetValue();
+				IConvertible value = ((DataPort)Port).GetValue();
 				if (value != lastValue)
 				{
 					lastValue = value;
-					valueText.text = value.ToString();
+					if (value == null)
+						valueText.text = "null";
+					else if (value is string)
+						valueText.text = '"' + (string)value + '"';
+					else
+						valueText.text = value.ToString();
 				}
 			}
 

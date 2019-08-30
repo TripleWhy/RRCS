@@ -5,7 +5,7 @@
 		public AndChip(CircuitManager manager) : base(manager, 7, 2, true)
 		{
 			for (int i = 0; i < inputPortCount; i++)
-				inputPorts[i].UnconnectedValue = 1;
+				inputPorts[i].UnconnectedValue = true;
 		}
 
 		override public int IconIndex
@@ -28,15 +28,15 @@
 				outputPorts[0].Value = outputPorts[1].Value = 0;
 			else
 			{
-				outputPorts[0].Value = ToInt(
-					ToBool(inputPorts[0])
-						&& ToBool(inputPorts[1])
-						&& ToBool(inputPorts[2])
-						&& ToBool(inputPorts[3])
-						&& ToBool(inputPorts[4])
-						&& ToBool(inputPorts[5])
-						&& ToBool(inputPorts[6]));
-				outputPorts[1].Value = 1 - outputPorts[0].Value;
+				bool result = InBool(0)
+					&& InBool(1)
+					&& InBool(2)
+					&& InBool(3)
+					&& InBool(4)
+					&& InBool(5)
+					&& InBool(6);
+				outputPorts[0].Value = result;
+				outputPorts[1].Value = !result;
 			}
 		}
 	}

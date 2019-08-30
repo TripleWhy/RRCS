@@ -17,9 +17,9 @@
 		override protected void EvaluateOutputs()
 		{
 			if (!inputPorts[0].IsConnected)
-				outputPorts[0].Value = 0;
+				outputPorts[0].Value = false;
 			else
-				outputPorts[0].Value = ToInt(!ToBool(inputPorts[0]));
+				outputPorts[0].Value = !InBool(0);
 		}
 	}
 }

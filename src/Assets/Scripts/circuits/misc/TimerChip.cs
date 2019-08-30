@@ -20,7 +20,7 @@
 
 		private void Start()
 		{
-			remainingTicks = ToInt(inputPorts[1]);
+			remainingTicks = InInt(1);
 			remainingSeconds = (remainingTicks + 9) / 10;
 		}
 
@@ -28,7 +28,7 @@
 		{
 			get
 			{
-				return ToBool(inputPorts[0]) && !IsResetSet;
+				return InBool(0) && !IsResetSet;
 			}
 		}
 
@@ -50,7 +50,7 @@
 		override public void Evaluate()
 		{
 			outputPorts[outputPortCount].Value = ResetValue;
-			int dur = InValue(1);
+			int dur = InInt(1);
 			if (IsResetSet || dur != duration)
 			{
 				duration = dur;

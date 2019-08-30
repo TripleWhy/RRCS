@@ -1,33 +1,31 @@
 ﻿namespace AssemblyCSharp.gizmos
 {
-    public class LookAt : Gizmo
-    {
-        private int iconIndex;
+	public class LookAt : Gizmo
+	{
+		private bool isActive = false;
 
-        private bool isActive = false;
+		public LookAt(CircuitManager manager) : base(manager, 1)
+		{
+		}
 
-        public LookAt(CircuitManager manager) : base(manager, 1)
-        {
-        }
+		protected override void EvaluateOutputs()
+		{
+			isActive = InBool(0);
+		}
 
-        protected override void EvaluateOutputs()
-        {
-            isActive = InValue(0) != 0;
-        }
+		override protected NodeSetting[] CreateSettings()
+		{
+			return new NodeSetting[]
+			{
+				NodeSetting.CreateSetting(NodeSetting.SettingType.TagToFollow)
+			};
+		}
 
-        override protected NodeSetting[] CreateSettings()
-        {
-            return new NodeSetting[]
-            {
-                NodeSetting.CreateSetting(NodeSetting.SettingType.TagToFollow)
-            };
-        }
+		public override string GetGizmoValueString()
+		{
+			return isActive ? "#" + settings[0].currentValue : "";
+		}
 
-        public override string getGizmoValueString()
-        {
-            return isActive ? "#" + settings[0].currentValue : "";
-        }
-
-        public override void reset() { }
-    }
+		public override void Reset() { }
+	}
 }

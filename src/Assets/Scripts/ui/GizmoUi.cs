@@ -48,11 +48,11 @@ namespace AssemblyCSharp
 			Gizmo gizmo = (Gizmo) Node;
 			if (!IsSidebarNode && gizmoValueText != null && gizmo != null)
 			{
-				gizmoValueText.text = gizmo.getGizmoValueString();
+				gizmoValueText.text = gizmo.GetGizmoValueString();
 
 				if (type == GizmoType.Rotator)
 				{
-					if (((Rotator) gizmo).isMoveToTarget())
+					if (((Rotator) gizmo).IsMoveToTarget())
 					{
 						inPorts[2].RectTransform.localScale = new Vector3(1, 1, 1);
 					}
@@ -65,7 +65,7 @@ namespace AssemblyCSharp
 
 				if (type == GizmoType.Piston)
 				{
-					if (((Piston) gizmo).isMoveToTarget())
+					if (((Piston) gizmo).IsMoveToTarget())
 					{
 						inPorts[2].RectTransform.localScale = new Vector3(1, 1, 1);
 					}

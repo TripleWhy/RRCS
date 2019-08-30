@@ -188,34 +188,39 @@
 						yield return connection;
 		}
 
-		public static int ToInt(bool b)
+		public static int ValueToInt(IConvertible val)
 		{
-			return b ? 1 : 0;
+			return Convert.ToInt32(val);
 		}
 
-		public static bool ToBool(int i)
+		public static float ValueToFloat(IConvertible val)
 		{
-			return i != 0;
+			return Convert.ToSingle(val);
 		}
 
-		public static int ToInt(DataPort p)
+		public static bool ValueToBool(IConvertible val)
 		{
-			return p.GetValue();
+			return Convert.ToBoolean(val);
 		}
 
-		public static bool ToBool(DataPort p)
+		protected IConvertible InValue(int index)
 		{
-			return ToBool(ToInt(p));
-		}
-
-		protected int InValue(int index)
-		{
-			return ToInt(inputPorts[index]);
+			return inputPorts[index].GetValue();
 		}
 
 		protected bool InBool(int index)
 		{
-			return ToBool(inputPorts[index]);
+			return ValueToBool(InValue(index));
+		}
+
+		protected int InInt(int index)
+		{
+			return ValueToInt(InValue(index));
+		}
+
+		protected float InFloat(int index)
+		{
+			return ValueToFloat(InValue(index));
 		}
 
 		protected bool IsResetSet
@@ -226,7 +231,7 @@
 			}
 		}
 
-		protected int ResetValue
+		protected IConvertible ResetValue
 		{
 			get
 			{
@@ -245,7 +250,7 @@
 			else if (!IsResetSet)
 			{
 				EvaluateOutputs();
-				outputPorts[outputPortCount].Value = 0;
+				outputPorts[outputPortCount].Value = false;
 			}
 			else
 			{

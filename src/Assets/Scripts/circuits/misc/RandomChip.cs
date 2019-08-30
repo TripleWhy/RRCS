@@ -25,8 +25,8 @@
 			{
 				try
 				{
-					int min = InValue(1);
-					int max = InValue(2);
+					int min = InInt(1);
+					int max = InInt(2);
 					outputPorts[0].Value = random.Next(min, max);
 					clearValue = !(bool)settings[0].currentValue;
 					if (clearValue || min + 1 < max)

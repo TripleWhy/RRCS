@@ -43,7 +43,7 @@
 		{
 			get
 			{
-				return ToBool(inputPorts[0]);
+				return InBool(0);
 			}
 		}
 
@@ -162,7 +162,7 @@
 			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.node))
 			{
 				DebugUtils.Assert(transition.TargetStatePort != null);
-				if (ToBool(transition.TransitionEnabledPort))
+				if (ValueToBool(transition.TransitionEnabledPort.GetValue()))
 					return (StateChip)transition.TargetStatePort.node;
 			}
 			return null;

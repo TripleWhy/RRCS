@@ -9,16 +9,16 @@
 		public class QueueEntry : FastPriorityQueueNode
 		{
 			public readonly int outputTick;
-			public readonly int value;
+			public readonly IConvertible value;
 
-			public QueueEntry(int outputTick, int value)
+			public QueueEntry(int outputTick, IConvertible value)
 			{
 				this.outputTick = outputTick;
 				this.value = value;
 			}
 		}
 
-		private int lastInput = 0;
+		private IConvertible lastInput = null;
 		private FastPriorityQueue<QueueEntry> queue = new FastPriorityQueue<QueueEntry>(20);
 
 		public DelayChip(CircuitManager manager) : base(manager, 2, 1, true)
@@ -35,7 +35,7 @@
 
 		private bool ShouldOutput()
 		{
-			return queue.Count != 0 && Manager.CurrentTick >= queue.First.outputTick && !ToBool(inputPorts[2]);
+			return queue.Count != 0 && Manager.CurrentTick >= queue.First.outputTick && !InBool(2);
 		}
 
 		public override void Tick()
@@ -47,7 +47,7 @@
 		override public void Evaluate()
 		{
 			outputPorts[outputPortCount].Value = ResetValue;
-			if (ToBool(inputPorts[2]))
+			if (IsResetSet)
 				queue.Clear();
 			else
 				EvaluateOutputs();
@@ -63,13 +63,13 @@
 			else
 				outputPorts[0].Value = 0;
 
-			int value = ToInt(inputPorts[0]);
+			IConvertible value = InValue(0);
 			if (value == lastInput)
 				return;
 			lastInput = value;
-			if (!ToBool(value))
+			if (!ValueToBool(value))
 				return;
-			int delay = Math.Max(1, ToInt(inputPorts[1]));
+			int delay = Math.Max(1, InInt(1));
 			int outputTick = Manager.CurrentTick + delay;
 			QueueEntry entry = new QueueEntry(outputTick, value);
 			if (queue.Count >= queue.MaxSize)

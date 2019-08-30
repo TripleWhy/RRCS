@@ -7,8 +7,8 @@
         {
         }
 
-        public abstract string getGizmoValueString();
+        public abstract string GetGizmoValueString();
 
-        public abstract void reset();
+        public abstract void Reset();
     }
 }
