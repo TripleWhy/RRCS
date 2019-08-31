@@ -37,6 +37,7 @@
 			Message4,
 			LimitMessage,
 			Text,
+			NodeDataType,
 		};
 
 		[Serializable]
@@ -120,9 +121,111 @@
 			}
 		}
 
+		[Serializable]
+		public class DataType
+		{
+			public enum Type
+			{
+				Bool, Int, Long, Float, Double, String
+			};
+
+			public Type type = Type.Int;
+
+			public DataType()
+			{
+			}
+
+			public DataType(Type type)
+			{
+				this.type = type;
+			}
+
+			public string TypeText
+			{
+				get
+				{
+					switch (type)
+					{
+						case Type.Bool:
+							return "bool";
+						case Type.Int:
+							return "int";
+						case Type.Long:
+							return "long";
+						case Type.Float:
+							return "float";
+						case Type.Double:
+							return "double";
+						case Type.String:
+							return "string";
+						default:
+							throw new InvalidOperationException();
+					}
+				}
+			}
+
+			public System.Type SytemType
+			{
+				get
+				{
+					switch (type)
+					{
+						case Type.Bool:
+							return typeof(bool);
+						case Type.Int:
+							return typeof(int);
+						case Type.Long:
+							return typeof(long);
+						case Type.Float:
+							return typeof(float);
+						case Type.Double:
+							return typeof(double);
+						case Type.String:
+							return typeof(string);
+						default:
+							throw new InvalidOperationException();
+					}
+				}
+			}
+
+			public override string ToString()
+			{
+				return TypeText;
+			}
+
+			public static Type ParseType(string text)
+			{
+				switch (text)
+				{
+					case "bool":
+						return Type.Bool;
+					case "int":
+						return Type.Int;
+					case "long":
+						return Type.Long;
+					case "float":
+						return Type.Float;
+					case "double":
+						return Type.Double;
+					case "string":
+						return Type.String;
+					default:
+						throw new FormatException("\"" + text + "\" is not a valid type.");
+				}
+			}
+
+			public static DataType Parse(string str)
+			{
+				return new NodeSetting.DataType
+				{
+					type = ParseType(str),
+				};
+			}
+		}
+
 		public readonly SettingType type;
 		public readonly string displayName;
-		public readonly Type valueType;
+		public Type valueType;
 		public object currentValue;
 
 		private NodeSetting(SettingType type, string displayName, Type valueType, object currentValue)
@@ -197,6 +300,8 @@
 					return new NodeSetting(type, "Limit Length", typeof(bool), true);
 				case SettingType.Text:
 					return new NodeSetting(type, "Text", typeof(string), "Text");
+				case SettingType.NodeDataType:
+					return new NodeSetting(type, "Data Type", typeof(DataType), new DataType());
 
 			}
 			DebugUtils.Assert(false);

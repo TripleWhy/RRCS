@@ -7,15 +7,19 @@
 
 	public class NodeSettingsUi : MonoBehaviour
 	{
-		public IntEditor intEditorPrefab;
 		public BoolEditor boolEditorPrefab;
+		public IntEditor intEditorPrefab;
+		public LongEditor longEditorPrefab;
+		public FloatEditor floatEditorPrefab;
+		public DoubleEditor doubleEditorPrefab;
 		public StringEditor stringEditorPrefab;
 		public SelectorConditionEditor selectorConditionEditorPrefab;
+		public DataTypeEditor dataTypeEditorPrefab;
 
 		private Text effectiveEvaluationIndexText;
 		private IntEditor priorityEditor;
-		private List<NodeUi> selectedNodes = new List<NodeUi>();
-		private List<GameObject> editors = new List<GameObject>();
+		private readonly List<NodeUi> selectedNodes = new List<NodeUi>();
+		private readonly List<GameObject> editors = new List<GameObject>();
 
 		private void Awake()
 		{
@@ -29,7 +33,7 @@
 			priorityEditor.ValueChanged += PriorityEditor_ValueChanged;
 		}
 
-		private void PriorityEditor_ValueChanged(IntEditor sender, int value)
+		private void PriorityEditor_ValueChanged(NumberEditor<int> sender, int value)
 		{
 			DebugUtils.Assert(selectedNodes.Count == 1);
 			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
@@ -99,18 +103,39 @@
 
 		private GameObject CreateSettingEditor(NodeSetting setting)
 		{
-			if (setting.valueType == typeof(int))
-			{
-				IntEditor editor = Instantiate<IntEditor>(intEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += IntEditor_ValueChanged;
-				return editor.gameObject;
-			}
-			else if (setting.valueType == typeof(bool))
+			if (setting.valueType == typeof(bool))
 			{
 				BoolEditor editor = Instantiate<BoolEditor>(boolEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += BoolEditor_ValueChanged;
+				return editor.gameObject;
+			}
+			else if (setting.valueType == typeof(int))
+			{
+				IntEditor editor = Instantiate<IntEditor>(intEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += NumberEditor_ValueChanged<int>;
+				return editor.gameObject;
+			}
+			else if (setting.valueType == typeof(long))
+			{
+				LongEditor editor = Instantiate<LongEditor>(longEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += NumberEditor_ValueChanged<long>;
+				return editor.gameObject;
+			}
+			else if (setting.valueType == typeof(float))
+			{
+				FloatEditor editor = Instantiate<FloatEditor>(floatEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += NumberEditor_ValueChanged<float>;
+				return editor.gameObject;
+			}
+			else if (setting.valueType == typeof(double))
+			{
+				DoubleEditor editor = Instantiate<DoubleEditor>(doubleEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += NumberEditor_ValueChanged<double>;
 				return editor.gameObject;
 			}
 			else if (setting.valueType == typeof(string))
@@ -127,6 +152,13 @@
 				editor.ConditionChanged += Editor_ConditionChanged;
 				return editor.gameObject;
 			}
+			else if (setting.valueType == typeof(NodeSetting.DataType))
+			{
+				DataTypeEditor editor = Instantiate<DataTypeEditor>(dataTypeEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.DataTypeChanged += Editor_DataTypeChanged;
+				return editor.gameObject;
+			}
 			else
 			{
 				DebugUtils.Assert(false);
@@ -134,13 +166,13 @@
 			}
 		}
 
-		private void IntEditor_ValueChanged(IntEditor sender, int value)
+		private void BoolEditor_ValueChanged(BoolEditor sender, bool value)
 		{
 			foreach (NodeUi nodeUi in selectedNodes)
 				nodeUi.Node.SetSetting(sender.Setting.type, value);
 		}
 
-		private void BoolEditor_ValueChanged(BoolEditor sender, bool value)
+		private void NumberEditor_ValueChanged<T>(NumberEditor<T> sender, T value) where T : IComparable<T>
 		{
 			foreach (NodeUi nodeUi in selectedNodes)
 				nodeUi.Node.SetSetting(sender.Setting.type, value);
@@ -153,6 +185,12 @@
 		}
 		
 		private void Editor_ConditionChanged(SelectorConditionEditor sender, NodeSetting.SelectorCondition value)
+		{
+			foreach (NodeUi nodeUi in selectedNodes)
+				nodeUi.Node.SetSetting(sender.Setting.type, value);
+		}
+
+		private void Editor_DataTypeChanged(DataTypeEditor sender, NodeSetting.DataType value)
 		{
 			foreach (NodeUi nodeUi in selectedNodes)
 				nodeUi.Node.SetSetting(sender.Setting.type, value);
