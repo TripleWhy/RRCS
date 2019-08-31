@@ -22,6 +22,9 @@
 			StateMachine, State,
 
 			ExtBreakpoint,
+			ExtBitwiseAnd, ExtBitwiseOr, ExtBitwiseXor,
+			ExtBuffer, ExtArray, ExtMultiplexer,
+			ExtMathConstants, ExtMathAbs,
 		};
 
 		public ChipType type;
@@ -211,6 +214,22 @@
 					return new StateChip(manager);
 				case ChipType.ExtBreakpoint:
 					return new BreakpointChip(manager);
+				case ChipType.ExtBitwiseAnd:
+					return new BitwiseAndChip(manager);
+				case ChipType.ExtBitwiseOr:
+					return new BitwiseOrChip(manager);
+				case ChipType.ExtBitwiseXor:
+					return new BitwiseXorChip(manager);
+				case ChipType.ExtBuffer:
+					return new BufferChip(manager);
+				case ChipType.ExtArray:
+					return new ArrayChip(manager);
+				case ChipType.ExtMultiplexer:
+					return new MultiplexerChip(manager);
+				case ChipType.ExtMathConstants:
+					return new ConstantsChip(manager);
+				case ChipType.ExtMathAbs:
+					return new AbsChip(manager);
 				default:
 					return null;
 			}
