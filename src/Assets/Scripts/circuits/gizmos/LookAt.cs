@@ -26,6 +26,6 @@
 			return isActive ? "#" + settings[0].currentValue : "";
 		}
 
-		public override void Reset() { }
+		public override void ResetGizmo() { }
 	}
 }

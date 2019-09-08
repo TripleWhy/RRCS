@@ -2,9 +2,9 @@
 {
 	using System;
 
-	public class ConstantsChip : Chip
+	public class MathConstantsChip : Chip
 	{
-		public ConstantsChip(CircuitManager manager)
+		public MathConstantsChip(CircuitManager manager)
 			: base(manager, 0, 2, false)
 		{
 		}

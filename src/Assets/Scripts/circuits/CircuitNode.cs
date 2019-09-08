@@ -31,6 +31,7 @@
 			for (int i = 0; i < inputCount; i++)
 			{
 				inputPorts[i] = new InputPort(this, false);
+				inputPorts[i].UnconnectedValue = DefaultInputValue(i);
 				inputPorts[i].ValueChanged += CircuitNode_ValueChanged;
 				inputPorts[i].Connected += CircuitNode_Connected;
 				inputPorts[i].Disconnected += CircuitNode_Disconnected;
@@ -38,6 +39,7 @@
 			if (hasReset)
 			{
 				inputPorts[inputCount] = new InputPort(this, true);
+				inputPorts[inputCount].UnconnectedValue = false;
 				inputPorts[inputCount].ValueChanged += CircuitNode_ValueChanged;
 				inputPorts[inputCount].Connected += CircuitNode_Connected;
 				inputPorts[inputCount].Disconnected += CircuitNode_Disconnected;
@@ -247,17 +249,30 @@
 		{
 			if (!hasReset)
 				EvaluateOutputs();
-			else if (!IsResetSet)
-			{
-				EvaluateOutputs();
-				outputPorts[outputPortCount].Value = false;
-			}
 			else
 			{
+				if (!IsResetSet)
+					EvaluateOutputs();
+				else
+					Reset();
 				outputPorts[outputPortCount].Value = ResetValue;
-				for (int i = 0; i < outputPortCount; ++i)
-					outputPorts[i].Value = 0;
 			}
+		}
+
+		protected virtual IConvertible DefaultInputValue(int inputIndex)
+		{
+			return null;
+		}
+
+		protected virtual IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return null;
+		}
+
+		protected virtual void Reset()
+		{
+			for (int i = 0; i < outputPortCount; ++i)
+				outputPorts[i].Value = DefaultOutputValue(i);
 		}
 
 		protected abstract void EvaluateOutputs();

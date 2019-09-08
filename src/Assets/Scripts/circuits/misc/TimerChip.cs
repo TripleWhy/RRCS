@@ -59,13 +59,13 @@
 
 			if (remainingTicks == 0 && IsOn)
 			{
-				outputPorts[0].Value = 1;
+				outputPorts[0].Value = true;
 				if ((bool)settings[0].currentValue)
 					Start();
 				EmitEvaluationRequired();
 			}
 			else
-				outputPorts[0].Value = 0;
+				outputPorts[0].Value = false;
 			outputPorts[1].Value = remainingSeconds;
 		}
 

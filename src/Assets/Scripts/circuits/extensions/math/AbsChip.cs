@@ -17,6 +17,16 @@
 			}
 		}
 
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return 0;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return 0;
+		}
+
 		override protected void EvaluateOutputs()
 		{
 			IConvertible a = InValue(0);

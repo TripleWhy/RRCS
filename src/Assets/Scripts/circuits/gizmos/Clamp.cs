@@ -19,6 +19,6 @@
 			return isClamped ? "Clamped" : "Released";
 		}
 
-		public override void Reset() { }
+		public override void ResetGizmo() { }
 	}
 }

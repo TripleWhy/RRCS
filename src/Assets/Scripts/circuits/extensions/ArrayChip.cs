@@ -29,54 +29,46 @@
 			return index;
 		}
 
-		public override void Evaluate()
+		protected override void Reset()
 		{
-			if (IsResetSet)
-			{
-				data.Clear();
-				for (int i = 0; i < outputPortCount; i++)
-					outputPorts[i].Value = null;
-				outputPorts[outputPortCount].Value = ResetValue;
-			}
-			else
-			{
-				if (InBool(2))
-				{
-					IConvertible insertValue = InValue(0);
-					int insertIndex = DataIndex(InInt(1));
-					if (data.Count < maxSize)
-						data.Insert(insertIndex, insertValue);
-					EmitEvaluationRequired();
-				}
-				if (data.Count > 0)
-				{
-					int removeIndex = Math.Min(data.Count - 1, DataIndex(InInt(3)));
-					outputPorts[0].Value = data[removeIndex];
-					if (InBool(4))
-					{
-						data.RemoveAt(removeIndex);
-						EmitEvaluationRequired();
-					}
-				}
-				else
-					outputPorts[0].Value = null;
-				if (data.Count > 0)
-				{
-					outputPorts[1].Value = data[0];
-					outputPorts[2].Value = data[data.Count - 1];
-				}
-				else
-				{
-					outputPorts[1].Value = null;
-					outputPorts[2].Value = null;
-				}
-				outputPorts[3].Value = data.Count;
-				outputPorts[outputPortCount].Value = false;
-			}
+			data.Clear();
+			base.Reset();
 		}
 
 		protected override void EvaluateOutputs()
 		{
+			if (InBool(2))
+			{
+				IConvertible insertValue = InValue(0);
+				int insertIndex = DataIndex(InInt(1));
+				if (data.Count < maxSize)
+					data.Insert(insertIndex, insertValue);
+				EmitEvaluationRequired();
+			}
+			if (data.Count > 0)
+			{
+				int removeIndex = Math.Min(data.Count - 1, DataIndex(InInt(3)));
+				outputPorts[0].Value = data[removeIndex];
+				if (InBool(4))
+				{
+					data.RemoveAt(removeIndex);
+					EmitEvaluationRequired();
+				}
+			}
+			else
+				outputPorts[0].Value = null;
+			if (data.Count > 0)
+			{
+				outputPorts[1].Value = data[0];
+				outputPorts[2].Value = data[data.Count - 1];
+			}
+			else
+			{
+				outputPorts[1].Value = null;
+				outputPorts[2].Value = null;
+			}
+			outputPorts[3].Value = data.Count;
+			outputPorts[outputPortCount].Value = false;
 		}
 	}
 }

@@ -4,8 +4,19 @@
 
 	public abstract class SimpleCombinatorChip : Chip
 	{
-		protected SimpleCombinatorChip(CircuitManager manager) : base(manager, 2, 1, true)
+		protected SimpleCombinatorChip(CircuitManager manager)
+			: base(manager, 2, 1, true)
 		{
+		}
+
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return 0;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return 0;
 		}
 
 		override protected void EvaluateOutputs()

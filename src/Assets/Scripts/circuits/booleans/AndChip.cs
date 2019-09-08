@@ -1,11 +1,12 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class AndChip : Chip
 	{
-		public AndChip(CircuitManager manager) : base(manager, 7, 2, true)
+		public AndChip(CircuitManager manager)
+			: base(manager, 7, 2, true)
 		{
-			for (int i = 0; i < inputPortCount; i++)
-				inputPorts[i].UnconnectedValue = true;
 		}
 
 		override public int IconIndex
@@ -14,6 +15,16 @@
 			{
 				return 15;
 			}
+		}
+
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return true;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return false;
 		}
 
 		override protected void EvaluateOutputs()
@@ -25,7 +36,7 @@
 				|| inputPorts[4].IsConnected
 				|| inputPorts[5].IsConnected
 				|| inputPorts[6].IsConnected))
-				outputPorts[0].Value = outputPorts[1].Value = 0;
+				outputPorts[0].Value = outputPorts[1].Value = false;
 			else
 			{
 				bool result = InBool(0)

@@ -1,8 +1,11 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class NotChip : Chip
 	{
-		public NotChip(CircuitManager manager) : base(manager, 1, 1, true)
+		public NotChip(CircuitManager manager)
+			: base(manager, 1, 1, true)
 		{
 		}
 
@@ -14,12 +17,19 @@
 			}
 		}
 
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return true;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return false;
+		}
+
 		override protected void EvaluateOutputs()
 		{
-			if (!inputPorts[0].IsConnected)
-				outputPorts[0].Value = false;
-			else
-				outputPorts[0].Value = !InBool(0);
+			outputPorts[0].Value = !InBool(0);
 		}
 	}
 }

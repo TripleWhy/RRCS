@@ -40,8 +40,6 @@
 		override protected void EvaluateOutputs()
 		{
 			int signal = InInt(0);
-			IConvertible value = InValue(1);
-
 			outputPorts[0].Value = null;
 			for (int i = 1; i < inputPortCount; i++)
 			{

@@ -227,7 +227,7 @@
 				case ChipType.ExtMultiplexer:
 					return new MultiplexerChip(manager);
 				case ChipType.ExtMathConstants:
-					return new ConstantsChip(manager);
+					return new MathConstantsChip(manager);
 				case ChipType.ExtMathAbs:
 					return new AbsChip(manager);
 				default:

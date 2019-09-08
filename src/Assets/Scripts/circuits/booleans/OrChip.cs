@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class OrChip : Chip
 	{
 		public OrChip(CircuitManager manager) : base(manager, 7, 2, true)
@@ -14,6 +16,16 @@
 			}
 		}
 
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return true;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return false;
+		}
+
 		override protected void EvaluateOutputs()
 		{
 			if (!(inputPorts[0].IsConnected
@@ -23,7 +35,7 @@
 				|| inputPorts[4].IsConnected
 				|| inputPorts[5].IsConnected
 				|| inputPorts[6].IsConnected))
-				outputPorts[0].Value = outputPorts[1].Value = 0;
+				outputPorts[0].Value = outputPorts[1].Value = false;
 			else
 			{
 				bool result = InBool(0)

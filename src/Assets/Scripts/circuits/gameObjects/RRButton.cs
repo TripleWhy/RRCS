@@ -68,12 +68,12 @@
 			lastPressed = pressed;
 		}
 
-		private int GetOutputValue()
+		private IConvertible GetOutputValue()
 		{
 			if ((bool)settings[0].currentValue)
 				return RRCSManager.Instance.CurrentPlayerId;
 			else
-				return 1;
+				return true;
 		}
 
 		public void Press()

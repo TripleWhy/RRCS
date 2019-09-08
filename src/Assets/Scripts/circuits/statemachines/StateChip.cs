@@ -35,16 +35,16 @@
 		{
 			bool wasActive = isActive;
 
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
+			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = false;
 			if (isActive)
 			{
-				outputPorts[1].Value = 1;
+				outputPorts[1].Value = true;
 				if (!wasActive)
-					outputPorts[0].Value = 1;
+					outputPorts[0].Value = true;
 			}
 			else if (wasActive)
 			{
-				outputPorts[2].Value = 1;
+				outputPorts[2].Value = true;
 			}
 		}
 

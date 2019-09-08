@@ -4,7 +4,8 @@
 
 	public class ModuloChip : SimpleCombinatorChip
 	{
-		public ModuloChip(CircuitManager manager) : base(manager)
+		public ModuloChip(CircuitManager manager)
+			: base(manager)
 		{
 		}
 

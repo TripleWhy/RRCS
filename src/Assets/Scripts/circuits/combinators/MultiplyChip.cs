@@ -5,7 +5,8 @@
 
 	public class MultiplyChip : SimpleCombinatorChip
 	{
-		public MultiplyChip(CircuitManager manager) : base(manager)
+		public MultiplyChip(CircuitManager manager)
+			: base(manager)
 		{
 		}
 
@@ -15,6 +16,11 @@
 			{
 				return 11;
 			}
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return null;
 		}
 
 		override protected IConvertible Combine(IConvertible a, IConvertible b)

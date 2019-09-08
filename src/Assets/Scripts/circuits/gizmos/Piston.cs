@@ -143,7 +143,7 @@ namespace AssemblyCSharp.gizmos
 			return (bool) settings[1].currentValue;
 		}
 
-		public override void Reset()
+		public override void ResetGizmo()
 		{
 			currentPosition = 0;
 			currentVelocity = 0;

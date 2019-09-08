@@ -4,11 +4,12 @@
 
 	public abstract class AdvancedCombarerChipBase : Chip
 	{
-		protected AdvancedCombarerChipBase(CircuitManager manager) : base(manager, 4, 2, true)
+		protected AdvancedCombarerChipBase(CircuitManager manager)
+			: base(manager, 4, 2, true)
 		{
 		}
 
-		override protected void EvaluateOutputs()
+		protected override void EvaluateOutputs()
 		{
 			if (Compare(InValue(0), InValue(1)))
 			{

@@ -4,7 +4,8 @@
 
 	public abstract class SimpleCombarerChipBase : Chip
 	{
-		protected SimpleCombarerChipBase(CircuitManager manager) : base(manager, 2, 2, true)
+		protected SimpleCombarerChipBase(CircuitManager manager)
+			: base(manager, 2, 2, true)
 		{
 		}
 

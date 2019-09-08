@@ -41,6 +41,8 @@
 			{
 				linesContainer = GameObject.Find("WorldCanvas/Lines").transform;
 			}
+			if (valueText != null)
+				valueText.text = "null";
 		}
 
 		void OnDestroy()

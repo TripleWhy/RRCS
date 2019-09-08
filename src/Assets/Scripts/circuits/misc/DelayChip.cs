@@ -2,7 +2,6 @@
 {
 	using Priority_Queue;
 	using System;
-	using System.Collections.Generic;
 
 	public class DelayChip : Chip
 	{
@@ -44,13 +43,10 @@
 				EmitEvaluationRequired();
 		}
 
-		override public void Evaluate()
+		protected override void Reset()
 		{
-			outputPorts[outputPortCount].Value = ResetValue;
-			if (IsResetSet)
-				queue.Clear();
-			else
-				EvaluateOutputs();
+			queue.Clear();
+			base.Reset();
 		}
 
 		override protected void EvaluateOutputs()

@@ -4,7 +4,8 @@
 
 	public class DivideChip : SimpleCombinatorChip
 	{
-		public DivideChip(CircuitManager manager) : base(manager)
+		public DivideChip(CircuitManager manager)
+			: base(manager)
 		{
 		}
 
@@ -26,7 +27,7 @@
 			{
 				long lb = Convert.ToInt64(b);
 				if (lb == 0)
-					return 0;
+					return 0L;
 				return Convert.ToInt64(a) / lb;
 			}
 			if (a is int || b is int)

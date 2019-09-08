@@ -175,7 +175,7 @@
 		public static void ResetGizmos()
 		{
 			foreach (GizmoUi gizmo in GetGizmos())
-				gizmo.Gizmo.Reset();
+				gizmo.Gizmo.ResetGizmo();
 		}
 	}
 }

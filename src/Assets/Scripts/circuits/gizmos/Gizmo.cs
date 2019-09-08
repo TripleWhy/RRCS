@@ -1,14 +1,16 @@
 ﻿namespace AssemblyCSharp
 {
-    public abstract class Gizmo : CircuitNode
-    {
-        public Gizmo(CircuitManager manager, int inputCount) :
-            base(manager, inputCount, 0, false)
-        {
-        }
+	using System;
 
-        public abstract string GetGizmoValueString();
+	public abstract class Gizmo : CircuitNode
+	{
+		public Gizmo(CircuitManager manager, int inputCount) :
+			base(manager, inputCount, 0, false)
+		{
+		}
 
-        public abstract void Reset();
-    }
+		public abstract string GetGizmoValueString();
+
+		public abstract void ResetGizmo();
+	}
 }

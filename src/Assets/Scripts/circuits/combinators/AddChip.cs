@@ -5,7 +5,8 @@
 
 	public class AddChip : Chip
 	{
-		public AddChip(CircuitManager manager) : base(manager, 3, 1, true)
+		public AddChip(CircuitManager manager)
+			: base(manager, 3, 1, true)
 		{
 		}
 
@@ -15,6 +16,11 @@
 			{
 				return 9;
 			}
+		}
+
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return 0;
 		}
 
 		override protected void EvaluateOutputs()
