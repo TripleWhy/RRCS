@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class TimerChip : Chip
 	{
 		private int remainingTicks = -1;
@@ -16,6 +18,13 @@
 			{
 				return 21;
 			}
+		}
+
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			if (outputIndex == 0)
+				return typeof(bool);
+			return typeof(int);
 		}
 
 		private void Start()

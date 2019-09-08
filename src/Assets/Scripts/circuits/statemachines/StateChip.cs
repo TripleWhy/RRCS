@@ -1,5 +1,6 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using System.Collections.Generic;
 
 	public class StateChip : Chip
@@ -24,6 +25,11 @@
 			{
 				return 32;
 			}
+		}
+
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
 		}
 
 		public override void Evaluate()

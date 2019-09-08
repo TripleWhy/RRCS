@@ -2,6 +2,7 @@
 {
 	using System.Linq;
 	using System.Collections.Generic;
+	using System;
 
 	public class StateMachineChip : Chip
 	{
@@ -20,6 +21,22 @@
 			get
 			{
 				return 31;
+			}
+		}
+
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			switch (outputIndex)
+			{
+				default:
+				case 0:
+				case 1:
+				case 2:
+					return null;
+				case 3:
+					return typeof(int);
+				case 4:
+					return typeof(bool);
 			}
 		}
 

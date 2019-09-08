@@ -50,6 +50,7 @@
 			for (int i = 0; i < outputCount; i++)
 			{
 				outputPorts[i] = new OutputPort(this, false);
+				outputPorts[i].expectedType = ExpectedOutputType(i);
 				outputPorts[i].Connected += CircuitNode_Connected;
 				outputPorts[i].Disconnected += CircuitNode_Disconnected;
 			}
@@ -257,6 +258,11 @@
 					Reset();
 				outputPorts[outputPortCount].Value = ResetValue;
 			}
+		}
+
+		protected virtual Type ExpectedOutputType(int outputIndex)
+		{
+			return null;
 		}
 
 		protected virtual IConvertible DefaultInputValue(int inputIndex)

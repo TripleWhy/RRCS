@@ -19,6 +19,11 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(int);
+		}
+
 		override protected void EvaluateOutputs()
 		{
 			if (InBool(0))

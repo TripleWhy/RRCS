@@ -17,6 +17,11 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
+		}
+
 		protected override IConvertible DefaultInputValue(int inputIndex)
 		{
 			return true;

@@ -17,6 +17,11 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(double);
+		}
+
 		public override void Evaluate()
 		{
 			outputPorts[0].Value = Math.E;

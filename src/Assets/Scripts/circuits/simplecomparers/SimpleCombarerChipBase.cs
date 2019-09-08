@@ -9,6 +9,11 @@
 		{
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
+		}
+
 		override protected void EvaluateOutputs()
 		{
 			bool result = Compare(InValue(0), InValue(1));

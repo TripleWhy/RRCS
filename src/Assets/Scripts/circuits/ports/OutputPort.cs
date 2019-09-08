@@ -5,6 +5,7 @@
 	public class OutputPort : DataPort
 	{
 		private IConvertible value;
+		public System.Type expectedType;
 
 		public OutputPort(CircuitNode node, bool isReset)
 			: base(node, false, isReset)
@@ -19,6 +20,13 @@
 			}
 			set
 			{
+				if (expectedType != null)
+				{
+					if (expectedType.IsPrimitive)
+						DebugUtils.Assert(expectedType != null && value.GetType() == expectedType);
+					else
+						DebugUtils.Assert(expectedType == null || value.GetType() == expectedType);
+				}
 				if (value == this.value)
 					return;
 				this.value = value;

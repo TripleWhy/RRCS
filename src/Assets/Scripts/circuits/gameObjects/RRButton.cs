@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class RRButton : CircuitNode
 	{
 		private bool lastPressed = false;
@@ -11,6 +13,11 @@
 
 		public RRButton(CircuitManager manager) : base(manager, 0, 3, false)
 		{
+		}
+
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
 		}
 
 		protected override NodeSetting[] CreateSettings()
@@ -26,16 +33,27 @@
 
 		public override void SetSetting(NodeSetting setting, object value)
 		{
-			if (setting.type != NodeSetting.SettingType.Text)
+			switch (setting.type)
 			{
-				base.SetSetting(setting, value);
-			}
-			else
-			{
-				if (value == setting.currentValue)
-					return;
-				setting.currentValue = value;
-				ButtonTextChanged(this, (string)value);
+				case NodeSetting.SettingType.Text:
+					if (value == setting.currentValue)
+						return;
+					setting.currentValue = value;
+					ButtonTextChanged(this, (string)value);
+					break;
+				case NodeSetting.SettingType.SendPlayerId:
+				{
+					if (value == setting.currentValue)
+						return;
+					base.SetSetting(setting, value);
+					Type acceptedType = (bool)value ? typeof(int) : typeof(bool);
+					foreach (OutputPort output in outputPorts)
+						output.expectedType = acceptedType;
+					break;
+				}
+				default:
+					base.SetSetting(setting, value);
+					break;
 			}
 		}
 
