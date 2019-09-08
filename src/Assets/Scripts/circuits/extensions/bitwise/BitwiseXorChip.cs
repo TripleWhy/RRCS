@@ -4,7 +4,8 @@
 
 	public class BitwiseXorChip : SimpleCombinatorChip
 	{
-		public BitwiseXorChip(CircuitManager manager) : base(manager)
+		public BitwiseXorChip(CircuitManager manager)
+			: base(manager)
 		{
 		}
 
@@ -20,9 +21,8 @@
 		{
 			if (a is long || b is long)
 				return Convert.ToInt64(a) ^ Convert.ToInt64(b);
-			if (a is int || b is int)
+			else
 				return Convert.ToInt32(a) ^ Convert.ToInt32(b);
-			return 0;
 		}
 	}
 }

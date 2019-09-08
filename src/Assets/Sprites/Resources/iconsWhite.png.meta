@@ -69,6 +69,10 @@ TextureImporter:
     21300128: iconsWhite_64
     21300130: iconsWhite_65
     21300132: iconsWhite_66
+    21300134: iconsWhite_67
+    21300136: iconsWhite_68
+    21300138: iconsWhite_69
+    21300140: iconsWhite_70
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -817,9 +821,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2141
-        y: 1168
+        y: 1169
         width: 166
-        height: 270
+        height: 269
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -876,10 +880,10 @@ TextureImporter:
       name: iconsWhite_35
       rect:
         serializedVersion: 2
-        x: 2420
-        y: 1721
-        width: 161
-        height: 213
+        x: 2427
+        y: 1736
+        width: 150
+        height: 171
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -896,10 +900,10 @@ TextureImporter:
       name: iconsWhite_36
       rect:
         serializedVersion: 2
-        x: 2412
-        y: 1182
-        width: 167
-        height: 249
+        x: 2439
+        y: 1188
+        width: 128
+        height: 220
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -916,10 +920,10 @@ TextureImporter:
       name: iconsWhite_37
       rect:
         serializedVersion: 2
-        x: 2428
-        y: 645
-        width: 106
-        height: 272
+        x: 2455
+        y: 652
+        width: 57
+        height: 254
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -936,10 +940,10 @@ TextureImporter:
       name: iconsWhite_38
       rect:
         serializedVersion: 2
-        x: 2419
-        y: 103
-        width: 118
-        height: 276
+        x: 2431
+        y: 124
+        width: 96
+        height: 235
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1501,13 +1505,93 @@ TextureImporter:
         width: 125
         height: 247
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: 713c7248edb4a064ca89a9ad989fb12b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iconsWhite_67
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3016
+        width: 125
+        height: 213
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1b19dfb5da5d4a4f93a370662edfcde
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iconsWhite_68
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2756
+        width: 125
+        height: 214
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77b3a81b5e0f477479fa89b662838371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iconsWhite_69
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 2607
+        width: 104
+        height: 136
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca3da030817b23d4996853632174429e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iconsWhite_70
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2373
+        width: 125
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4e615dfec97b5c46a323db7d50f1c6b
       vertices: []
       indices: 
       edges: []
