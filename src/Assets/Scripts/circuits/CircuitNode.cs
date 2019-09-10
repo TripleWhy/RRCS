@@ -203,6 +203,10 @@
 
 		public static bool ValueToBool(IConvertible val)
 		{
+			if (val == null)
+				return false;
+			if (val is string)
+				return ((string)val).Length > 0;
 			return Convert.ToBoolean(val);
 		}
 

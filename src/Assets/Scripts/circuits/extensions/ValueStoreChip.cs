@@ -4,9 +4,10 @@
 
 	public class ValueStoreChip : Chip
 	{
-		private IConvertible value = false;
+		private IConvertible value = null;
 
-		public ValueStoreChip(CircuitManager manager) : base(manager, 2, 1, true)
+		public ValueStoreChip(CircuitManager manager)
+			: base(manager, 2, 1, true)
 		{
 		}
 
