@@ -61,11 +61,12 @@
 		{
 			if (pressed && released && lastPressed)
 				pressed = released = false;
+			IConvertible offValue = GetOfftValue();
 			if (pressed)
 			{
-				outputPorts[2].Value = 0;
+				outputPorts[2].Value = offValue;
 				if (lastPressed)
-					outputPorts[0].Value = 0;
+					outputPorts[0].Value = offValue;
 				else
 				{
 					outputPorts[0].Value = outputPorts[1].Value = GetOutputValue();
@@ -74,14 +75,14 @@
 			}
 			else
 			{
-				outputPorts[0].Value = outputPorts[1].Value = 0;
+				outputPorts[0].Value = outputPorts[1].Value = offValue;
 				if (lastPressed)
 				{
 					outputPorts[2].Value = GetOutputValue();
 					EmitEvaluationRequired();
 				}
 				else
-					outputPorts[2].Value = 0;
+					outputPorts[2].Value = offValue;
 			}
 			lastPressed = pressed;
 		}
@@ -92,6 +93,14 @@
 				return RRCSManager.Instance.CurrentPlayerId;
 			else
 				return true;
+		}
+
+		private IConvertible GetOfftValue()
+		{
+			if ((bool)settings[0].currentValue)
+				return 0;
+			else
+				return false;
 		}
 
 		public void Press()
