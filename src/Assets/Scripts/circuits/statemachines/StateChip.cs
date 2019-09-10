@@ -6,6 +6,7 @@
 	public class StateChip : Chip
 	{
 		private bool isActive = false;
+		private bool lastWasActive = false;
 		private StateMachineChip stateMachine;
 
 		public delegate void StateNameChangedEventHandler(StateChip source, string stateName);
@@ -39,19 +40,18 @@
 
 		protected override void EvaluateOutputs()
 		{
-			bool wasActive = isActive;
-
 			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = false;
 			if (isActive)
 			{
 				outputPorts[1].Value = true;
-				if (!wasActive)
+				if (!lastWasActive)
 					outputPorts[0].Value = true;
 			}
-			else if (wasActive)
+			else if (lastWasActive)
 			{
 				outputPorts[2].Value = true;
 			}
+			lastWasActive = isActive;
 		}
 
 		override protected NodeSetting[] CreateSettings()
