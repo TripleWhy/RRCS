@@ -225,6 +225,12 @@
 						valueText.text = "null";
 					else if (value is string)
 						valueText.text = '"' + (string)value + '"';
+					else if (value is double)
+						valueText.text = value.ToString() + "D";
+					else if (value is float)
+						valueText.text = value.ToString() + "F";
+					else if (value is long)
+						valueText.text = value.ToString() + "L";
 					else
 						valueText.text = value.ToString();
 				}
