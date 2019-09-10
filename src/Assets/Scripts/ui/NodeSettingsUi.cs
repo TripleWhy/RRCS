@@ -39,6 +39,11 @@
 			RRCSManager.Instance.circuitManager.UpdateNodePriority(selectedNodes[0].Node, value);
 		}
 
+		private class SettingsTypeUsageData
+		{
+			public int usageCount;
+			public Type valueType;
+		}
 		public void SetSelectedNodes(IEnumerable<NodeUi> nodes)
 		{
 			foreach (GameObject go in editors)
@@ -71,22 +76,40 @@
 				selectedNodes[0].Node.RingEvaluationPriorityChanged += Node_RingEvaluationPriorityChanged;
 			}
 
-			Dictionary<NodeSetting.SettingType, int> typeUsages = new Dictionary<NodeSetting.SettingType, int>();
+			Dictionary<NodeSetting.SettingType, SettingsTypeUsageData> typeUsages = new Dictionary<NodeSetting.SettingType, SettingsTypeUsageData>();
 			foreach (NodeUi nodeUi in selectedNodes)
 			{
 				foreach (NodeSetting setting in nodeUi.Node.settings)
 				{
 					if (typeUsages.ContainsKey(setting.type))
-						typeUsages[setting.type]++;
+					{
+						SettingsTypeUsageData data = typeUsages[setting.type];
+						data.usageCount++;
+						if (data.valueType != null && data.valueType != setting.valueType)
+							data.valueType = null;
+					}
 					else
-						typeUsages.Add(setting.type, 1);
+						typeUsages.Add(setting.type, new SettingsTypeUsageData { usageCount = 1, valueType = setting.valueType });
 				}
 			}
 			foreach (NodeSetting setting in selectedNodes[0].Node.settings)
 			{
-				if (typeUsages[setting.type] != selectedNodes.Count)
-					continue;
-				editors.Add(CreateSettingEditor(setting));
+				{
+					SettingsTypeUsageData data = typeUsages[setting.type];
+					if (data.valueType == null)
+						continue;
+					if (data.usageCount != selectedNodes.Count)
+						continue;
+				}
+				MonoBehaviour editor = CreateSettingEditor(setting);
+				{
+					//TODO find a more elegant solution?
+					DataTypeEditor typeEditor = editor as DataTypeEditor;
+					if (typeEditor != null)
+						typeEditor.DataTypeChanged += (sender, type) => SetSelectedNodes(nodes);
+				}
+				if (editor != null)
+					editors.Add(editor.gameObject);
 			}
 		}
 
@@ -101,63 +124,63 @@
 			return "Effective Index: " + index;
 		}
 
-		private GameObject CreateSettingEditor(NodeSetting setting)
+		private MonoBehaviour CreateSettingEditor(NodeSetting setting)
 		{
 			if (setting.valueType == typeof(bool))
 			{
 				BoolEditor editor = Instantiate<BoolEditor>(boolEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += BoolEditor_ValueChanged;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(int))
 			{
 				IntEditor editor = Instantiate<IntEditor>(intEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += NumberEditor_ValueChanged<int>;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(long))
 			{
 				LongEditor editor = Instantiate<LongEditor>(longEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += NumberEditor_ValueChanged<long>;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(float))
 			{
 				FloatEditor editor = Instantiate<FloatEditor>(floatEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += NumberEditor_ValueChanged<float>;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(double))
 			{
 				DoubleEditor editor = Instantiate<DoubleEditor>(doubleEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += NumberEditor_ValueChanged<double>;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(string))
 			{
 				StringEditor editor = Instantiate<StringEditor>(stringEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ValueChanged += StringEditor_ValueChanged;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(NodeSetting.SelectorCondition))
 			{
 				SelectorConditionEditor editor = Instantiate<SelectorConditionEditor>(selectorConditionEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ConditionChanged += Editor_ConditionChanged;
-				return editor.gameObject;
+				return editor;
 			}
 			else if (setting.valueType == typeof(NodeSetting.DataType))
 			{
 				DataTypeEditor editor = Instantiate<DataTypeEditor>(dataTypeEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.DataTypeChanged += Editor_DataTypeChanged;
-				return editor.gameObject;
+				return editor;
 			}
 			else
 			{
