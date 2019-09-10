@@ -124,7 +124,7 @@
 				minimum = value;
 				if (minusButton != null)
 					minusButton.interactable = Value.CompareTo(minimum) >= 0;
-				if (Value.CompareTo(minimum) > 0)
+				if (Value.CompareTo(minimum) < 0)
 					Value = minimum;
 			}
 		}
