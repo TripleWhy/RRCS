@@ -3975,6 +3975,22 @@ MonoBehaviour:
   currentValue: 1
   minimum: 1
   maximum: 2147483647
+  onValueChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 533916712}
+        m_MethodName: set_CurrentPlayerId
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: AssemblyCSharp.IntEditor+ValueChangeEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &449758353
 MonoBehaviour:
   m_ObjectHideFlags: 0

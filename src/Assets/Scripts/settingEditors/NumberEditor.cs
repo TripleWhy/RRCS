@@ -7,14 +7,8 @@
 
 	public abstract class NumberEditor<T> : MonoBehaviour where T : IComparable<T>
 	{
-		[System.Serializable]
-		public class ValueChangeEvent : UnityEvent<T>
-		{
-		}
-
 		public delegate void ValueChangedEventHandler(NumberEditor<T> sender, T value);
 		public event ValueChangedEventHandler ValueChanged = delegate { };
-		public ValueChangeEvent onValueChanged;
 
 		[SerializeField]
 		private T currentValue;
@@ -108,8 +102,6 @@
 				}
 				this.currentValue = val;
 				ValueChanged(this, val);
-				if (onValueChanged != null)
-					onValueChanged.Invoke(val);
 			}
 		}
 

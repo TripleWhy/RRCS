@@ -1,7 +1,26 @@
 ﻿namespace AssemblyCSharp
 {
+	using UnityEngine.Events;
+
 	public class IntEditor : NumberEditor<int>
 	{
+		[System.Serializable]
+		public class ValueChangeEvent : UnityEvent<int>
+		{
+		}
+		public ValueChangeEvent onValueChanged;
+
+		public IntEditor()
+		{
+			ValueChanged += IntEditor_ValueChanged;
+		}
+
+		private void IntEditor_ValueChanged(NumberEditor<int> sender, int value)
+		{
+			if (onValueChanged != null)
+				onValueChanged.Invoke(value);
+		}
+
 		protected override int Decrement(int value)
 		{
 			return value - 1;
