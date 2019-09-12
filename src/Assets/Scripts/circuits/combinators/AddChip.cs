@@ -25,28 +25,48 @@
 
 		override protected void EvaluateOutputs()
 		{
-			outputPorts[0].Value = Add(InValue(0), InValue(1), InValue(2));
+			outputPorts[0].Value = Add();
 		}
 
-		protected IConvertible Add(IConvertible a, IConvertible b, IConvertible c)
+		protected IConvertible Add()
 		{
+			IConvertible a = inputPorts[0].IsConnected ? InValue(0) : null;
+			IConvertible b = inputPorts[1].IsConnected ? InValue(1) : null;
+			IConvertible c = inputPorts[2].IsConnected ? InValue(2) : null;
 			if (a is string || b is string || c is string)
 			{
+				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = "";
 				StringBuilder sb = new StringBuilder();
-				sb.Append(a);
-				sb.Append(b);
-				sb.Append(c);
+				sb.Append(InValue(0));
+				sb.Append(InValue(1));
+				sb.Append(InValue(2));
 				return sb.ToString();
 			}
 			if (a is double || b is double || c is double)
-				return Convert.ToDouble(a) + Convert.ToDouble(b) + Convert.ToDouble(c);
+			{
+				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0D;
+				return Convert.ToDouble(InValue(0)) + Convert.ToDouble(InValue(1)) + Convert.ToDouble(InValue(2));
+			}
 			if (a is float || b is float || b is float)
-				return Convert.ToSingle(a) + Convert.ToSingle(b) + Convert.ToSingle(c);
-			if (a is long || b is long ||c is long)
-				return Convert.ToInt64(a) + Convert.ToInt64(b) + Convert.ToInt64(c);
-			if (a is int || b is int || c is int)
-				return Convert.ToInt32(a) + Convert.ToInt32(b) + Convert.ToInt32(c);
-			return null;
+			{
+				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0F;
+				return Convert.ToSingle(InValue(0)) + Convert.ToSingle(InValue(1)) + Convert.ToSingle(InValue(2));
+			}
+			if (a is long || b is long || c is long)
+			{
+				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0L;
+				return Convert.ToInt64(InValue(0)) + Convert.ToInt64(InValue(1)) + Convert.ToInt64(InValue(2));
+			}
+			if ((a is int || b is int || c is int) || (a is bool || b is bool || c is bool))
+			{
+				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0;
+				return Convert.ToInt32(InValue(0)) + Convert.ToInt32(InValue(1)) + Convert.ToInt32(InValue(2));
+			}
+			else
+			{
+				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = null;
+				return null;
+			}
 		}
 	}
 }
