@@ -30,7 +30,7 @@
 					return 0;
 				return Convert.ToInt64(a) % lb;
 			}
-			if (a is int || b is int)
+			if (a is int || b is int || a is bool || b is bool)
 			{
 				int ib = Convert.ToInt32(b);
 				if (ib == 0)
