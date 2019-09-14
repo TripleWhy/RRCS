@@ -34,7 +34,7 @@ namespace AssemblyCSharp
 
 			if (IsMouseOnWorldCanvas())
 			{
-				if (Input.GetMouseButton(2))
+				if (Input.GetButton("PanCamera"))
 				{
 					float speed = cam.orthographicSize;
 					transform.position -= new Vector3(speed * Input.GetAxis("Mouse X") * Time.deltaTime,
