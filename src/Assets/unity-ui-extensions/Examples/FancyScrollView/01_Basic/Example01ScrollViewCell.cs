@@ -1,40 +1,43 @@
-﻿namespace UnityEngine.UI.Extensions.Examples
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+namespace UnityEngine.UI.Extensions.Examples
 {
     public class Example01ScrollViewCell : FancyScrollViewCell<Example01CellDto>
     {
         [SerializeField]
-        Animator animator;
+        Animator animator = null;
         [SerializeField]
-        Text message;
+        Text message = null;
 
-        readonly int scrollTriggerHash = Animator.StringToHash("scroll");
-
-        void Start()
-        {
-            var rectTransform = transform as RectTransform;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchoredPosition3D = Vector3.zero;
-            UpdatePosition(0);
-        }
+        static readonly int scrollTriggerHash = Animator.StringToHash("scroll");
 
         /// <summary>
-        /// セルの内容を更新します
+        /// Updates the content.
         /// </summary>
-        /// <param name="itemData"></param>
+        /// <param name="itemData">Item data.</param>
         public override void UpdateContent(Example01CellDto itemData)
         {
             message.text = itemData.Message;
         }
 
         /// <summary>
-        /// セルの位置を更新します
+        /// Updates the position.
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="position">Position.</param>
         public override void UpdatePosition(float position)
         {
+            currentPosition = position;
             animator.Play(scrollTriggerHash, -1, position);
             animator.speed = 0;
+        }
+
+        // GameObject が非アクティブになると Animator がリセットされてしまうため
+        // 現在位置を保持しておいて OnEnable のタイミングで現在位置を再設定します
+        float currentPosition = 0;
+        void OnEnable()
+        {
+            UpdatePosition(currentPosition);
         }
     }
 }
