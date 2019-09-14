@@ -23,7 +23,7 @@
 
 		protected override IConvertible DefaultInputValue(int inputIndex)
 		{
-			return true;
+			return false;
 		}
 
 		protected override IConvertible DefaultOutputValue(int outputIndex)
