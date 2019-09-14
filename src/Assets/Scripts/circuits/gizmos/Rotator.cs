@@ -24,7 +24,7 @@ namespace AssemblyCSharp.gizmos
 				if (inputVelocity == 0 && IsMoveToTarget())
 				{
 					// Instant
-					currentPosition = Mathf.Repeat(inputVelocity, 360);
+					currentPosition = Mathf.Repeat(InFloat(2), 360); ;
 					currentVelocity = 0;
 					targetVelocity = 0;
 				}
