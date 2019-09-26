@@ -12,7 +12,15 @@
 		{
 		}
 
-		public abstract IConvertible GetValue();
+		public abstract IConvertible GetInternalValue();
+
+		public IConvertible GetValue()
+		{
+			if (node.Manager.UseIntValuesOnly)
+				return CircuitNode.ValueToInt(GetInternalValue());
+			else
+				return GetInternalValue();
+		}
 
 		public override bool Connect(Port port)
 		{

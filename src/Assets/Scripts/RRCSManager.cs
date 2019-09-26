@@ -105,6 +105,12 @@ namespace AssemblyCSharp
 			set { UiManager.ShowEvaluationOrderLabels = value; }
 		}
 
+		public bool UseIntValuesOnly
+		{
+			get { return circuitManager.UseIntValuesOnly; }
+			set { circuitManager.UseIntValuesOnly = value; }
+		}
+
 		public void ResetGizmos()
 		{
 			UiManager.ResetGizmos();

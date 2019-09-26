@@ -12,7 +12,7 @@
 		}
 
 		#region implemented abstract members of Port
-		public override IConvertible GetValue()
+		public override IConvertible GetInternalValue()
 		{
 			if (IsConnected)
 				return ((DataConnection)connections[0]).SourceDataPort.GetValue();

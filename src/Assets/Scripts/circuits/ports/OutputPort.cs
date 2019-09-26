@@ -14,10 +14,6 @@
 
 		public IConvertible Value
 		{
-			get
-			{
-				return value;
-			}
 			set
 			{
 				if (expectedType != null)
@@ -35,9 +31,9 @@
 		}
 
 		#region implemented abstract members of Port
-		public override IConvertible GetValue()
+		public override IConvertible GetInternalValue()
 		{
-			return Value;
+			return value;
 		}
 		#endregion
 	}
