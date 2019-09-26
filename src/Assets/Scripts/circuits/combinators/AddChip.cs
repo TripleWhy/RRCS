@@ -45,22 +45,22 @@
 			if (a is double || b is double || c is double)
 			{
 				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0D;
-				return Convert.ToDouble(InValue(0)) + Convert.ToDouble(InValue(1)) + Convert.ToDouble(InValue(2));
+				return InDouble(0) + InDouble(1) + InDouble(2);
 			}
 			if (a is float || b is float || b is float)
 			{
 				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0F;
-				return Convert.ToSingle(InValue(0)) + Convert.ToSingle(InValue(1)) + Convert.ToSingle(InValue(2));
+				return InFloat(0) + InFloat(1) + InFloat(2);
 			}
 			if (a is long || b is long || c is long)
 			{
 				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0L;
-				return Convert.ToInt64(InValue(0)) + Convert.ToInt64(InValue(1)) + Convert.ToInt64(InValue(2));
+				return InLong(0) + InLong(1) + InLong(2);
 			}
 			if ((a is int || b is int || c is int) || (a is bool || b is bool || c is bool))
 			{
 				inputPorts[0].UnconnectedValue = inputPorts[1].UnconnectedValue = inputPorts[2].UnconnectedValue = 0;
-				return Convert.ToInt32(InValue(0)) + Convert.ToInt32(InValue(1)) + Convert.ToInt32(InValue(2));
+				return InInt(0) + InInt(1) + InInt(2);
 			}
 			else
 			{

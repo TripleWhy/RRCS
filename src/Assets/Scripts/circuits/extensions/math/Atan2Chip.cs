@@ -19,7 +19,7 @@
 
 		override protected IConvertible Combine(IConvertible a, IConvertible b)
 		{
-			return Math.Atan2(Convert.ToDouble(a), Convert.ToDouble(b));
+			return Math.Atan2(ValueToDouble(a), ValueToDouble(b));
 		}
 	}
 }

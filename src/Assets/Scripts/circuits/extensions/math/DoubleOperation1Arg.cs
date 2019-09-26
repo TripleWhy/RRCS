@@ -26,7 +26,7 @@
 
 		protected override void EvaluateOutputs()
 		{
-			outputPorts[0].Value = MathEval(Convert.ToDouble(InValue(0)));
+			outputPorts[0].Value = MathEval(InDouble(0));
 		}
 
 		protected abstract double MathEval(double value);

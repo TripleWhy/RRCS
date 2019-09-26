@@ -20,9 +20,9 @@
 		override protected IConvertible Combine(IConvertible a, IConvertible b)
 		{
 			if (a is long)
-				return Convert.ToInt64(a) >> Convert.ToInt32(b);
+				return ValueToLong(a) >> ValueToInt(b);
 			else
-				return Convert.ToInt32(a) >> Convert.ToInt32(b);
+				return ValueToInt(a) >> ValueToInt(b);
 		}
 	}
 }

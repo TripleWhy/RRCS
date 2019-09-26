@@ -28,7 +28,7 @@
 			if (a is string && (b is int || b is long || b == null))
 			{
 				string str = (string)a;
-				int count = Convert.ToInt32(b);
+				int count = ValueToInt(b);
 				StringBuilder sb = new StringBuilder(str.Length * count);
 				for (int i = 0; i < count; i++)
 					sb.Append(str);
@@ -37,20 +37,20 @@
 			if (b is string && (a is int || a is long || a == null))
 			{
 				string str = (string)b;
-				int count = Convert.ToInt32(a);
+				int count = ValueToInt(a);
 				StringBuilder sb = new StringBuilder(str.Length * count);
 				for (int i = 0; i < count; i++)
 					sb.Append(str);
 				return sb.ToString();
 			}
 			if (a is double || b is double)
-				return Convert.ToDouble(a) * Convert.ToDouble(b);
+				return ValueToDouble(a) * ValueToDouble(b);
 			if (a is float || b is float)
-				return Convert.ToSingle(a) * Convert.ToSingle(b);
+				return ValueToFloat(a) * ValueToFloat(b);
 			if (a is long || b is long)
-				return Convert.ToInt64(a) * Convert.ToInt64(b);
+				return ValueToLong(a) * ValueToLong(b);
 			if (a is int || b is int || a is bool || b is bool)
-				return Convert.ToInt32(a) * Convert.ToInt32(b);
+				return ValueToInt(a) * ValueToInt(b);
 			return null;
 		}
 	}

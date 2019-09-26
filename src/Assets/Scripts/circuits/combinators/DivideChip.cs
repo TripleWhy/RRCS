@@ -20,22 +20,22 @@
 		override protected IConvertible Combine(IConvertible a, IConvertible b)
 		{
 			if (a is double || b is double)
-				return Convert.ToDouble(a) / Convert.ToDouble(b);
+				return ValueToDouble(a) / ValueToDouble(b);
 			if (a is float || b is float)
-				return Convert.ToSingle(a) / Convert.ToSingle(b);
+				return ValueToInt(a) / ValueToInt(b);
 			if (a is long || b is long)
 			{
-				long lb = Convert.ToInt64(b);
+				long lb = ValueToLong(b);
 				if (lb == 0)
 					return 0L;
-				return Convert.ToInt64(a) / lb;
+				return ValueToLong(a) / lb;
 			}
 			if (a is int || b is int || a is bool || b is bool)
 			{
-				int ib = Convert.ToInt32(b);
+				int ib = ValueToInt(b);
 				if (ib == 0)
 					return 0;
-				return Convert.ToInt32(a) / ib;
+				return ValueToInt(a) / ib;
 			}
 			return null;
 		}

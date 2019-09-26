@@ -193,12 +193,38 @@
 
 		public static int ValueToInt(IConvertible val)
 		{
+			if (val == null)
+				return 0;
+			if (val is string)
+				return ((string)val).Length;
 			return Convert.ToInt32(val);
+		}
+
+		public static long ValueToLong(IConvertible val)
+		{
+			if (val == null)
+				return 0L;
+			if (val is string)
+				return ((string)val).Length;
+			return Convert.ToInt64(val);
 		}
 
 		public static float ValueToFloat(IConvertible val)
 		{
+			if (val == null)
+				return 0f;
+			if (val is string)
+				return ((string)val).Length;
 			return Convert.ToSingle(val);
+		}
+
+		public static double ValueToDouble(IConvertible val)
+		{
+			if (val == null)
+				return 0d;
+			if (val is string)
+				return ((string)val).Length;
+			return Convert.ToDouble(val);
 		}
 
 		public static bool ValueToBool(IConvertible val)
@@ -225,9 +251,19 @@
 			return ValueToInt(InValue(index));
 		}
 
+		protected long InLong(int index)
+		{
+			return ValueToLong(InValue(index));
+		}
+
 		protected float InFloat(int index)
 		{
 			return ValueToFloat(InValue(index));
+		}
+
+		protected double InDouble(int index)
+		{
+			return ValueToDouble(InValue(index));
 		}
 
 		protected bool IsResetSet

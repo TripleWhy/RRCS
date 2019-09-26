@@ -19,7 +19,7 @@
 
 		override protected IConvertible Combine(IConvertible a, IConvertible b)
 		{
-			return Math.Log(Convert.ToDouble(a), Convert.ToDouble(b));
+			return Math.Log(ValueToDouble(a), ValueToDouble(b));
 		}
 	}
 }

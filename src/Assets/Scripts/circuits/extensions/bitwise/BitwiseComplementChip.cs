@@ -31,9 +31,9 @@
 		{
 			IConvertible value = InValue(0);
 			if (value is long)
-				outputPorts[0].Value = ~Convert.ToInt64(value);
+				outputPorts[0].Value = ~ValueToLong(value);
 			else
-				outputPorts[0].Value = ~Convert.ToInt32(value);
+				outputPorts[0].Value = ~ValueToInt(value);
 		}
 	}
 }
