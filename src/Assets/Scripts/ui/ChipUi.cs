@@ -22,6 +22,11 @@
 			StateMachine, State,
 
 			ExtBreakpoint,
+			ExtBitwiseComplement, ExtBitshiftLeft, ExtBitshiftRight, ExtBitwiseAnd, ExtBitwiseOr, ExtBitwiseXor,
+			ExtValueStore, ExtBuffer, ExtArray, ExtMultiplexer,
+			ExtMathConstants, ExtMathAbs, ExtMathSign, ExtMathClamp, ExtMathRound, ExtMathCeil, ExtMathFloor,
+			ExtMathSin, ExtMathCos, ExtMathTan, ExtMathAtan, ExtMathAtan2,
+			ExtMathSqrt, ExtMathExp, ExtMathPow, ExtMathLog,
 		};
 
 		public ChipType type;
@@ -211,6 +216,58 @@
 					return new StateChip(manager);
 				case ChipType.ExtBreakpoint:
 					return new BreakpointChip(manager);
+				case ChipType.ExtBitwiseComplement:
+					return new BitwiseComplementChip(manager);
+				case ChipType.ExtBitshiftLeft:
+					return new BitshiftLeftChip(manager);
+				case ChipType.ExtBitshiftRight:
+					return new BitshiftRightChip(manager);
+				case ChipType.ExtBitwiseAnd:
+					return new BitwiseAndChip(manager);
+				case ChipType.ExtBitwiseOr:
+					return new BitwiseOrChip(manager);
+				case ChipType.ExtBitwiseXor:
+					return new BitwiseXorChip(manager);
+				case ChipType.ExtValueStore:
+					return new ValueStoreChip(manager);
+				case ChipType.ExtBuffer:
+					return new BufferChip(manager);
+				case ChipType.ExtArray:
+					return new ArrayChip(manager);
+				case ChipType.ExtMultiplexer:
+					return new MultiplexerChip(manager);
+				case ChipType.ExtMathConstants:
+					return new MathConstantsChip(manager);
+				case ChipType.ExtMathAbs:
+					return new AbsChip(manager);
+				case ChipType.ExtMathSign:
+					return new SignChip(manager);
+				case ChipType.ExtMathClamp:
+					return new ClampChip(manager);
+				case ChipType.ExtMathRound:
+					return new RoundChip(manager);
+				case ChipType.ExtMathCeil:
+					return new CeilChip(manager);
+				case ChipType.ExtMathFloor:
+					return new FloorChip(manager);
+				case ChipType.ExtMathSin:
+					return new SinChip(manager);
+				case ChipType.ExtMathCos:
+					return new CosChip(manager);
+				case ChipType.ExtMathTan:
+					return new TanChip(manager);
+				case ChipType.ExtMathAtan:
+					return new AtanChip(manager);
+				case ChipType.ExtMathAtan2:
+					return new Atan2Chip(manager);
+				case ChipType.ExtMathSqrt:
+					return new SqrtChip(manager);
+				case ChipType.ExtMathExp:
+					return new ExpChip(manager);
+				case ChipType.ExtMathPow:
+					return new PowChip(manager);
+				case ChipType.ExtMathLog:
+					return new LogChip(manager);
 				default:
 					return null;
 			}

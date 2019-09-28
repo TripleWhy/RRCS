@@ -19,14 +19,19 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(int);
+		}
+
 		override protected void EvaluateOutputs()
 		{
 			if (InBool(0))
 			{
 				try
 				{
-					int min = InValue(1);
-					int max = InValue(2);
+					int min = InInt(1);
+					int max = InInt(2);
 					outputPorts[0].Value = random.Next(min, max);
 					clearValue = !(bool)settings[0].currentValue;
 					if (clearValue || min + 1 < max)

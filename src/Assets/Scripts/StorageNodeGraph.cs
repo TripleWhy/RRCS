@@ -134,7 +134,6 @@
 		{
 			Dictionary<string, GameObject> typeMap = new Dictionary<string, GameObject>();
 
-			var p = manager.NodeUiPrefabRoot.GetComponentInChildren<RRButtonUi>(true);
 			typeMap.Add(typeof(RRButtonUi).FullName,
 				manager.NodeUiPrefabRoot.GetComponentInChildren<RRButtonUi>(true).gameObject);
 			typeMap.Add(typeof(StageLightUi).FullName,

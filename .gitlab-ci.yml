@@ -23,8 +23,9 @@ variables:
     paths:
     - ./src/Builds/
   only:
-  - release
-  - ci
+    variables:
+    - $CI_COMMIT_REF_NAME == "ci"
+    - $CI_COMMIT_REF_NAME == $PAGES_BRANCH
 
 build-StandaloneWindows64:
   <<: *build
@@ -47,4 +48,5 @@ pages:
     paths:
     - public
   only:
-  - release
+    variables:
+    - $CI_COMMIT_REF_NAME == $PAGES_BRANCH

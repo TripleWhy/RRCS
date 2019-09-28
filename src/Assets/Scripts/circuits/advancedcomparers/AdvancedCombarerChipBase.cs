@@ -1,26 +1,29 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public abstract class AdvancedCombarerChipBase : Chip
 	{
-		protected AdvancedCombarerChipBase(CircuitManager manager) : base(manager, 4, 2, true)
+		protected AdvancedCombarerChipBase(CircuitManager manager)
+			: base(manager, 4, 2, true)
 		{
 		}
 
-		override protected void EvaluateOutputs()
+		protected override void EvaluateOutputs()
 		{
-			if (Compare(inputPorts[0].GetValue(), inputPorts[1].GetValue()))
+			if (Compare(InValue(0), InValue(1)))
 			{
-				outputPorts[0].Value = inputPorts[2].GetValue();
-				outputPorts[1].Value = 0;
+				outputPorts[0].Value = InValue(2);
+				outputPorts[1].Value = null;
 			}
 			else
 			{
-				outputPorts[0].Value = 0;
-				outputPorts[1].Value = inputPorts[3].GetValue();
+				outputPorts[0].Value = null;
+				outputPorts[1].Value = InValue(3);
 			}
 		}
 
-		abstract protected bool Compare(int a, int b);
+		abstract protected bool Compare(IConvertible a, IConvertible b);
 	}
 }
 

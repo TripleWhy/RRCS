@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class SelectorChip : Chip
 	{
 		public SelectorChip(CircuitManager manager) : base(manager, 2, 7, true)
@@ -37,13 +39,13 @@
 		override protected void EvaluateOutputs()
 		{
 			bool firstOnly = (bool)settings[0].currentValue;
-			int signal = InValue(0);
-			int value = InValue(1);
+			int signal = InInt(0);
+			IConvertible value = InValue(1);
 			bool skip = false;
 			for (int i = 0; i < outputPortCount; i++)
 			{
 				if (skip || !Evaluate((NodeSetting.SelectorCondition)settings[i + 1].currentValue, signal))
-					outputPorts[i].Value = 0;
+					outputPorts[i].Value = null;
 				else
 				{
 					skip = firstOnly;

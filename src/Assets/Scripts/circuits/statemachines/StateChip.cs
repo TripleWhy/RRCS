@@ -1,5 +1,6 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using System.Collections.Generic;
 
 	public class StateChip : Chip
@@ -27,6 +28,11 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
+		}
+
 		public override void Evaluate()
 		{
 			EvaluateOutputs();
@@ -34,16 +40,16 @@
 
 		protected override void EvaluateOutputs()
 		{
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
+			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = false;
 			if (isActive)
 			{
-				outputPorts[1].Value = 1;
+				outputPorts[1].Value = true;
 				if (!lastWasActive)
-					outputPorts[0].Value = 1;
+					outputPorts[0].Value = true;
 			}
 			else if (lastWasActive)
 			{
-				outputPorts[2].Value = 1;
+				outputPorts[2].Value = true;
 			}
 			lastWasActive = isActive;
 		}

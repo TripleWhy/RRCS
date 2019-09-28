@@ -1,8 +1,7 @@
-﻿using AssemblyCSharp.modals;
-using AssemblyCSharp.share;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using AssemblyCSharp.modals;
+	using AssemblyCSharp.share;
 	using UnityEngine;
 
 	public class RRCSManager : MonoBehaviour
@@ -103,6 +102,12 @@ namespace AssemblyCSharp
 		{
 			get { return UiManager.ShowEvaluationOrderLabels; }
 			set { UiManager.ShowEvaluationOrderLabels = value; }
+		}
+
+		public bool UseIntValuesOnly
+		{
+			get { return circuitManager.UseIntValuesOnly; }
+			set { circuitManager.UseIntValuesOnly = value; }
 		}
 
 		public void ResetGizmos()

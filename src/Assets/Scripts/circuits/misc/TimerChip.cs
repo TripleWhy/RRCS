@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class TimerChip : Chip
 	{
 		private int remainingTicks = -1;
@@ -18,9 +20,16 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			if (outputIndex == 0)
+				return typeof(bool);
+			return typeof(int);
+		}
+
 		private void Start()
 		{
-			remainingTicks = ToInt(inputPorts[1]);
+			remainingTicks = InInt(1);
 			remainingSeconds = (remainingTicks + 9) / 10;
 		}
 
@@ -28,7 +37,7 @@
 		{
 			get
 			{
-				return ToBool(inputPorts[0]) && !IsResetSet;
+				return InBool(0) && !IsResetSet;
 			}
 		}
 
@@ -50,7 +59,7 @@
 		override public void Evaluate()
 		{
 			outputPorts[outputPortCount].Value = ResetValue;
-			int dur = InValue(1);
+			int dur = InInt(1);
 			if (IsResetSet || dur != duration)
 			{
 				duration = dur;
@@ -59,13 +68,13 @@
 
 			if (remainingTicks == 0 && IsOn)
 			{
-				outputPorts[0].Value = 1;
+				outputPorts[0].Value = true;
 				if ((bool)settings[0].currentValue)
 					Start();
 				EmitEvaluationRequired();
 			}
 			else
-				outputPorts[0].Value = 0;
+				outputPorts[0].Value = false;
 			outputPorts[1].Value = remainingSeconds;
 		}
 
