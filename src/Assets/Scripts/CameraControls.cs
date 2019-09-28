@@ -11,6 +11,7 @@ namespace AssemblyCSharp
 	{
 		private float inverseZoom = 0.5f;
 		private int zoomLevel = 0;
+		private Vector3 lastMousePosition;
 
 		private Camera cam;
 		private int screenHeight;
@@ -23,7 +24,6 @@ namespace AssemblyCSharp
 			cam = GetComponent<Camera>();
 		}
 
-
 		void Update()
 		{
 			if (Screen.height != screenHeight)
@@ -34,11 +34,14 @@ namespace AssemblyCSharp
 
 			if (IsMouseOnWorldCanvas())
 			{
-				if (Input.GetButton("PanCamera"))
+				if (Input.GetButtonDown("PanCamera"))
 				{
-					float speed = cam.orthographicSize * 2.0f;
-					transform.position -= new Vector3(speed * Input.GetAxis("Mouse X") * Time.deltaTime,
-						speed * Input.GetAxis("Mouse Y") * Time.deltaTime, 0f);
+					lastMousePosition = Input.mousePosition;
+				}
+				else if (Input.GetButton("PanCamera"))
+				{
+					transform.position += (lastMousePosition - Input.mousePosition) * InverseZoom;
+					lastMousePosition = Input.mousePosition;
 				}
 
 				float wheel = Input.GetAxis("Mouse ScrollWheel");
