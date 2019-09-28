@@ -318,6 +318,8 @@
 				currentValue = stringValue;
 			else if (valueType == typeof(SelectorCondition))
 				currentValue = SelectorCondition.Parse(stringValue);
+			else if (valueType == typeof(DataType))
+				currentValue = DataType.Parse(stringValue);
 			else
 				throw new InvalidOperationException();
 		}
