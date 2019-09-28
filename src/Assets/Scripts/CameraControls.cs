@@ -10,12 +10,12 @@ namespace AssemblyCSharp
 	public class CameraControls : MonoBehaviour
 	{
 		private float inverseZoom = 0.5f;
+		private int zoomLevel = 0;
 
 		private Camera cam;
 		private int screenHeight;
 
 		public delegate void ZoomChangedEventHandler(float inverseZoom);
-
 		public event ZoomChangedEventHandler ZoomChanged = delegate { };
 
 		void Awake()
@@ -49,9 +49,9 @@ namespace AssemblyCSharp
 					if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 1 && mousePos.y < 1)
 					{
 						if (wheel > 0)
-							InverseZoom *= 0.5f;
+							ZoomLevel++;
 						else
-							InverseZoom *= 2f;
+							ZoomLevel--;
 					}
 				}
 			}
@@ -60,12 +60,18 @@ namespace AssemblyCSharp
 		public float InverseZoom
 		{
 			get { return inverseZoom; }
+		}
+
+		public int ZoomLevel
+		{
+			get { return zoomLevel; }
 			set
 			{
-				float inv = Math.Max(Math.Min(8f, value), 0.0625f);
-				if (inv == inverseZoom)
+				int lvl = Math.Max(Math.Min(10, value), -12);
+				if (lvl == zoomLevel)
 					return;
-				inverseZoom = inv;
+				zoomLevel = lvl;
+				inverseZoom = (float)(0.5 * Math.Pow(1.25, -lvl));
 				UpdateCameraZoom();
 				ZoomChanged(inverseZoom);
 			}
