@@ -9,6 +9,9 @@ namespace AssemblyCSharp
 
 	public class CameraControls : MonoBehaviour
 	{
+		private const float zoomSpeed = 1.25f;
+		private const int minZoomLevel = -12;
+		private const int maxZoomLevel = 10;
 		private float inverseZoom = 0.5f;
 		private int zoomLevel = 0;
 		private Vector3 lastMousePosition;
@@ -51,10 +54,26 @@ namespace AssemblyCSharp
 
 					if (mousePos.x > 0 && mousePos.y > 0 && mousePos.x < 1 && mousePos.y < 1)
 					{
+						if (wheel > 0 && ZoomLevel >= maxZoomLevel)
+							return;
+						else if (wheel < 0 && ZoomLevel <= minZoomLevel)
+							return;
+
+						//TODO: get sidebar widths?
+						const int leftBarWidth = 0;
+						const int rightBarWidth = 0;
+						Vector3 screenCenter = new Vector3((Screen.width + leftBarWidth - rightBarWidth) / 2f, Screen.height / 2f);
+						Vector3 translation = (Input.mousePosition - screenCenter) / (4f * zoomSpeed);
 						if (wheel > 0)
+						{
+							transform.position += translation * InverseZoom;
 							ZoomLevel++;
+						}
 						else
+						{
 							ZoomLevel--;
+							transform.position -= translation * InverseZoom;
+						}
 					}
 				}
 			}
@@ -70,11 +89,11 @@ namespace AssemblyCSharp
 			get { return zoomLevel; }
 			set
 			{
-				int lvl = Math.Max(Math.Min(10, value), -12);
+				int lvl = Math.Max(Math.Min(maxZoomLevel, value), minZoomLevel);
 				if (lvl == zoomLevel)
 					return;
 				zoomLevel = lvl;
-				inverseZoom = (float)(0.5 * Math.Pow(1.25, -lvl));
+				inverseZoom = (float)(0.5 * Math.Pow(zoomSpeed, -lvl));
 				UpdateCameraZoom();
 				ZoomChanged(inverseZoom);
 			}
