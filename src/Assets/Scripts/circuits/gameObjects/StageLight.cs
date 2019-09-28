@@ -31,8 +31,8 @@
 			else
 			{
 				//byte alpha = (byte)(InValue(2) * 255 / 100);
-				int alpha = InValue(2);
-				int color = ((InValue(1) % 12) + 12) % 12;
+				int alpha = InInt(2);
+				int color = ((InInt(1) % 12) + 12) % 12;
 				switch (color)
 				{
 					default:

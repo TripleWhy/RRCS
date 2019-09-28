@@ -31,6 +31,7 @@
 			for (int i = 0; i < inputCount; i++)
 			{
 				inputPorts[i] = new InputPort(this, false);
+				inputPorts[i].UnconnectedValue = DefaultInputValue(i);
 				inputPorts[i].ValueChanged += CircuitNode_ValueChanged;
 				inputPorts[i].Connected += CircuitNode_Connected;
 				inputPorts[i].Disconnected += CircuitNode_Disconnected;
@@ -38,6 +39,7 @@
 			if (hasReset)
 			{
 				inputPorts[inputCount] = new InputPort(this, true);
+				inputPorts[inputCount].UnconnectedValue = false;
 				inputPorts[inputCount].ValueChanged += CircuitNode_ValueChanged;
 				inputPorts[inputCount].Connected += CircuitNode_Connected;
 				inputPorts[inputCount].Disconnected += CircuitNode_Disconnected;
@@ -48,6 +50,7 @@
 			for (int i = 0; i < outputCount; i++)
 			{
 				outputPorts[i] = new OutputPort(this, false);
+				outputPorts[i].expectedType = ExpectedOutputType(i);
 				outputPorts[i].Connected += CircuitNode_Connected;
 				outputPorts[i].Disconnected += CircuitNode_Disconnected;
 			}
@@ -188,34 +191,79 @@
 						yield return connection;
 		}
 
-		public static int ToInt(bool b)
+		public static int ValueToInt(IConvertible val)
 		{
-			return b ? 1 : 0;
+			if (val == null)
+				return 0;
+			if (val is string)
+				return ((string)val).Length;
+			return Convert.ToInt32(val);
 		}
 
-		public static bool ToBool(int i)
+		public static long ValueToLong(IConvertible val)
 		{
-			return i != 0;
+			if (val == null)
+				return 0L;
+			if (val is string)
+				return ((string)val).Length;
+			return Convert.ToInt64(val);
 		}
 
-		public static int ToInt(DataPort p)
+		public static float ValueToFloat(IConvertible val)
 		{
-			return p.GetValue();
+			if (val == null)
+				return 0f;
+			if (val is string)
+				return ((string)val).Length;
+			return Convert.ToSingle(val);
 		}
 
-		public static bool ToBool(DataPort p)
+		public static double ValueToDouble(IConvertible val)
 		{
-			return ToBool(ToInt(p));
+			if (val == null)
+				return 0d;
+			if (val is string)
+				return ((string)val).Length;
+			return Convert.ToDouble(val);
 		}
 
-		protected int InValue(int index)
+		public static bool ValueToBool(IConvertible val)
 		{
-			return ToInt(inputPorts[index]);
+			if (val == null)
+				return false;
+			if (val is string)
+				return ((string)val).Length > 0;
+			return Convert.ToBoolean(val);
+		}
+
+		protected IConvertible InValue(int index)
+		{
+			return inputPorts[index].GetValue();
 		}
 
 		protected bool InBool(int index)
 		{
-			return ToBool(inputPorts[index]);
+			return ValueToBool(InValue(index));
+		}
+
+		protected int InInt(int index)
+		{
+			return ValueToInt(InValue(index));
+		}
+
+		protected long InLong(int index)
+		{
+			return ValueToLong(InValue(index));
+		}
+
+		protected float InFloat(int index)
+		{
+			return ValueToFloat(InValue(index));
+		}
+
+		protected double InDouble(int index)
+		{
+			return ValueToDouble(InValue(index));
 		}
 
 		protected bool IsResetSet
@@ -226,7 +274,7 @@
 			}
 		}
 
-		protected int ResetValue
+		protected IConvertible ResetValue
 		{
 			get
 			{
@@ -242,17 +290,35 @@
 		{
 			if (!hasReset)
 				EvaluateOutputs();
-			else if (!IsResetSet)
-			{
-				EvaluateOutputs();
-				outputPorts[outputPortCount].Value = 0;
-			}
 			else
 			{
+				if (!IsResetSet)
+					EvaluateOutputs();
+				else
+					Reset();
 				outputPorts[outputPortCount].Value = ResetValue;
-				for (int i = 0; i < outputPortCount; ++i)
-					outputPorts[i].Value = 0;
 			}
+		}
+
+		protected virtual Type ExpectedOutputType(int outputIndex)
+		{
+			return null;
+		}
+
+		protected virtual IConvertible DefaultInputValue(int inputIndex)
+		{
+			return null;
+		}
+
+		protected virtual IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return null;
+		}
+
+		protected virtual void Reset()
+		{
+			for (int i = 0; i < outputPortCount; ++i)
+				outputPorts[i].Value = DefaultOutputValue(i);
 		}
 
 		protected abstract void EvaluateOutputs();

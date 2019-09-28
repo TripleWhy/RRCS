@@ -2,6 +2,7 @@
 {
 	using System.Linq;
 	using System.Collections.Generic;
+	using System;
 
 	public class StateMachineChip : Chip
 	{
@@ -20,6 +21,43 @@
 			get
 			{
 				return 31;
+			}
+		}
+
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			switch (outputIndex)
+			{
+				default:
+				case 0:
+				case 1:
+				case 2:
+					return null;
+				case 3:
+					return typeof(int);
+				case 4:
+					return typeof(bool);
+			}
+		}
+
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return true;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			switch (outputIndex)
+			{
+				default:
+				case 0:
+				case 1:
+				case 2:
+					return null;
+				case 3:
+					return 0;
+				case 4:
+					return false;
 			}
 		}
 
@@ -43,55 +81,46 @@
 		{
 			get
 			{
-				return ToBool(inputPorts[0]);
+				return InBool(0);
 			}
+		}
+
+		protected override void Reset()
+		{
+			if (activeState != null)
+				activeState.Active = false;
+			ResetActiveState();
+			base.Reset();
 		}
 
 		public override void Evaluate()
 		{
 			DebugUtils.Assert(statePort != null);
-
-			if (IsResetSet)
-			{
-				if (activeState != null)
-					activeState.Active = false;
-				ResetActiveState();
-				for (int i = 0; i < outputPortCount; ++i)
-					outputPorts[i].Value = 0;
-			}
-			else if (IsActive)
-			{
-				StateChip lastActiveState = activeState;
-				activeState = FindActiveState();
-
-				timeInState++;
-
-				if (activeState == null)
-					ResetActiveState();
-
-				if (activeState != null && timeInState > 0 && timeInState >= activeState.MinTimeInState)
-				{
-					StateChip nextState = NextStateAfterValidTransition();
-					if (nextState != null)
-					{
-						activeState.Active = false;
-						nextState.Active = true;
-						activeState = nextState;
-						timeInState = 0;
-					}
-				}
-
-				EvaluateOutputs();
-				outputPorts[4].Value = object.ReferenceEquals(lastActiveState, activeState) ? 0 : 1;
-
-				EmitEvaluationRequired();
-			}
-
-			outputPorts[outputPortCount].Value = ResetValue;
+			base.Evaluate();
 		}
 
 		override protected void EvaluateOutputs()
 		{
+			StateChip lastActiveState = activeState;
+			activeState = FindActiveState();
+
+			timeInState++;
+
+			if (activeState == null)
+				ResetActiveState();
+
+			if (activeState != null && timeInState > 0 && timeInState >= activeState.MinTimeInState)
+			{
+				StateChip nextState = NextStateAfterValidTransition();
+				if (nextState != null)
+				{
+					activeState.Active = false;
+					nextState.Active = true;
+					activeState = nextState;
+					timeInState = 0;
+				}
+			}
+
 			if (activeState != null)
 			{
 				outputPorts[0].Value = activeState.Value0;
@@ -101,11 +130,12 @@
 			}
 			else
 			{
-				outputPorts[0].Value = 0;
-				outputPorts[1].Value = 0;
-				outputPorts[2].Value = 0;
-				outputPorts[3].Value = 0;
+				for (int i = 0; i < 4; ++i)
+					outputPorts[i].Value = DefaultOutputValue(i);
 			}
+			outputPorts[4].Value = !object.ReferenceEquals(lastActiveState, activeState);
+
+			EmitEvaluationRequired();
 		}
 
 		private StateChip FindActiveState()
@@ -162,7 +192,7 @@
 			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.node))
 			{
 				DebugUtils.Assert(transition.TargetStatePort != null);
-				if (ToBool(transition.TransitionEnabledPort))
+				if (ValueToBool(transition.TransitionEnabledPort.GetValue()))
 					return (StateChip)transition.TargetStatePort.node;
 			}
 			return null;

@@ -1,10 +1,12 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
 	using System.Collections.Generic;
 
 	public class StateChip : Chip
 	{
 		private bool isActive = false;
+		private bool lastWasActive = false;
 		private StateMachineChip stateMachine;
 
 		public delegate void StateNameChangedEventHandler(StateChip source, string stateName);
@@ -26,6 +28,11 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
+		}
+
 		public override void Evaluate()
 		{
 			EvaluateOutputs();
@@ -33,19 +40,18 @@
 
 		protected override void EvaluateOutputs()
 		{
-			bool wasActive = isActive;
-
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = 0;
+			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = false;
 			if (isActive)
 			{
-				outputPorts[1].Value = 1;
-				if (!wasActive)
-					outputPorts[0].Value = 1;
+				outputPorts[1].Value = true;
+				if (!lastWasActive)
+					outputPorts[0].Value = true;
 			}
-			else if (wasActive)
+			else if (lastWasActive)
 			{
-				outputPorts[2].Value = 1;
+				outputPorts[2].Value = true;
 			}
+			lastWasActive = isActive;
 		}
 
 		override protected NodeSetting[] CreateSettings()

@@ -31,7 +31,7 @@ namespace AssemblyCSharp
 			{
 				TransitionEnabledPort = new InputPort(target.node, false)
 				{
-					UnconnectedValue = 1
+					UnconnectedValue = true
 				};
 			}
 		}

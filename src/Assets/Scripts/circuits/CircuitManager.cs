@@ -12,6 +12,7 @@
 		private bool graphChanged = true;
 		private bool evaluationRequired = true;
 		public int CurrentTick { get; private set; }
+		public bool UseIntValuesOnly { get; set; }
 
 		public delegate void VoidEventHandler();
 		public event VoidEventHandler SimulationPauseRequested = delegate { };

@@ -1,5 +1,7 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+
 	public class OrChip : Chip
 	{
 		public OrChip(CircuitManager manager) : base(manager, 7, 2, true)
@@ -14,6 +16,21 @@
 			}
 		}
 
+		protected override Type ExpectedOutputType(int outputIndex)
+		{
+			return typeof(bool);
+		}
+
+		protected override IConvertible DefaultInputValue(int inputIndex)
+		{
+			return false;
+		}
+
+		protected override IConvertible DefaultOutputValue(int outputIndex)
+		{
+			return false;
+		}
+
 		override protected void EvaluateOutputs()
 		{
 			if (!(inputPorts[0].IsConnected
@@ -23,18 +40,18 @@
 				|| inputPorts[4].IsConnected
 				|| inputPorts[5].IsConnected
 				|| inputPorts[6].IsConnected))
-				outputPorts[0].Value = outputPorts[1].Value = 0;
+				outputPorts[0].Value = outputPorts[1].Value = false;
 			else
 			{
-				outputPorts[0].Value = ToInt(
-					ToBool(inputPorts[0])
-						|| ToBool(inputPorts[1])
-						|| ToBool(inputPorts[2])
-						|| ToBool(inputPorts[3])
-						|| ToBool(inputPorts[4])
-						|| ToBool(inputPorts[5])
-						|| ToBool(inputPorts[6]));
-				outputPorts[1].Value = 1 - outputPorts[0].Value;
+				bool result = InBool(0)
+					|| InBool(1)
+					|| InBool(2)
+					|| InBool(3)
+					|| InBool(4)
+					|| InBool(5)
+					|| InBool(6);
+				outputPorts[0].Value = result;
+				outputPorts[1].Value = !result;
 			}
 		}
 	}

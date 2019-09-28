@@ -9,7 +9,8 @@
 		{
 			DrawDefaultInspector();
 			CameraControls controls = (CameraControls)target;
-			controls.InverseZoom = EditorGUILayout.FloatField("InverseZoom", controls.InverseZoom);
+			controls.ZoomLevel = EditorGUILayout.IntField("ZoomLevel", controls.ZoomLevel);
+			EditorGUILayout.FloatField("InverseZoom", controls.InverseZoom);
 		}
 	}
 

@@ -1,5 +1,8 @@
 ﻿namespace AssemblyCSharp
 {
+	using System;
+	using System.Collections;
+
 	public class SimpleEqualsChip : SimpleCombarerChipBase
 	{
 		public SimpleEqualsChip(CircuitManager manager) : base(manager)
@@ -14,9 +17,9 @@
 			}
 		}
 
-		override protected bool Compare(int a, int b)
+		override protected bool Compare(IConvertible a, IConvertible b)
 		{
-			return a == b;
+			return Comparer.DefaultInvariant.Compare(a, b) == 0;
 		}
 	}
 }
