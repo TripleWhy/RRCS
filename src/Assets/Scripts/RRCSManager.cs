@@ -1,8 +1,7 @@
-﻿using AssemblyCSharp.modals;
-using AssemblyCSharp.share;
-
-namespace AssemblyCSharp
+﻿namespace AssemblyCSharp
 {
+	using AssemblyCSharp.modals;
+	using AssemblyCSharp.share;
 	using UnityEngine;
 
 	public class RRCSManager : MonoBehaviour
