@@ -31,6 +31,14 @@
 			};
 		}
 
+		public string ButtonText
+		{
+			get
+			{
+				return (string)settings[1].currentValue;
+			}
+		}
+
 		public override void SetSetting(NodeSetting setting, object value)
 		{
 			switch (setting.type)
