@@ -151,9 +151,10 @@
 				typeMap.Add(Enum.GetName(typeof(GizmoUi.GizmoType), prefab.type), prefab.gameObject);
 			}
 
-
+			Dictionary<NodeSetting.SettingType, int> settingsTypeIndex = new Dictionary<NodeSetting.SettingType, int>();
 			foreach (StorageNode storageNode in graph)
 			{
+				settingsTypeIndex.Clear();
 				var typeKey = storageNode.uiType;
 				if (typeKey == typeof(ChipUi).FullName)
 					typeKey = storageNode.typeParams;
@@ -169,17 +170,20 @@
 				go.transform.position = storageNode.position;
 				CircuitNode node = ui.Node;
 
-				if (storageNode.settings.Length != node.settings.Length)
-					throw new InvalidOperationException("Number of settings does not match for type " +
-					                                    storageNode.uiType + ".");
-				for (int j = 0; j < storageNode.settings.Length; j++)
+				foreach (NodeSettingContainer settingContainer in storageNode.settings)
 				{
-					NodeSetting setting = node.settings[j];
-					StorageNodeGrahp.NodeSettingContainer settingContainer = storageNode.settings[j];
-					if (settingContainer.type != setting.type)
-						throw new InvalidOperationException("Setting at " + j + " does not match for type " +
-						                                    storageNode.uiType + ".");
+					int offset;
+					settingsTypeIndex.TryGetValue(settingContainer.type, out offset);
+					int index = Array.FindIndex(node.settings, offset, s => s.type == settingContainer.type);
+					if (index < 0)
+					{
+						Debug.Log("Stored setting " + settingContainer.type + " for type " + typeKey + " not found with offset " + offset + ".");
+						continue;
+					}
+					NodeSetting setting = node.settings[index];
+					DebugUtils.Assert(settingContainer.type == setting.type);
 					setting.ParseValue(settingContainer.value);
+					settingsTypeIndex[settingContainer.type] = index + 1;
 				}
 			}
 			DebugUtils.Assert(manager.circuitManager.Nodes.Count == graph.Length);
