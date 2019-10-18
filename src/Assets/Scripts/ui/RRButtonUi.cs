@@ -34,6 +34,7 @@
 			DebugUtils.Assert(portIndex == 3);
 
 			button.ButtonTextChanged += Button_ButtonTextChanged;
+			Button_ButtonTextChanged(button, button.ButtonText);
 		}
 
 		private void Button_ButtonTextChanged(RRButton source, string text)
