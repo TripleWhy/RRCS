@@ -16,27 +16,25 @@ namespace AssemblyCSharp
 			statePorts = new PortUi[0];
 
 
-			int i = 0;
-			foreach (PortUi portUi in portsUis)
+			for (int i = 0; i < portsUis.Length; ++i)
 			{
+				PortUi portUi = portsUis[i];
 				portUi.nodeUi = this;
 				portUi.Port = Node.inputPorts[i];
 				portUi.PortIndex = i;
-
 				inPorts[i] = portUi;
-
-				i++;
 			}
+
+			sign.DisplayTextChanged += Sign_DisplayTextChanged;
+			Sign_DisplayTextChanged(sign.DisplayText, sign.DisplayTextIsLimited);
 		}
 
 		protected override CircuitNode CreateNode(CircuitManager manager)
 		{
-			sign = new Sign(manager);
-			sign.TextChanged += Sign_TextChanged;
-			return sign;
+			return sign = new Sign(manager);
 		}
 
-		private void Sign_TextChanged(string message, bool limitLength)
+		private void Sign_DisplayTextChanged(string message, bool limitLength)
 		{
 			text.text = message;
 			text.enableWordWrapping = !limitLength;
@@ -49,7 +47,7 @@ namespace AssemblyCSharp
 
 		protected new void OnDestroy()
 		{
-			sign.TextChanged -= Sign_TextChanged;
+			sign.DisplayTextChanged -= Sign_DisplayTextChanged;
 			base.OnDestroy();
 		}
 	}
