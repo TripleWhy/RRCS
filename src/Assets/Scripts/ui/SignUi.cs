@@ -3,54 +3,52 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-    public class SignUi : NodeUi
-    {
-        public TextMeshProUGUI text;
-        private Sign sign;
-        public PortUi[] portsUis;
+	public class SignUi : NodeUi
+	{
+		public TextMeshProUGUI text;
+		private Sign sign;
+		public PortUi[] portsUis;
 
-        void Start()
-        {
-            inPorts = new PortUi[4];
-            outPorts = new PortUi[0];
-            statePorts = new PortUi[0];
+		void Start()
+		{
+			inPorts = new PortUi[4];
+			outPorts = new PortUi[0];
+			statePorts = new PortUi[0];
 
 
-            int i = 0;
-            foreach (PortUi portUi in portsUis)
-            {
-                portUi.nodeUi = this;
-                portUi.Port = Node.inputPorts[i];
-                portUi.PortIndex = i;
+			for (int i = 0; i < portsUis.Length; ++i)
+			{
+				PortUi portUi = portsUis[i];
+				portUi.nodeUi = this;
+				portUi.Port = Node.inputPorts[i];
+				portUi.PortIndex = i;
+				inPorts[i] = portUi;
+			}
 
-                inPorts[i] = portUi;
+			sign.DisplayTextChanged += Sign_DisplayTextChanged;
+			Sign_DisplayTextChanged(sign.DisplayText, sign.DisplayTextIsLimited);
+		}
 
-                i++;
-            }
-        }
+		protected override CircuitNode CreateNode(CircuitManager manager)
+		{
+			return sign = new Sign(manager);
+		}
 
-        protected override CircuitNode CreateNode(CircuitManager manager)
-        {
-            sign = new Sign(manager);
-            sign.TextChanged += Sign_TextChanged;
-            return sign;
-        }
+		private void Sign_DisplayTextChanged(string message, bool limitLength)
+		{
+			text.text = message;
+			text.enableWordWrapping = !limitLength;
+		}
 
-        private void Sign_TextChanged(string message, bool limitLength)
-        {
-            text.text = message;
-            text.enableWordWrapping = !limitLength;
-        }
+		protected override void OnMovedToWorld()
+		{
+			transform.localScale = new Vector3(1, 1, 1);
+		}
 
-        protected override void OnMovedToWorld()
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-
-        protected new void OnDestroy()
-        {
-            sign.TextChanged -= Sign_TextChanged;
-            base.OnDestroy();
-        }
-    }
+		protected new void OnDestroy()
+		{
+			sign.DisplayTextChanged -= Sign_DisplayTextChanged;
+			base.OnDestroy();
+		}
+	}
 }
