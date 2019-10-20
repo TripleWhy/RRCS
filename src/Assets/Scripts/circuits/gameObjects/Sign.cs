@@ -42,7 +42,6 @@
 			string result = message.ToString();
 			try
 			{
-				UnityEngine.Debug.Log("format string: \"" + result + "\"");
 				result = string.Format(result, InValue(0), InValue(1), InValue(2));
 			}
 			catch (IndexOutOfRangeException)

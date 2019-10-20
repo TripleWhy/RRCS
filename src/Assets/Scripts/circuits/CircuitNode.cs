@@ -191,6 +191,11 @@
 						yield return connection;
 		}
 
+		public static string ValueToString(IConvertible val)
+		{
+			return Convert.ToString(val);
+		}
+
 		public static int ValueToInt(IConvertible val)
 		{
 			if (val == null)
