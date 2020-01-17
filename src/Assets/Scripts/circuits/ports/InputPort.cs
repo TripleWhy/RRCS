@@ -5,6 +5,7 @@
 	public class InputPort : DataPort
 	{
 		public IConvertible UnconnectedValue { get; set; }
+		public IConvertible Value { get; private set; }
 
 		public InputPort(CircuitNode node, bool isReset)
 			: base(node, true, isReset)
@@ -14,10 +15,15 @@
 		#region implemented abstract members of Port
 		public override IConvertible GetInternalValue()
 		{
+			return Value;
+		}
+
+		public void UpdateValue()
+		{
 			if (IsConnected)
-				return ((DataConnection)connections[0]).SourceDataPort.GetValue();
+				Value = ((DataConnection)connections[0]).SourceDataPort.GetValue();
 			else
-				return UnconnectedValue;
+				Value = UnconnectedValue;
 		}
 		#endregion
 	}

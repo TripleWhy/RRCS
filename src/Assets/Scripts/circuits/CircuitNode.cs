@@ -288,6 +288,8 @@
 
 		public void Evaluate()
 		{
+			foreach (InputPort inputPort in inputPorts)
+				inputPort.UpdateValue();
 			EvaluateImpl();
 		}
 
