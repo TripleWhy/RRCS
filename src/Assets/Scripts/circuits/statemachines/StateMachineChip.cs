@@ -93,10 +93,10 @@
 			base.Reset();
 		}
 
-		public override void Evaluate()
+		protected override void EvaluateImpl()
 		{
 			DebugUtils.Assert(statePort != null);
-			base.Evaluate();
+			base.EvaluateImpl();
 		}
 
 		override protected void EvaluateOutputs()

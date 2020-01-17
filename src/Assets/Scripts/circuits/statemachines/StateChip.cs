@@ -33,7 +33,7 @@
 			return typeof(bool);
 		}
 
-		public override void Evaluate()
+		protected override void EvaluateImpl()
 		{
 			EvaluateOutputs();
 		}

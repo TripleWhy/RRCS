@@ -56,7 +56,7 @@
 			}
 		}
 
-		override public void Evaluate()
+		override protected void EvaluateImpl()
 		{
 			outputPorts[outputPortCount].Value = ResetValue;
 			int dur = InInt(1);

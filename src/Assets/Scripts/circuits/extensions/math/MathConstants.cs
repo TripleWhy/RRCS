@@ -22,7 +22,7 @@
 			return typeof(double);
 		}
 
-		public override void Evaluate()
+		protected override void EvaluateImpl()
 		{
 			outputPorts[0].Value = Math.E;
 			outputPorts[1].Value = Math.PI;

@@ -286,7 +286,12 @@
 		{
 		}
 
-		public virtual void Evaluate()
+		public void Evaluate()
+		{
+			EvaluateImpl();
+		}
+
+		protected virtual void EvaluateImpl()
 		{
 			if (!hasReset)
 				EvaluateOutputs();
