@@ -7,6 +7,8 @@
 		public MathConstantsChip(CircuitManager manager)
 			: base(manager, 0, 2, false)
 		{
+			outputPorts[0].Value = Math.E;
+			outputPorts[1].Value = Math.PI;
 		}
 
 		override public int IconIndex
@@ -24,8 +26,6 @@
 
 		protected override void EvaluateImpl()
 		{
-			outputPorts[0].Value = Math.E;
-			outputPorts[1].Value = Math.PI;
 		}
 
 		protected override void EvaluateOutputs()
