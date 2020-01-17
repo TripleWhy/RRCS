@@ -216,25 +216,7 @@
 			}
 
 			if (valueText != null && valueText.gameObject.activeInHierarchy)
-			{
-				IConvertible value = ((DataPort)Port).GetValue();
-				if (value != lastValue)
-				{
-					lastValue = value;
-					if (value == null)
-						valueText.text = "null";
-					else if (value is string)
-						valueText.text = '"' + (string)value + '"';
-					else if (value is double)
-						valueText.text = value.ToString() + "D";
-					else if (value is float)
-						valueText.text = value.ToString() + "F";
-					else if (value is long)
-						valueText.text = value.ToString() + "L";
-					else
-						valueText.text = value.ToString();
-				}
-			}
+				SetDisplayValue(((DataPort)Port).GetValue());
 
 			if (Port != null && delayIcon != null)
 			{
@@ -251,6 +233,26 @@
 			}
 		}
 
+		private void SetDisplayValue(IConvertible value)
+		{
+			if (value != lastValue)
+			{
+				lastValue = value;
+				if (value == null)
+					valueText.text = "null";
+				else if (value is string)
+					valueText.text = '"' + (string)value + '"';
+				else if (value is double)
+					valueText.text = value.ToString() + "D";
+				else if (value is float)
+					valueText.text = value.ToString() + "F";
+				else if (value is long)
+					valueText.text = value.ToString() + "L";
+				else
+					valueText.text = value.ToString();
+			}
+		}
+
 		public bool TextActive
 		{
 			get
@@ -259,7 +261,8 @@
 			}
 			set
 			{
-				if (valueText != null) valueText.gameObject.SetActive(value);
+				if (valueText != null)
+					valueText.gameObject.SetActive(value);
 			}
 		}
 
