@@ -40,16 +40,23 @@
 
 		protected override void EvaluateOutputs()
 		{
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = false;
 			if (isActive)
 			{
 				outputPorts[1].Value = true;
-				if (!lastWasActive)
-					outputPorts[0].Value = true;
+				outputPorts[0].Value = !lastWasActive;
+				outputPorts[2].Value = false;
 			}
 			else if (lastWasActive)
 			{
+				outputPorts[0].Value = false;
+				outputPorts[1].Value = false;
 				outputPorts[2].Value = true;
+			}
+			else
+			{
+				outputPorts[0].Value = false;
+				outputPorts[1].Value = false;
+				outputPorts[2].Value = false;
 			}
 			lastWasActive = isActive;
 		}
