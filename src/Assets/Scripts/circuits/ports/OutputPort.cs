@@ -23,7 +23,7 @@
 					else
 						DebugUtils.Assert(expectedType == null || value.GetType() == expectedType);
 				}
-				if (value == this.value)
+				if (object.Equals(value, this.value))
 					return;
 				this.value = value;
 				EmitValueChanged();
