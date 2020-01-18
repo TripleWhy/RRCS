@@ -85,14 +85,6 @@
 			}
 		}
 
-		protected override void Reset()
-		{
-			if (activeState != null)
-				activeState.Active = false;
-			ResetActiveState();
-			base.Reset();
-		}
-
 		protected override void UpdateInputValues()
 		{
 			base.UpdateInputValues();
@@ -105,7 +97,8 @@
 		protected override void EvaluateImpl()
 		{
 			DebugUtils.Assert(statePort != null);
-			base.EvaluateImpl();
+			EvaluateOutputs();
+			outputPorts[outputPortCount].Value = ResetValue;
 		}
 
 		override protected void EvaluateOutputs()
@@ -113,10 +106,18 @@
 			StateChip lastActiveState = activeState;
 			activeState = FindActiveState();
 
-			timeInState++;
-
-			if (activeState == null)
+			if (IsResetSet)
+			{
+				if (activeState != null)
+					activeState.Active = false;
 				ResetActiveState();
+			}
+			else
+			{
+				timeInState++;
+				if (activeState == null)
+					ResetActiveState();
+			}
 
 			if (activeState != null && timeInState > 0 && timeInState >= activeState.MinTimeInState)
 			{
