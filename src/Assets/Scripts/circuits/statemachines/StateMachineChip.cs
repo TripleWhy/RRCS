@@ -93,6 +93,15 @@
 			base.Reset();
 		}
 
+		protected override void UpdateInputValues()
+		{
+			base.UpdateInputValues();
+			foreach (StateChip state in connectedStates)
+				foreach (StateMachineTransition transition in state.IncomingConnections())
+					if (transition.TransitionEnabledPort != null)
+						transition.TransitionEnabledPort.UpdateValue();
+		}
+
 		protected override void EvaluateImpl()
 		{
 			DebugUtils.Assert(statePort != null);
@@ -196,6 +205,15 @@
 					return (StateChip)transition.TargetStatePort.Node;
 			}
 			return null;
+		}
+
+		public override IEnumerable<Connection> IncomingConnections()
+		{
+			foreach (Connection connection in base.IncomingConnections())
+				yield return connection;
+			foreach (StateChip state in connectedStates)
+				foreach (DataConnection connection in state.IncomingTransitionEnabledConnections())
+					yield return connection;
 		}
 
 		public override IEnumerable<Connection> OutgoingConnections()

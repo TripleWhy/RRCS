@@ -288,9 +288,14 @@
 
 		public void Evaluate()
 		{
+			UpdateInputValues();
+			EvaluateImpl();
+		}
+
+		protected virtual void UpdateInputValues()
+		{
 			foreach (InputPort inputPort in inputPorts)
 				inputPort.UpdateValue();
-			EvaluateImpl();
 		}
 
 		protected virtual void EvaluateImpl()

@@ -178,10 +178,17 @@
 			{
 				if (!object.ReferenceEquals(transition.TargetStatePort.Node, this))
 					continue;
+				yield return transition;
+			}
+		}
+
+		public IEnumerable<DataConnection> IncomingTransitionEnabledConnections()
+		{
+			foreach (StateMachineTransition transition in IncomingConnections())
+			{
 				if (transition.TransitionEnabledPort != null)
 					foreach (DataConnection transitionEnabledConnection in transition.TransitionEnabledPort.connections)
 						yield return transitionEnabledConnection;
-				yield return transition;
 			}
 		}
 

@@ -6,13 +6,24 @@
 	{
 		public IConvertible UnconnectedValue { get; set; }
 		public IConvertible Value { get; private set; }
+		private StateChip stateChip;
 
 		public InputPort(CircuitNode node, bool isReset)
 			: base(node, true, isReset)
 		{
+			stateChip = node as StateChip;
 		}
 
-		#region implemented abstract members of Port
+		public override CircuitNode Node
+		{
+			get
+			{
+				if (stateChip != null)
+					return stateChip.StateMachine;
+				return base.Node;
+			}
+		}
+
 		public override IConvertible GetInternalValue()
 		{
 			return Value;
@@ -25,6 +36,5 @@
 			else
 				Value = UnconnectedValue;
 		}
-		#endregion
 	}
 }
