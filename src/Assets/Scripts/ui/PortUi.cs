@@ -223,9 +223,9 @@
 				bool delayed;
 				if (Port.IsConnected)
 				{
-					CircuitNode srcNode = Port.connections[0].SourcePort.node;
-					CircuitNode dstNode = Port.node;
-					delayed = srcNode.RingEvaluationPriority >= dstNode.RingEvaluationPriority;
+					Port srcPort = Port.connections[0].SourcePort;
+					Port dstPort = Port;
+					delayed = srcPort.RingEvaluationPriority >= dstPort.RingEvaluationPriority;
 				}
 				else
 					delayed = false;

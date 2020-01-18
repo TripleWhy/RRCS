@@ -152,12 +152,12 @@
 		{
 			public int Compare(Connection x, Connection y)
 			{
-				int xTargetPrio = x.TargetPort.node.RingEvaluationPriority;
-				int yTargetPrio = y.TargetPort.node.RingEvaluationPriority;
+				int xTargetPrio = x.TargetPort.RingEvaluationPriority;
+				int yTargetPrio = y.TargetPort.RingEvaluationPriority;
 				if (xTargetPrio != yTargetPrio)
 					return xTargetPrio.CompareTo(yTargetPrio);
-				int xSourcePrio = x.SourcePort.node.RingEvaluationPriority;
-				int ySourcePrio = y.SourcePort.node.RingEvaluationPriority;
+				int xSourcePrio = x.SourcePort.RingEvaluationPriority;
+				int ySourcePrio = y.SourcePort.RingEvaluationPriority;
 				return ySourcePrio.CompareTo(xSourcePrio);
 			}
 		}
@@ -215,10 +215,10 @@
 			while (true)
 			{
 				CircuitNode backtrackTo = null;
-				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.SourcePort.node))
+				foreach (Connection e in n.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy((Connection c) => c.SourcePort.Node))
 				{
-					DebugUtils.Assert(ReferenceEquals(e.TargetPort.node, n));
-					CircuitNode m = e.SourcePort.node;
+					DebugUtils.Assert(ReferenceEquals(e.TargetPort.Node, n));
+					CircuitNode m = e.SourcePort.Node;
 					if (marks[m] == DfsMark.Temmporary)
 					{
 						SortedSet<CircuitNode> loop = new SortedSet<CircuitNode>();
@@ -233,8 +233,8 @@
 						{
 							foreach (Connection c in cn.IncomingConnections().Where(a => !removedEdges.Contains(a)).OrderBy(a => a, edgeComparer))
 							{
-								DebugUtils.Assert(ReferenceEquals(c.TargetPort.node, cn));
-								CircuitNode src = c.SourcePort.node;
+								DebugUtils.Assert(ReferenceEquals(c.TargetPort.Node, cn));
+								CircuitNode src = c.SourcePort.Node;
 								if (!loop.Contains(src))
 									continue;
 								removedEdges.Add(c);

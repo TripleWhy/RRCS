@@ -73,7 +73,7 @@
 		{
 			DebugUtils.Assert(statePort.connections.Count <= 1);
 			if (statePort.connections.Count > 0)
-				return (StateChip)statePort.connections[0].TargetPort.node;
+				return (StateChip)statePort.connections[0].TargetPort.Node;
 			return null;
 		}
 
@@ -175,7 +175,7 @@
 			DebugUtils.Assert(!port.IsStateRootPort);
 			visited.Add(port);
 
-			yield return (StateChip)port.node;
+			yield return (StateChip)port.Node;
 
 			foreach (StateMachineTransition connection in port.connections)
 			{
@@ -189,11 +189,11 @@
 		public StateChip NextStateAfterValidTransition()
 		{
 			StatePort port = activeState.statePort;
-			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.node))
+			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.Node))
 			{
 				DebugUtils.Assert(transition.TargetStatePort != null);
 				if (ValueToBool(transition.TransitionEnabledPort.GetValue()))
-					return (StateChip)transition.TargetStatePort.node;
+					return (StateChip)transition.TargetStatePort.Node;
 			}
 			return null;
 		}

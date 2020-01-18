@@ -25,12 +25,12 @@
 
 		public readonly List<Connection> connections = new List<Connection>();
 
-		public readonly CircuitNode node;
 		public readonly PortType portType;
+		public virtual CircuitNode Node { get; private set; }
 
 		protected Port(CircuitNode node, PortType portType)
 		{
-			this.node = node;
+			this.Node = node;
 			this.portType = portType;
 		}
 
@@ -114,6 +114,14 @@
 				connections[i].Disconnect();
 
 			DebugUtils.Assert(connections.Count == 0);
+		}
+
+		public int RingEvaluationPriority
+		{
+			get
+			{
+				return Node.RingEvaluationPriority;
+			}
 		}
 
 		protected void EmitConnected(Connection connection)

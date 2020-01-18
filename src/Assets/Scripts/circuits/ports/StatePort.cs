@@ -33,10 +33,10 @@
 			StateMachineChip sourceRoot;
 			{
 				if (source.IsStateRootPort)
-					sourceRoot = (StateMachineChip)source.node;
+					sourceRoot = (StateMachineChip)source.Node;
 				else
-					sourceRoot = ((StateChip)source.node).StateMachine;
-				targetRoot = ((StateChip)target.node).StateMachine;
+					sourceRoot = ((StateChip)source.Node).StateMachine;
+				targetRoot = ((StateChip)target.Node).StateMachine;
 			}
 
 			if (sourceRoot != null && targetRoot != null && !object.ReferenceEquals(sourceRoot, targetRoot))
@@ -65,12 +65,12 @@
 			DebugUtils.Assert(!connection.TargetPort.IsStateRootPort);
 			StateMachineTransition transition = (StateMachineTransition)connection;
 			StateMachineChip stateMachine;
-			StateChip targetState = (StateChip)transition.TargetStatePort.node;
+			StateChip targetState = (StateChip)transition.TargetStatePort.Node;
 			if (transition.SourceStatePort.IsStateRootPort)
-				stateMachine = (StateMachineChip)transition.SourceStatePort.node;
+				stateMachine = (StateMachineChip)transition.SourceStatePort.Node;
 			else
 			{
-				StateChip sourceState = (StateChip)transition.SourceStatePort.node;
+				StateChip sourceState = (StateChip)transition.SourceStatePort.Node;
 				stateMachine = sourceState.StateMachineUnchecked;
 				if (stateMachine == null)
 					stateMachine = targetState.StateMachineUnchecked;
@@ -78,7 +78,7 @@
 			if (stateMachine == null)
 			{
 				if (!transition.SourceStatePort.IsStateRootPort)
-					((StateChip)transition.SourceStatePort.node).CheckStateMachine();
+					((StateChip)transition.SourceStatePort.Node).CheckStateMachine();
 				targetState.CheckStateMachine();
 				return;
 			}
@@ -87,7 +87,7 @@
 			if (targetState.StateMachineUnchecked == null)
 				newState = targetState;
 			else
-				newState = (StateChip)transition.SourceStatePort.node;
+				newState = (StateChip)transition.SourceStatePort.Node;
 
 			if (newState.StateMachineUnchecked == null)
 			{
@@ -104,7 +104,7 @@
 			else
 				DebugUtils.Assert(object.ReferenceEquals(targetState.StateMachine, stateMachine));
 			if (!transition.SourceStatePort.IsStateRootPort)
-				((StateChip)transition.SourceStatePort.node).CheckStateMachine();
+				((StateChip)transition.SourceStatePort.Node).CheckStateMachine();
 			targetState.CheckStateMachine();
 		}
 
@@ -114,20 +114,20 @@
 				return;
 			StateMachineTransition transition = (StateMachineTransition)connection;
 			StateMachineChip stateMachine;
-			StateChip targetState = (StateChip)transition.TargetStatePort.node;
+			StateChip targetState = (StateChip)transition.TargetStatePort.Node;
 			targetState.Active = false;
 			if (transition.SourceStatePort.IsStateRootPort)
-				stateMachine = (StateMachineChip)transition.SourceStatePort.node;
+				stateMachine = (StateMachineChip)transition.SourceStatePort.Node;
 			else
 			{
-				StateChip sourceState = (StateChip)transition.SourceStatePort.node;
+				StateChip sourceState = (StateChip)transition.SourceStatePort.Node;
 				stateMachine = sourceState.StateMachineUnchecked;
 			}
 			DebugUtils.Assert(object.ReferenceEquals(stateMachine, targetState.StateMachineUnchecked));
 			if (stateMachine == null)
 			{
 				if (!transition.SourceStatePort.IsStateRootPort)
-					((StateChip)transition.SourceStatePort.node).CheckStateMachine();
+					((StateChip)transition.SourceStatePort.Node).CheckStateMachine();
 				targetState.CheckStateMachine();
 				return;
 			}
@@ -139,7 +139,7 @@
 				targetState.StateMachine = null;
 			}
 			if (!transition.SourceStatePort.IsStateRootPort)
-				((StateChip)transition.SourceStatePort.node).CheckStateMachine();
+				((StateChip)transition.SourceStatePort.Node).CheckStateMachine();
 			targetState.CheckStateMachine();
 		}
 	}

@@ -128,7 +128,6 @@
 			}
 		}
 
-
 		public bool Active
 		{
 			get
@@ -177,7 +176,7 @@
 		{
 			foreach (StateMachineTransition transition in statePort.connections)
 			{
-				if (!object.ReferenceEquals(transition.TargetStatePort.node, this))
+				if (!object.ReferenceEquals(transition.TargetStatePort.Node, this))
 					continue;
 				if (transition.TransitionEnabledPort != null)
 					foreach (DataConnection transitionEnabledConnection in transition.TransitionEnabledPort.connections)
@@ -199,7 +198,7 @@
 		private StateMachineChip FindConnectedRoot(StatePort port, HashSet<StatePort> visited)
 		{
 			if (port.IsStateRootPort)
-				return (StateMachineChip)port.node;
+				return (StateMachineChip)port.Node;
 			visited.Add(port);
 
 			foreach (StateMachineTransition connection in port.connections)

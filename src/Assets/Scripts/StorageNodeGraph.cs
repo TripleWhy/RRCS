@@ -84,8 +84,8 @@
 					{
 						NodeConnection connection = new NodeConnection();
 						OutputPort connectedPort = ((DataConnection)port.connections[0]).SourceDataPort;
-						connection.nodeIndex = connectedPort.node.RingEvaluationPriority;
-						connection.portIndex = Array.IndexOf(connectedPort.node.outputPorts, connectedPort);
+						connection.nodeIndex = connectedPort.RingEvaluationPriority;
+						connection.portIndex = Array.IndexOf(connectedPort.Node.outputPorts, connectedPort);
 						storageNode.connections[portIndex] = connection;
 					}
 				}
@@ -106,8 +106,8 @@
 						StateMachineTransition outgoingTransition = outgoingTransitions[transitionIndex];
 						NodeTransition transition = new NodeTransition
 						{
-							sourceNodeIndex = outgoingTransition.SourceStatePort.node.RingEvaluationPriority,
-							targetNodeIndex = outgoingTransition.TargetStatePort.node.RingEvaluationPriority
+							sourceNodeIndex = outgoingTransition.SourceStatePort.RingEvaluationPriority,
+							targetNodeIndex = outgoingTransition.TargetStatePort.RingEvaluationPriority
 						};
 
 						if (outgoingTransition.TransitionEnabledPort != null && outgoingTransition.TransitionEnabledPort.IsConnected)
@@ -115,8 +115,8 @@
 							OutputPort connectedPort = ((DataConnection)outgoingTransition.TransitionEnabledPort.connections[0]).SourceDataPort;
 							NodeConnection connection = new NodeConnection
 							{
-								nodeIndex = connectedPort.node.RingEvaluationPriority,
-								portIndex = Array.IndexOf(connectedPort.node.outputPorts, connectedPort)
+								nodeIndex = connectedPort.RingEvaluationPriority,
+								portIndex = Array.IndexOf(connectedPort.Node.outputPorts, connectedPort)
 							};
 							transition.transitionEnabledConnection = connection;
 						}

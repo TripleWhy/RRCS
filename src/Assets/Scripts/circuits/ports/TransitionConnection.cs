@@ -29,7 +29,7 @@ namespace AssemblyCSharp
 			TargetStatePort = target;
 			if (!source.IsStateRootPort)
 			{
-				TransitionEnabledPort = new InputPort(target.node, false)
+				TransitionEnabledPort = new InputPort(target.Node, false)
 				{
 					UnconnectedValue = true
 				};
