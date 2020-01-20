@@ -16,7 +16,7 @@
 
 		public IConvertible GetValue()
 		{
-			if (node.Manager.UseIntValuesOnly)
+			if (Node.Manager.UseIntValuesOnly)
 				return CircuitNode.ValueToInt(GetInternalValue());
 			else
 				return GetInternalValue();

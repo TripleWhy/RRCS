@@ -155,7 +155,7 @@
 		public virtual IEnumerable<CircuitNode> SimpleDependsOn()
 		{
 			foreach (Connection connection in IncomingConnections())
-				yield return connection.SourcePort.node;
+				yield return connection.SourcePort.Node;
 		}
 
 		public SortedSet<CircuitNode> DependingOnThis()
@@ -173,13 +173,13 @@
 		public virtual IEnumerable<CircuitNode> SimpleDependingOnThis()
 		{
 			foreach (Connection connection in OutgoingConnections())
-				yield return connection.TargetPort.node;
+				yield return connection.TargetPort.Node;
 		}
 
 		public virtual IEnumerable<Connection> IncomingConnections()
 		{
 			foreach (InputPort port in inputPorts)
-				if (port.IsConnected && !ReferenceEquals(port.connections[0].SourcePort.node, this))
+				if (port.IsConnected && !ReferenceEquals(port.connections[0].SourcePort.Node, this))
 					yield return port.connections[0];
 		}
 
@@ -187,7 +187,7 @@
 		{
 			foreach (OutputPort port in outputPorts)
 				foreach (Connection connection in port.connections)
-					if (!ReferenceEquals(connection.TargetPort.node, this))
+					if (!ReferenceEquals(connection.TargetPort.Node, this))
 						yield return connection;
 		}
 
@@ -291,7 +291,19 @@
 		{
 		}
 
-		public virtual void Evaluate()
+		public void Evaluate()
+		{
+			UpdateInputValues();
+			EvaluateImpl();
+		}
+
+		protected virtual void UpdateInputValues()
+		{
+			foreach (InputPort inputPort in inputPorts)
+				inputPort.UpdateValue();
+		}
+
+		protected virtual void EvaluateImpl()
 		{
 			if (!hasReset)
 				EvaluateOutputs();

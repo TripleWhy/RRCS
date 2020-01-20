@@ -73,7 +73,7 @@
 		{
 			DebugUtils.Assert(statePort.connections.Count <= 1);
 			if (statePort.connections.Count > 0)
-				return (StateChip)statePort.connections[0].TargetPort.node;
+				return (StateChip)statePort.connections[0].TargetPort.Node;
 			return null;
 		}
 
@@ -85,18 +85,20 @@
 			}
 		}
 
-		protected override void Reset()
+		protected override void UpdateInputValues()
 		{
-			if (activeState != null)
-				activeState.Active = false;
-			ResetActiveState();
-			base.Reset();
+			base.UpdateInputValues();
+			foreach (StateChip state in connectedStates)
+				foreach (StateMachineTransition transition in state.IncomingConnections())
+					if (transition.TransitionEnabledPort != null)
+						transition.TransitionEnabledPort.UpdateValue();
 		}
 
-		public override void Evaluate()
+		protected override void EvaluateImpl()
 		{
 			DebugUtils.Assert(statePort != null);
-			base.Evaluate();
+			EvaluateOutputs();
+			outputPorts[outputPortCount].Value = ResetValue;
 		}
 
 		override protected void EvaluateOutputs()
@@ -104,10 +106,18 @@
 			StateChip lastActiveState = activeState;
 			activeState = FindActiveState();
 
-			timeInState++;
-
-			if (activeState == null)
+			if (IsResetSet)
+			{
+				if (activeState != null)
+					activeState.Active = false;
 				ResetActiveState();
+			}
+			else
+			{
+				timeInState++;
+				if (activeState == null)
+					ResetActiveState();
+			}
 
 			if (activeState != null && timeInState > 0 && timeInState >= activeState.MinTimeInState)
 			{
@@ -175,7 +185,7 @@
 			DebugUtils.Assert(!port.IsStateRootPort);
 			visited.Add(port);
 
-			yield return (StateChip)port.node;
+			yield return (StateChip)port.Node;
 
 			foreach (StateMachineTransition connection in port.connections)
 			{
@@ -189,13 +199,22 @@
 		public StateChip NextStateAfterValidTransition()
 		{
 			StatePort port = activeState.statePort;
-			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.node))
+			foreach (StateMachineTransition transition in port.connections.Where(t => object.ReferenceEquals(t.SourcePort, port)).OrderBy(t => t.TargetPort.Node))
 			{
 				DebugUtils.Assert(transition.TargetStatePort != null);
 				if (ValueToBool(transition.TransitionEnabledPort.GetValue()))
-					return (StateChip)transition.TargetStatePort.node;
+					return (StateChip)transition.TargetStatePort.Node;
 			}
 			return null;
+		}
+
+		public override IEnumerable<Connection> IncomingConnections()
+		{
+			foreach (Connection connection in base.IncomingConnections())
+				yield return connection;
+			foreach (StateChip state in connectedStates)
+				foreach (DataConnection connection in state.IncomingTransitionEnabledConnections())
+					yield return connection;
 		}
 
 		public override IEnumerable<Connection> OutgoingConnections()

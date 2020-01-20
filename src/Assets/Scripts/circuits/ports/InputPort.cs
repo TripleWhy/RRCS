@@ -5,20 +5,36 @@
 	public class InputPort : DataPort
 	{
 		public IConvertible UnconnectedValue { get; set; }
+		public IConvertible Value { get; private set; }
+		private StateChip stateChip;
 
 		public InputPort(CircuitNode node, bool isReset)
 			: base(node, true, isReset)
 		{
+			stateChip = node as StateChip;
 		}
 
-		#region implemented abstract members of Port
+		public override CircuitNode Node
+		{
+			get
+			{
+				if (stateChip != null)
+					return stateChip.StateMachine;
+				return base.Node;
+			}
+		}
+
 		public override IConvertible GetInternalValue()
 		{
-			if (IsConnected)
-				return ((DataConnection)connections[0]).SourceDataPort.GetValue();
-			else
-				return UnconnectedValue;
+			return Value;
 		}
-		#endregion
+
+		public void UpdateValue()
+		{
+			if (IsConnected)
+				Value = ((DataConnection)connections[0]).SourceDataPort.GetValue();
+			else
+				Value = UnconnectedValue;
+		}
 	}
 }

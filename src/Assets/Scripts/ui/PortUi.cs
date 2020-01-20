@@ -216,38 +216,40 @@
 			}
 
 			if (valueText != null && valueText.gameObject.activeInHierarchy)
-			{
-				IConvertible value = ((DataPort)Port).GetValue();
-				if (value != lastValue)
-				{
-					lastValue = value;
-					if (value == null)
-						valueText.text = "null";
-					else if (value is string)
-						valueText.text = '"' + (string)value + '"';
-					else if (value is double)
-						valueText.text = value.ToString() + "D";
-					else if (value is float)
-						valueText.text = value.ToString() + "F";
-					else if (value is long)
-						valueText.text = value.ToString() + "L";
-					else
-						valueText.text = value.ToString();
-				}
-			}
+				SetDisplayValue(((DataPort)Port).GetValue());
 
 			if (Port != null && delayIcon != null)
 			{
 				bool delayed;
 				if (Port.IsConnected)
 				{
-					CircuitNode srcNode = Port.connections[0].SourcePort.node;
-					CircuitNode dstNode = Port.node;
-					delayed = srcNode.RingEvaluationPriority >= dstNode.RingEvaluationPriority;
+					Port srcPort = Port.connections[0].SourcePort;
+					Port dstPort = Port;
+					delayed = srcPort.RingEvaluationPriority >= dstPort.RingEvaluationPriority;
 				}
 				else
 					delayed = false;
 				delayIcon.gameObject.SetActive(delayed);
+			}
+		}
+
+		private void SetDisplayValue(IConvertible value)
+		{
+			if (value != lastValue)
+			{
+				lastValue = value;
+				if (value == null)
+					valueText.text = "null";
+				else if (value is string)
+					valueText.text = '"' + (string)value + '"';
+				else if (value is double)
+					valueText.text = value.ToString() + "D";
+				else if (value is float)
+					valueText.text = value.ToString() + "F";
+				else if (value is long)
+					valueText.text = value.ToString() + "L";
+				else
+					valueText.text = value.ToString();
 			}
 		}
 
@@ -259,7 +261,8 @@
 			}
 			set
 			{
-				if (valueText != null) valueText.gameObject.SetActive(value);
+				if (valueText != null)
+					valueText.gameObject.SetActive(value);
 			}
 		}
 

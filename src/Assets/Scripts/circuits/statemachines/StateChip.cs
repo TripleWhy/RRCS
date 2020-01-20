@@ -33,23 +33,30 @@
 			return typeof(bool);
 		}
 
-		public override void Evaluate()
+		protected override void EvaluateImpl()
 		{
 			EvaluateOutputs();
 		}
 
 		protected override void EvaluateOutputs()
 		{
-			outputPorts[0].Value = outputPorts[1].Value = outputPorts[2].Value = false;
 			if (isActive)
 			{
 				outputPorts[1].Value = true;
-				if (!lastWasActive)
-					outputPorts[0].Value = true;
+				outputPorts[0].Value = !lastWasActive;
+				outputPorts[2].Value = false;
 			}
 			else if (lastWasActive)
 			{
+				outputPorts[0].Value = false;
+				outputPorts[1].Value = false;
 				outputPorts[2].Value = true;
+			}
+			else
+			{
+				outputPorts[0].Value = false;
+				outputPorts[1].Value = false;
+				outputPorts[2].Value = false;
 			}
 			lastWasActive = isActive;
 		}
@@ -121,7 +128,6 @@
 			}
 		}
 
-
 		public bool Active
 		{
 			get
@@ -170,12 +176,19 @@
 		{
 			foreach (StateMachineTransition transition in statePort.connections)
 			{
-				if (!object.ReferenceEquals(transition.TargetStatePort.node, this))
+				if (!object.ReferenceEquals(transition.TargetStatePort.Node, this))
 					continue;
+				yield return transition;
+			}
+		}
+
+		public IEnumerable<DataConnection> IncomingTransitionEnabledConnections()
+		{
+			foreach (StateMachineTransition transition in IncomingConnections())
+			{
 				if (transition.TransitionEnabledPort != null)
 					foreach (DataConnection transitionEnabledConnection in transition.TransitionEnabledPort.connections)
 						yield return transitionEnabledConnection;
-				yield return transition;
 			}
 		}
 
@@ -192,7 +205,7 @@
 		private StateMachineChip FindConnectedRoot(StatePort port, HashSet<StatePort> visited)
 		{
 			if (port.IsStateRootPort)
-				return (StateMachineChip)port.node;
+				return (StateMachineChip)port.Node;
 			visited.Add(port);
 
 			foreach (StateMachineTransition connection in port.connections)
