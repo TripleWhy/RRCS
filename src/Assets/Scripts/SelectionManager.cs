@@ -36,12 +36,14 @@
 
 		public bool SelectionEnabled
 		{
-			get
-			{
-				return box.gameObject.activeSelf;
-			}
+			get { return box.gameObject.activeSelf; }
 			set
 			{
+				if (box.gameObject.activeSelf && !value)
+				{
+					box.ResetBoxRect();
+				}
+
 				box.gameObject.SetActive(value);
 			}
 		}

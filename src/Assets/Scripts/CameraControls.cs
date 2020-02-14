@@ -19,7 +19,13 @@ namespace AssemblyCSharp
 		private Camera cam;
 		private int screenHeight;
 
+		private bool isPinchPanZoomActive = false;
+		Vector2 lastPinchCenter = Vector2.zero;
+		private float lastPinchDistance = 0;
+		private int[] pinchFingerIds = new int[] {-1, -1};
+
 		public delegate void ZoomChangedEventHandler(float inverseZoom);
+
 		public event ZoomChangedEventHandler ZoomChanged = delegate { };
 
 		void Awake()
@@ -70,6 +76,47 @@ namespace AssemblyCSharp
 					}
 				}
 			}
+
+			// Pan/Zoom functionality for touchscreen devices
+			if (Input.touchCount > 1)
+			{
+				Touch touch0 = Input.GetTouch(0);
+				Touch touch1 = Input.GetTouch(1);
+				float pinchDistance = Vector2.Distance(touch0.position, touch1.position);
+				Vector2 pinchCenter = (touch0.position + touch1.position) / 2;
+
+				if (!isPinchPanZoomActive || pinchFingerIds[0] != touch0.fingerId ||
+				    pinchFingerIds[1] != touch1.fingerId)
+				{
+					isPinchPanZoomActive = true;
+					lastPinchCenter = pinchCenter;
+					lastPinchDistance = pinchDistance;
+					pinchFingerIds[0] = touch0.fingerId;
+					pinchFingerIds[1] = touch1.fingerId;
+					RRCSManager.Instance.selectionManager.SelectionEnabled = false;
+				}
+
+				Vector2 pinchCenterDiff = lastPinchCenter - pinchCenter;
+				transform.position +=
+					new Vector3(pinchCenterDiff.x, pinchCenterDiff.y) * InverseZoom;
+
+				float distanceDiff = pinchDistance - lastPinchDistance;
+				ZoomToPosition(pinchCenter, distanceDiff * pinchZoomSpeed);
+
+				lastPinchCenter = pinchCenter;
+				lastPinchDistance = pinchDistance;
+			}
+
+			else
+			{
+				if (isPinchPanZoomActive)
+				{
+					RRCSManager.Instance.selectionManager.SelectionEnabled = true;
+					isPinchPanZoomActive = false;
+				}
+			}
+		}
+
 		public void ZoomToPosition(Vector3 zoomCenter, float zoom)
 		{
 			//TODO: get sidebar widths?
