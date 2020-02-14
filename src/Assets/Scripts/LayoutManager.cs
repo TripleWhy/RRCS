@@ -11,6 +11,7 @@ namespace AssemblyCSharp
 		public LayoutElement rightSidebar;
 		public LayoutElement leftSidebarScrollbar;
 		public LayoutElement rightSidebarScrollbar;
+		public RectTransform selectionArea;
 		public Toggle sidebarToggle;
 
 		private float leftSidebarInitialWidth = 0;
@@ -40,6 +41,9 @@ namespace AssemblyCSharp
 				rightSidebar.preferredWidth = rightSidebarInitialWidth;
 				leftSidebarScrollbar.preferredWidth = leftSidebarScrollbarInitialWidth;
 				rightSidebarScrollbar.preferredWidth = rightSidebarScrollbarInitialWidth;
+				
+				selectionArea.offsetMin = new Vector2(leftSidebarInitialWidth, selectionArea.offsetMin.y);
+				selectionArea.offsetMax = new Vector2(rightSidebarInitialWidth, selectionArea.offsetMax.y);
 			}
 			else
 			{
@@ -47,6 +51,9 @@ namespace AssemblyCSharp
 				rightSidebar.preferredWidth = 0;
 				leftSidebarScrollbar.preferredWidth = 0;
 				rightSidebarScrollbar.preferredWidth = 0;
+				
+				selectionArea.offsetMin = new Vector2(0, selectionArea.offsetMin.y);
+				selectionArea.offsetMax = new Vector2(0, selectionArea.offsetMax.y);
 			}
 		}
 	}

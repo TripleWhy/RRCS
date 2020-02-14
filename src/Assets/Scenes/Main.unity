@@ -14988,7 +14988,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1881280529}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.3455145
+  m_Size: 0.34155673
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18438,6 +18438,7 @@ MonoBehaviour:
   rightSidebar: {fileID: 322801297}
   leftSidebarScrollbar: {fileID: 1599031883}
   rightSidebarScrollbar: {fileID: 1740004405}
+  selectionArea: {fileID: 1684601275}
   sidebarToggle: {fileID: 519032221}
 --- !u!1 &1906303540
 GameObject:
