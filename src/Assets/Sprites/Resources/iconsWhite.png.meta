@@ -73,6 +73,8 @@ TextureImporter:
     21300136: iconsWhite_68
     21300138: iconsWhite_69
     21300140: iconsWhite_70
+    21300142: iconsWhite_71_maximize
+    21300144: iconsWhite_72_minimize
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -1585,13 +1587,53 @@ TextureImporter:
         width: 125
         height: 227
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
       spriteID: f4e615dfec97b5c46a323db7d50f1c6b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iconsWhite_71_maximize
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 3936
+        width: 133
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fde4439279514f84f9850a76250c7b39
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: iconsWhite_72_minimize
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 3786
+        width: 139
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96da8df3878242e418503b8bd58bf0aa
       vertices: []
       indices: 
       edges: []
