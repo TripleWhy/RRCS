@@ -10,6 +10,7 @@ namespace AssemblyCSharp
 	public class CameraControls : MonoBehaviour
 	{
 		private const float zoomSpeed = 1.25f;
+		private const float pinchZoomSpeed = 0.035f;
 		private const int minZoomLevel = -12;
 		private const int maxZoomLevel = 10;
 		private float inverseZoom = 0.5f;
