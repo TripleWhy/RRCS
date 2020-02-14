@@ -41,9 +41,11 @@ namespace AssemblyCSharp
 				rightSidebar.preferredWidth = rightSidebarInitialWidth;
 				leftSidebarScrollbar.preferredWidth = leftSidebarScrollbarInitialWidth;
 				rightSidebarScrollbar.preferredWidth = rightSidebarScrollbarInitialWidth;
-				
-				selectionArea.offsetMin = new Vector2(leftSidebarInitialWidth, selectionArea.offsetMin.y);
-				selectionArea.offsetMax = new Vector2(rightSidebarInitialWidth, selectionArea.offsetMax.y);
+
+				selectionArea.offsetMin = new Vector2(leftSidebarInitialWidth + leftSidebarScrollbarInitialWidth,
+					selectionArea.offsetMin.y);
+				selectionArea.offsetMax = new Vector2(-rightSidebarInitialWidth - rightSidebarScrollbarInitialWidth,
+					selectionArea.offsetMax.y);
 			}
 			else
 			{
@@ -51,7 +53,7 @@ namespace AssemblyCSharp
 				rightSidebar.preferredWidth = 0;
 				leftSidebarScrollbar.preferredWidth = 0;
 				rightSidebarScrollbar.preferredWidth = 0;
-				
+
 				selectionArea.offsetMin = new Vector2(0, selectionArea.offsetMin.y);
 				selectionArea.offsetMax = new Vector2(0, selectionArea.offsetMax.y);
 			}
