@@ -13,7 +13,7 @@ namespace AssemblyCSharp
 		private const int minZoomLevel = -12;
 		private const int maxZoomLevel = 10;
 		private float inverseZoom = 0.5f;
-		private int zoomLevel = 0;
+		private float zoomLevel = 0;
 		private Vector3 lastMousePosition;
 
 		private Camera cam;
@@ -59,24 +59,29 @@ namespace AssemblyCSharp
 						else if (wheel < 0 && ZoomLevel <= minZoomLevel)
 							return;
 
-						//TODO: get sidebar widths?
-						const int leftBarWidth = 0;
-						const int rightBarWidth = 0;
-						Vector3 screenCenter = new Vector3((Screen.width + leftBarWidth - rightBarWidth) / 2f, Screen.height / 2f);
-						Vector3 translation = (Input.mousePosition - screenCenter) / (4f * zoomSpeed);
 						if (wheel > 0)
 						{
-							transform.position += translation * InverseZoom;
-							ZoomLevel++;
+							ZoomToPosition(Input.mousePosition, 1);
 						}
 						else
 						{
-							ZoomLevel--;
-							transform.position -= translation * InverseZoom;
+							ZoomToPosition(Input.mousePosition, -1);
 						}
 					}
 				}
 			}
+		public void ZoomToPosition(Vector3 zoomCenter, float zoom)
+		{
+			//TODO: get sidebar widths?
+			const int leftBarWidth = 0;
+			const int rightBarWidth = 0;
+
+			Vector3 screenCenter = new Vector3((Screen.width + leftBarWidth - rightBarWidth) / 2f,
+				Screen.height / 2f);
+
+			Vector3 translation = (zoomCenter - screenCenter) / (4f * zoomSpeed);
+			transform.position += zoom * translation * InverseZoom;
+			ZoomLevel += zoom;
 		}
 
 		public float InverseZoom
@@ -84,16 +89,17 @@ namespace AssemblyCSharp
 			get { return inverseZoom; }
 		}
 
-		public int ZoomLevel
+		public float ZoomLevel
 		{
 			get { return zoomLevel; }
+
 			set
 			{
-				int lvl = Math.Max(Math.Min(maxZoomLevel, value), minZoomLevel);
+				float lvl = Math.Max(Math.Min(maxZoomLevel, value), minZoomLevel);
 				if (lvl == zoomLevel)
 					return;
 				zoomLevel = lvl;
-				inverseZoom = (float)(0.5 * Math.Pow(zoomSpeed, -lvl));
+				inverseZoom = (float) (0.5 * Math.Pow(zoomSpeed, -lvl));
 				UpdateCameraZoom();
 				ZoomChanged(inverseZoom);
 			}
