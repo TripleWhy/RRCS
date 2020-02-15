@@ -36,7 +36,10 @@
 
 		public bool SelectionEnabled
 		{
-			get { return box.gameObject.activeSelf; }
+			get 
+			{ 
+			    return box.gameObject.activeSelf;
+			}
 			set
 			{
 				if (!value && box.gameObject.activeSelf)
