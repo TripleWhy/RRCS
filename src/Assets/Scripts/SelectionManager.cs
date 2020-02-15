@@ -39,7 +39,7 @@
 			get { return box.gameObject.activeSelf; }
 			set
 			{
-				if (box.gameObject.activeSelf && !value)
+				if (!value && box.gameObject.activeSelf)
 				{
 					box.ResetBoxRect();
 				}
