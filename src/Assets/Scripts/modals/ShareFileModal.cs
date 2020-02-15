@@ -44,14 +44,22 @@ namespace AssemblyCSharp.modals
             yield return new WaitForEndOfFrame();
 
             int leftSideBarWidth =
-                1 + (int) (RectTransformUtility.PixelAdjustRect(leftSidebarTransform, uiCanvas).width *
+                45 + (int) (RectTransformUtility.PixelAdjustRect(leftSidebarTransform, uiCanvas).width *
                            uiCanvas.transform.localScale.x);
             int rightSideBarWidth =
-                1 + (int) (RectTransformUtility.PixelAdjustRect(rightSidebarTransform, uiCanvas).width *
+                45 + (int) (RectTransformUtility.PixelAdjustRect(rightSidebarTransform, uiCanvas).width *
                            uiCanvas.transform.localScale.x);
 
             int width = Screen.width - leftSideBarWidth - rightSideBarWidth;
             int height = Screen.height;
+            
+            if (width < 0)
+            {
+                // Fallback Image if sidebars overlap
+                width = 10;
+                height = 10;
+                leftSideBarWidth = 0;
+            }
 
             var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
             tex.ReadPixels(new Rect(leftSideBarWidth, 0, width, height), 0, 0);
