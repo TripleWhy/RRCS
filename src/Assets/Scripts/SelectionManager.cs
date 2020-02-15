@@ -1,4 +1,4 @@
-﻿namespace AssemblyCSharp
+namespace AssemblyCSharp
 {
 	using System.Collections.Generic;
 	using UnityEngine;
@@ -36,9 +36,9 @@
 
 		public bool SelectionEnabled
 		{
-			get 
-			{ 
-			    return box.gameObject.activeSelf;
+			get
+			{
+				return box.gameObject.activeSelf;
 			}
 			set
 			{
