@@ -53,7 +53,7 @@ namespace AssemblyCSharp.modals
             int width = Screen.width - leftSideBarWidth - rightSideBarWidth;
             int height = Screen.height;
             
-            if (width < 0)
+            if (width < 5)
             {
                 // Fallback Image if sidebars overlap
                 width = 10;
