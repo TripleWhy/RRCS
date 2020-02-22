@@ -2,14 +2,14 @@
 
 namespace AssemblyCSharp.modals
 {
-    public class LoadingModal : Modal
-    {
-        public Text loadingText;
+	public class LoadingModal : Modal
+	{
+		public Text loadingText;
 
-        public void Show(string message)
-        {
-            loadingText.text = message;
-            Show();
-        }
-    }
+		public void Show(string message)
+		{
+			loadingText.text = message;
+			Show();
+		}
+	}
 }
