@@ -120,12 +120,8 @@ namespace AssemblyCSharp
 
 		public void ZoomToPosition(Vector3 zoomCenter, float zoom)
 		{
-			//TODO: get sidebar widths?
-			const int leftBarWidth = 0;
-			const int rightBarWidth = 0;
-
 			Vector3 screenCenter = new Vector3(
-				(Screen.width + leftBarWidth - rightBarWidth) / 2f,
+				Screen.width / 2f,
 				Screen.height / 2f
 			);
 
