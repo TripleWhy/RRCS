@@ -12,7 +12,7 @@ namespace AssemblyCSharp
 
 		public Image spriteContainer;
 
-		void Start()
+		protected virtual void Start()
 		{
 			toggle.onValueChanged.AddListener(OnTargetToggleValueChanged);
 		}

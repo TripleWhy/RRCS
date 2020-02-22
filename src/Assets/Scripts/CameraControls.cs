@@ -124,8 +124,10 @@ namespace AssemblyCSharp
 			const int leftBarWidth = 0;
 			const int rightBarWidth = 0;
 
-			Vector3 screenCenter = new Vector3((Screen.width + leftBarWidth - rightBarWidth) / 2f,
-				Screen.height / 2f);
+			Vector3 screenCenter = new Vector3(
+				(Screen.width + leftBarWidth - rightBarWidth) / 2f,
+				Screen.height / 2f
+			);
 
 			Vector3 translation = (zoomCenter - screenCenter) / (4f * zoomSpeed);
 			transform.position += zoom * translation * InverseZoom;
