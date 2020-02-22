@@ -101,8 +101,12 @@ namespace AssemblyCSharp
 				transform.position +=
 					new Vector3(pinchCenterDiff.x, pinchCenterDiff.y) * InverseZoom;
 
-				float distanceDiff = pinchDistance - lastPinchDistance;
-				ZoomToPosition(pinchCenter, distanceDiff * pinchZoomSpeed);
+				float zoomDiff = (pinchDistance - lastPinchDistance) * pinchZoomSpeed;
+				float newZoom = ZoomLevel + zoomDiff;
+				if (newZoom <= maxZoomLevel && newZoom >= minZoomLevel)
+				{
+					ZoomToPosition(pinchCenter, zoomDiff);
+				}
 
 				lastPinchCenter = pinchCenter;
 				lastPinchDistance = pinchDistance;
