@@ -15,8 +15,7 @@ namespace AssemblyCSharp.modals
         public Button submitButton;
         public Button closeButton;
         public Button loadButton;
-        public RectTransform leftSidebarTransform;
-        public RectTransform rightSidebarTransform;
+        public LayoutManager layoutManager;
         public Canvas uiCanvas;
         public RawImage thumbnailPreview;
         public InputField currentUrlInput;
@@ -42,14 +41,10 @@ namespace AssemblyCSharp.modals
 
             // Create Thumbnail
             yield return new WaitForEndOfFrame();
-
-            int leftSideBarWidth =
-                45 + (int) (RectTransformUtility.PixelAdjustRect(leftSidebarTransform, uiCanvas).width *
-                           uiCanvas.transform.localScale.x);
-            int rightSideBarWidth =
-                45 + (int) (RectTransformUtility.PixelAdjustRect(rightSidebarTransform, uiCanvas).width *
-                           uiCanvas.transform.localScale.x);
-
+            
+            int leftSideBarWidth = (int) Math.Ceiling(layoutManager.GetAdjustedLeftSidebarWidth() + layoutManager.GetCollapseButtonWidth());
+            int rightSideBarWidth = (int) Math.Ceiling(layoutManager.GetAdjustedRightSidebarWidth() + layoutManager.GetCollapseButtonWidth());
+            
             int width = Screen.width - leftSideBarWidth - rightSideBarWidth;
             int height = Screen.height;
             
