@@ -18,7 +18,7 @@ namespace AssemblyCSharp
 		public void Start()
 		{
 			if (Screen.width < 600)
-			{ 
+			{
 				// Hide Sidebars on small screens
 				CollapseSidebars(true, true);
 			}
@@ -59,6 +59,28 @@ namespace AssemblyCSharp
 			return GetAdjustedWidth(collapseButtonRight);
 		}
 
+		public void OnRightSidebarExpandChanged(bool expanded)
+		{
+			if (expanded && GetAdjustedSelectionAreaWidth() <= 100)
+			{
+				CollapseSidebars(true, false);
+			}
+		}
+
+		public void OnLeftSidebarExpandChanged(bool expanded)
+		{
+			if (expanded && GetAdjustedSelectionAreaWidth() <= 100)
+			{
+				CollapseSidebars(false, true);
+			}
+		}
+
+		public void CollapseSidebars(bool left, bool right)
+		{
+			if (left)
+				leftHideSidebarToggle.isOn = false;
+			if (right)
+				rightHideSidebarToggle.isOn = false;
 		}
 	}
 }

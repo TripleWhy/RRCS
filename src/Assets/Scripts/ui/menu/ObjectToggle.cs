@@ -1,12 +1,15 @@
-using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace AssemblyCSharp
 {
 	public class ObjectToggle : ImageToggle
 	{
 		public GameObject[] ObjectsToToggle;
-		
+
+		public Toggle.ToggleEvent onObjectToggled = new Toggle.ToggleEvent();
+
 		protected override void Start()
 		{
 			base.Start();
@@ -19,6 +22,14 @@ namespace AssemblyCSharp
 			{
 				obj.SetActive(value);
 			}
+
+			StartCoroutine(CallbackAfterLayoutRebuild(value));
+		}
+
+		private IEnumerator CallbackAfterLayoutRebuild(bool value)
+		{
+			yield return new WaitForEndOfFrame();
+			onObjectToggled.Invoke(value);
 		}
 	}
 }
