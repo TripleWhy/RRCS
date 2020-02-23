@@ -221,6 +221,12 @@
 					type = ParseType(str),
 				};
 			}
+
+			public override bool Equals(object obj)
+			{
+				DataType type = obj as DataType;
+				return type != null && this.type == type.type;
+			}
 		}
 
 		public readonly SettingType type;

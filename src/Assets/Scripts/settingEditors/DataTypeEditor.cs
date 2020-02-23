@@ -19,8 +19,7 @@
 		private NodeSetting.DataType type = new NodeSetting.DataType();
 		private NodeSetting setting;
 		private Text settingNameText;
-		private Button tpyesButton;
-		private Text typesButtonText;
+		private Dropdown typesDropdown;
 
 		void Awake()
 		{
@@ -28,15 +27,13 @@
 			{
 				if (settingNameText == null)
 					settingNameText = child.GetComponent<Text>();
-				else if (tpyesButton == null)
+				else if (typesDropdown == null)
 				{
-					tpyesButton = child.GetComponent<Button>();
-					typesButtonText = tpyesButton.GetComponentInChildren<Text>();
+					typesDropdown = child.GetComponent<Dropdown>();
 				}
 			}
-			DebugUtils.Assert(tpyesButton != null);
-			DebugUtils.Assert(typesButtonText != null);
-			tpyesButton.onClick.AddListener(OnTypesClicked);
+			DebugUtils.Assert(typesDropdown != null);
+			typesDropdown.onValueChanged.AddListener(OnTypeChanged);
 		}
 
 		void Start()
@@ -45,29 +42,10 @@
 				onTypeChanged = new TypeChangedEvent();
 		}
 
-		private void OnTypesClicked()
+		private void OnTypeChanged(int index)
 		{
-			switch (Type)
-			{
-				case NodeSetting.DataType.Type.Bool:
-					Type = NodeSetting.DataType.Type.Int;
-					break;
-				case NodeSetting.DataType.Type.Int:
-					Type = NodeSetting.DataType.Type.Long;
-					break;
-				case NodeSetting.DataType.Type.Long:
-					Type = NodeSetting.DataType.Type.Float;
-					break;
-				case NodeSetting.DataType.Type.Float:
-					Type = NodeSetting.DataType.Type.Double;
-					break;
-				case NodeSetting.DataType.Type.Double:
-					Type = NodeSetting.DataType.Type.String;
-					break;
-				case NodeSetting.DataType.Type.String:
-					Type = NodeSetting.DataType.Type.Bool;
-					break;
-			}
+			Dropdown.OptionData option = typesDropdown.options[index];
+			DataType = NodeSetting.DataType.Parse(option.text);
 		}
 
 		public NodeSetting.DataType DataType
@@ -78,10 +56,20 @@
 			}
 			set
 			{
-				if (value == type)
+				if (value.Equals(type))
 					return;
 				type = value;
-				typesButtonText.text = type.TypeText;
+
+				string typeText = type.TypeText;
+				for (int i = 0; i < typesDropdown.options.Count; i++)
+				{
+					if (typesDropdown.options[i].text == typeText)
+					{
+						typesDropdown.value = i;
+						break;
+					}
+				}
+
 				DataTypeChanged(this, type);
 				onTypeChanged.Invoke(type);
 			}
