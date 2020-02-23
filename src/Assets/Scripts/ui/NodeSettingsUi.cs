@@ -7,12 +7,7 @@
 
 	public class NodeSettingsUi : MonoBehaviour
 	{
-		public BoolEditor boolEditorPrefab;
-		public IntEditor intEditorPrefab;
-		public LongEditor longEditorPrefab;
-		public FloatEditor floatEditorPrefab;
-		public DoubleEditor doubleEditorPrefab;
-		public StringEditor stringEditorPrefab;
+		public ValueEditor valueEditorPrefab;
 		public SelectorConditionEditor selectorConditionEditorPrefab;
 		public DataTypeEditor dataTypeEditorPrefab;
 
@@ -85,11 +80,11 @@
 					{
 						SettingsTypeUsageData data = typeUsages[setting.type];
 						data.usageCount++;
-						if (data.valueType != null && data.valueType != setting.valueType)
+						if (data.valueType != null && data.valueType != setting.ValueType)
 							data.valueType = null;
 					}
 					else
-						typeUsages.Add(setting.type, new SettingsTypeUsageData { usageCount = 1, valueType = setting.valueType });
+						typeUsages.Add(setting.type, new SettingsTypeUsageData { usageCount = 1, valueType = setting.ValueType });
 				}
 			}
 			foreach (NodeSetting setting in selectedNodes[0].Node.settings)
@@ -102,12 +97,6 @@
 						continue;
 				}
 				MonoBehaviour editor = CreateSettingEditor(setting);
-				{
-					//TODO find a more elegant solution?
-					DataTypeEditor typeEditor = editor as DataTypeEditor;
-					if (typeEditor != null)
-						typeEditor.DataTypeChanged += (sender, type) => SetSelectedNodes(nodes);
-				}
 				if (editor != null)
 					editors.Add(editor.gameObject);
 			}
@@ -126,87 +115,35 @@
 
 		private MonoBehaviour CreateSettingEditor(NodeSetting setting)
 		{
-			if (setting.valueType == typeof(bool))
-			{
-				BoolEditor editor = Instantiate<BoolEditor>(boolEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += BoolEditor_ValueChanged;
-				return editor;
-			}
-			else if (setting.valueType == typeof(int))
-			{
-				IntEditor editor = Instantiate<IntEditor>(intEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += NumberEditor_ValueChanged<int>;
-				return editor;
-			}
-			else if (setting.valueType == typeof(long))
-			{
-				LongEditor editor = Instantiate<LongEditor>(longEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += NumberEditor_ValueChanged<long>;
-				return editor;
-			}
-			else if (setting.valueType == typeof(float))
-			{
-				FloatEditor editor = Instantiate<FloatEditor>(floatEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += NumberEditor_ValueChanged<float>;
-				return editor;
-			}
-			else if (setting.valueType == typeof(double))
-			{
-				DoubleEditor editor = Instantiate<DoubleEditor>(doubleEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += NumberEditor_ValueChanged<double>;
-				return editor;
-			}
-			else if (setting.valueType == typeof(string))
-			{
-				StringEditor editor = Instantiate<StringEditor>(stringEditorPrefab, transform);
-				editor.Setting = setting;
-				editor.ValueChanged += StringEditor_ValueChanged;
-				return editor;
-			}
-			else if (setting.valueType == typeof(NodeSetting.SelectorCondition))
+			if (setting.ValueType == typeof(NodeSetting.SelectorCondition))
 			{
 				SelectorConditionEditor editor = Instantiate<SelectorConditionEditor>(selectorConditionEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.ConditionChanged += Editor_ConditionChanged;
 				return editor;
 			}
-			else if (setting.valueType == typeof(NodeSetting.DataType))
+			else if (setting.ValueType == typeof(NodeSetting.DataType))
 			{
-				DataTypeEditor editor = Instantiate<DataTypeEditor>(dataTypeEditorPrefab, transform);
+				DataTypeEditor editor = Instantiate(dataTypeEditorPrefab, transform);
 				editor.Setting = setting;
 				editor.DataTypeChanged += Editor_DataTypeChanged;
 				return editor;
 			}
 			else
 			{
-				DebugUtils.Assert(false);
-				return null;
+				ValueEditor editor = Instantiate(valueEditorPrefab, transform);
+				editor.Setting = setting;
+				editor.ValueChanged += ValueEditor_ValueChanged;
+				return editor;
 			}
 		}
 
-		private void BoolEditor_ValueChanged(BoolEditor sender, bool value)
+		private void ValueEditor_ValueChanged(ValueEditor sender, object value)
 		{
 			foreach (NodeUi nodeUi in selectedNodes)
 				nodeUi.Node.SetSetting(sender.Setting.type, value);
 		}
 
-		private void NumberEditor_ValueChanged<T>(NumberEditor<T> sender, T value) where T : IComparable<T>
-		{
-			foreach (NodeUi nodeUi in selectedNodes)
-				nodeUi.Node.SetSetting(sender.Setting.type, value);
-		}
-
-		private void StringEditor_ValueChanged(StringEditor sender, string value)
-		{
-			foreach (NodeUi nodeUi in selectedNodes)
-				nodeUi.Node.SetSetting(sender.Setting.type, value);
-		}
-		
 		private void Editor_ConditionChanged(SelectorConditionEditor sender, NodeSetting.SelectorCondition value)
 		{
 			foreach (NodeUi nodeUi in selectedNodes)

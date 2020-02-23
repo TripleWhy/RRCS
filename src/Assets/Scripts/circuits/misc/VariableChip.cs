@@ -51,17 +51,7 @@
 				for (int i = 1; i < settings.Length; i++)
 				{
 					NodeSetting s = settings[i];
-					s.valueType = newType;
-					try
-					{
-						s.currentValue = Convert.ChangeType(s.currentValue, newType);
-					}
-					catch (FormatException)
-					{
-						s.currentValue = Activator.CreateInstance(newType);
-					}
-					DebugUtils.Assert(s.currentValue != null);
-					DebugUtils.Assert(s.currentValue.GetType() == newType);
+					s.ValueType = newType;
 				}
 
 				EmitEvaluationRequired();

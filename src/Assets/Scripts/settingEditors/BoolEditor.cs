@@ -2,7 +2,6 @@
 {
 	using UnityEngine;
 	using UnityEngine.UI;
-	using Debug = System.Diagnostics.Debug;
 
 	public class BoolEditor : MonoBehaviour
 	{

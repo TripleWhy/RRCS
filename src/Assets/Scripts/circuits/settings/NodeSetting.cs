@@ -231,15 +231,49 @@
 
 		public readonly SettingType type;
 		public readonly string displayName;
-		public Type valueType;
+		private Type valueType;
 		public object currentValue;
+
+		public delegate void ValueTypeChangedEventHandler(NodeSetting sender, Type valueType);
+		public event ValueTypeChangedEventHandler ValueTypeChanged;
 
 		private NodeSetting(SettingType type, string displayName, Type valueType, object currentValue)
 		{
 			this.type = type;
 			this.displayName = displayName;
-			this.valueType = valueType;
+			this.ValueType = valueType;
 			this.currentValue = currentValue;
+		}
+
+		public Type ValueType
+		{
+			get
+			{
+				return valueType;
+			}
+			set
+			{
+				if (object.Equals(value, valueType))
+					return;
+				valueType = value;
+
+				if (!object.Equals(currentValue, null))
+				{
+					try
+					{
+						currentValue = Convert.ChangeType(currentValue, valueType);
+					}
+					catch (FormatException)
+					{
+						currentValue = Activator.CreateInstance(valueType);
+					}
+					DebugUtils.Assert(currentValue != null);
+					DebugUtils.Assert(currentValue.GetType() == valueType);
+				}
+
+				if (ValueTypeChanged != null)
+					ValueTypeChanged(this, valueType);
+			}
 		}
 
 		public static NodeSetting CreateSetting(SettingType type)
@@ -316,15 +350,15 @@
 
 		public void ParseValue(String stringValue)
 		{
-			if (valueType == typeof(int))
+			if (ValueType == typeof(int))
 				currentValue = int.Parse(stringValue);
-			else if (valueType == typeof(bool))
+			else if (ValueType == typeof(bool))
 				currentValue = bool.Parse(stringValue);
-			else if (valueType == typeof(string))
+			else if (ValueType == typeof(string))
 				currentValue = stringValue;
-			else if (valueType == typeof(SelectorCondition))
+			else if (ValueType == typeof(SelectorCondition))
 				currentValue = SelectorCondition.Parse(stringValue);
-			else if (valueType == typeof(DataType))
+			else if (ValueType == typeof(DataType))
 				currentValue = DataType.Parse(stringValue);
 			else
 				throw new InvalidOperationException();

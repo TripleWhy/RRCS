@@ -7256,17 +7256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c20dc2071f27a1469b3813b676878dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boolEditorPrefab: {fileID: 114042851224238240, guid: 70a063a7396c2dc498d321ecdb528f10,
-    type: 3}
-  intEditorPrefab: {fileID: 114376457154835578, guid: c6dd79b254c02874a97fad438a2f4862,
-    type: 3}
-  longEditorPrefab: {fileID: 1433693180240482953, guid: 4dac9f9c2b2e2ff42b4957fb9907d2dd,
-    type: 3}
-  floatEditorPrefab: {fileID: 4813923858779113654, guid: e6f4d196da95cd048a2bace28bd1c12f,
-    type: 3}
-  doubleEditorPrefab: {fileID: 8940555816323159554, guid: 3cf45e8acb845d04da6419b8a648b4f8,
-    type: 3}
-  stringEditorPrefab: {fileID: 114555584183686864, guid: 8e0b832ce003c804298e76f2e4f323a6,
+  valueEditorPrefab: {fileID: 4578381138293815661, guid: 90944e9e0a96e5647ab02e6e51d4f68f,
     type: 3}
   selectorConditionEditorPrefab: {fileID: 114893152218138692, guid: ba01e3a5365504345b00354467fc2367,
     type: 3}
