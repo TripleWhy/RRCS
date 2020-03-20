@@ -4964,8 +4964,8 @@ MonoBehaviour:
   inactiveSprite: {fileID: 21300144, guid: 1270d7ad818b8bc44bba6168b188e671, type: 3}
   spriteContainer: {fileID: 1949068098}
   ObjectsToToggle:
-  - {fileID: 1814478773}
-  - {fileID: 1599031878}
+  - {fileID: 1814478778}
+  - {fileID: 1599031883}
   onObjectToggled:
     m_PersistentCalls:
       m_Calls:
@@ -5721,8 +5721,8 @@ MonoBehaviour:
   inactiveSprite: {fileID: 21300144, guid: 1270d7ad818b8bc44bba6168b188e671, type: 3}
   spriteContainer: {fileID: 1528598399}
   ObjectsToToggle:
-  - {fileID: 322801294}
-  - {fileID: 1740004402}
+  - {fileID: 1740004405}
+  - {fileID: 322801297}
   onObjectToggled:
     m_PersistentCalls:
       m_Calls:
@@ -8440,7 +8440,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 640.5, y: 0}
+  m_AnchoredPosition: {x: 1172.25, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &908945184
@@ -15530,7 +15530,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1881280529}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.31424803
+  m_Size: 0.3166227
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
