@@ -12,6 +12,7 @@
 		public CameraControls cameraControls;
 		public SelectionManager selectionManager;
 		public NodeSettingsUi settingsEditor;
+		public UnityEngine.UI.Button pauseButton;
 		public int CurrentPlayerId { get; set; }
 		public ShareFileModal shareFileModal;
 		public LoadingModal loadingModal;
@@ -79,11 +80,13 @@
 		public void SimulationPlay()
 		{
 			Time.timeScale = SimulationSpeed;
+			pauseButton.interactable = true;
 		}
 
 		public void SimulationPause()
 		{
 			Time.timeScale = 0f;
+			pauseButton.interactable = false;
 		}
 
 		public void SimulationStep()

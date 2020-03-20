@@ -57,10 +57,10 @@
 				EmitEvaluationRequired();
 			}
 			else
-				outputPorts[0].Value = 0;
+				outputPorts[0].Value = null;
 
 			IConvertible value = InValue(0);
-			if (value == lastInput)
+			if (object.ReferenceEquals(value, lastInput) || (!object.ReferenceEquals(value, null) && value.Equals(lastInput)))
 				return;
 			lastInput = value;
 			if (!ValueToBool(value))

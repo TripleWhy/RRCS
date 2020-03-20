@@ -5244,6 +5244,7 @@ MonoBehaviour:
   cameraControls: {fileID: 1732939166}
   selectionManager: {fileID: 71807217}
   settingsEditor: {fileID: 828651034}
+  pauseButton: {fileID: 1795319601}
   shareFileModal: {fileID: 814808645}
   loadingModal: {fileID: 1939186059}
   errorModal: {fileID: 2062106406}
