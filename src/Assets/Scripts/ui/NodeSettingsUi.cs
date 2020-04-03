@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using TMPro;
+
+namespace AssemblyCSharp
 {
 	using System;
 	using System.Collections.Generic;
@@ -16,19 +18,13 @@
 		public SelectorConditionEditor selectorConditionEditorPrefab;
 		public DataTypeEditor dataTypeEditorPrefab;
 
-		private Text effectiveEvaluationIndexText;
-		private IntEditor priorityEditor;
+		public TextMeshProUGUI effectiveEvaluationIndexText;
+		public IntEditor priorityEditor;
 		private readonly List<NodeUi> selectedNodes = new List<NodeUi>();
 		private readonly List<GameObject> editors = new List<GameObject>();
 
 		private void Awake()
 		{
-			foreach (Transform child in transform)
-			{
-				if (priorityEditor == null)
-					priorityEditor = child.GetComponent<IntEditor>();
-				effectiveEvaluationIndexText = child.GetComponent<Text>() ?? effectiveEvaluationIndexText;
-			}
 			DebugUtils.Assert(priorityEditor != null);
 			priorityEditor.ValueChanged += PriorityEditor_ValueChanged;
 		}

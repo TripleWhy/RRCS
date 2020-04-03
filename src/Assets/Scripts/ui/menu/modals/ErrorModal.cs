@@ -1,11 +1,12 @@
-﻿using UnityEngine.UI;
+﻿using TMPro;
+using UnityEngine.UI;
 
 namespace AssemblyCSharp.modals
 {
     public class ErrorModal : Modal
     {
-        public Text errorTitle;
-        public Text errorMessage;
+        public TextMeshProUGUI errorTitle;
+        public TextMeshProUGUI errorMessage;
         public Button closeButton;
 
         public void Show(string title, string message)
