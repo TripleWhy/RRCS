@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using TMPro;
+
+namespace AssemblyCSharp
 {
 	using UnityEngine;
 	using UnityEngine.Events;
@@ -18,22 +20,12 @@
 		[SerializeField]
 		private NodeSetting.DataType type = new NodeSetting.DataType();
 		private NodeSetting setting;
-		private Text settingNameText;
-		private Button tpyesButton;
-		private Text typesButtonText;
+		public TextMeshProUGUI settingNameText;
+		public Button tpyesButton;
+		public TextMeshProUGUI typesButtonText;
 
 		void Awake()
 		{
-			foreach (Transform child in transform)
-			{
-				if (settingNameText == null)
-					settingNameText = child.GetComponent<Text>();
-				else if (tpyesButton == null)
-				{
-					tpyesButton = child.GetComponent<Button>();
-					typesButtonText = tpyesButton.GetComponentInChildren<Text>();
-				}
-			}
 			DebugUtils.Assert(tpyesButton != null);
 			DebugUtils.Assert(typesButtonText != null);
 			tpyesButton.onClick.AddListener(OnTypesClicked);

@@ -1,12 +1,15 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace AssemblyCSharp
 {
-	public class ObjectToggle : ImageToggle
+	public class ObjectWidthToggle : ImageToggle
 	{
-		public GameObject[] ObjectsToToggle;
+		public LayoutElement[] ObjectsToToggle;
+
+		private float[] initialWidths;
 
 		public Toggle.ToggleEvent onObjectToggled = new Toggle.ToggleEvent();
 
@@ -14,15 +17,16 @@ namespace AssemblyCSharp
 		{
 			base.Start();
 			toggle.onValueChanged.AddListener(OnToggleValueChanged);
+
+			initialWidths = ObjectsToToggle.Select(layout => layout.preferredWidth).ToArray();
 		}
 
 		private void OnToggleValueChanged(bool value)
 		{
-			foreach (var obj in ObjectsToToggle)
+			for (int i = 0; i < ObjectsToToggle.Length; i++)
 			{
-				obj.SetActive(value);
+				ObjectsToToggle[i].preferredWidth = value ? initialWidths[i] : 0;
 			}
-
 			StartCoroutine(CallbackAfterLayoutRebuild(value));
 		}
 

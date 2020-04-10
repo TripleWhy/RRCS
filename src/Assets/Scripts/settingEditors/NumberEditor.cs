@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using TMPro;
+
+namespace AssemblyCSharp
 {
 	using System;
 	using UnityEngine;
@@ -17,10 +19,10 @@
 		[SerializeField]
 		private T maximum;
 		private NodeSetting setting;
-		private Text settingNameText;
-		private InputField input;
-		private Button plusButton;
-		private Button minusButton;
+		public TextMeshProUGUI settingNameText;
+		public InputField input;
+		public Button plusButton;
+		public Button minusButton;
 
 		protected abstract T Increment(T value);
 		protected abstract T Decrement(T value);
@@ -38,21 +40,6 @@
 
 		void Awake()
 		{
-			foreach (Transform child in transform)
-			{
-				if (settingNameText == null)
-					settingNameText = child.GetComponent<Text>();
-				else if (input == null)
-					input = child.GetComponent<InputField>();
-				else if (minusButton == null)
-					minusButton = child.GetComponent<Button>();
-				else if (plusButton == null)
-					plusButton = child.GetComponent<Button>();
-			}
-			DebugUtils.Assert(input != null);
-			DebugUtils.Assert(plusButton != null);
-			DebugUtils.Assert(minusButton != null);
-
 			plusButton.interactable = Value.CompareTo(maximum) <= 0;
 			minusButton.interactable = Value.CompareTo(minimum) >= 0;
 			input.text = Value.ToString();

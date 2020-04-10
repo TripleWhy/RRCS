@@ -1,10 +1,11 @@
-﻿using UnityEngine.UI;
+﻿using TMPro;
+using UnityEngine.UI;
 
 namespace AssemblyCSharp.modals
 {
 	public class LoadingModal : Modal
 	{
-		public Text loadingText;
+		public TextMeshProUGUI loadingText;
 
 		public void Show(string message)
 		{

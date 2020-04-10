@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using TMPro;
+
+namespace AssemblyCSharp
 {
 	using UnityEngine;
 	using UnityEngine.UI;
@@ -7,7 +9,7 @@
 	{
 		internal RRButton button;
 		private RRButtonCenterUi centerUi;
-		public Text buttonText;
+		public TextMeshProUGUI buttonText;
 
 		void Start()
 		{

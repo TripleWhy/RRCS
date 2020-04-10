@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Text;
 using AssemblyCSharp.share;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,7 @@ namespace AssemblyCSharp.modals
 		public Canvas uiCanvas;
 		public RawImage thumbnailPreview;
 		public InputField currentUrlInput;
-		public Text currentUrlTitle;
+		public TextMeshProUGUI currentUrlTitle;
 
 		private string dataToSubmit;
 
