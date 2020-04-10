@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using TMPro;
+
+namespace AssemblyCSharp
 {
 	using UnityEngine;
 	using UnityEngine.UI;
@@ -10,13 +12,11 @@
 		public event ValueChangedEventHandler ValueChanged = delegate { };
 
 		private NodeSetting setting;
-		private Text settingNameText;
-		private Toggle toggle;
+		public TextMeshProUGUI settingNameText;
+		public Toggle toggle;
 
 		void Awake()
 		{
-			toggle = GetComponent<Toggle>();
-			settingNameText = GetComponentInChildren<Text>();
 			DebugUtils.Assert(toggle != null);
 			DebugUtils.Assert(settingNameText != null);
 			toggle.onValueChanged.AddListener(OnToggleChanged);

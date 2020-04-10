@@ -1,4 +1,6 @@
-﻿namespace AssemblyCSharp
+﻿using TMPro;
+
+namespace AssemblyCSharp
 {
     using UnityEngine;
     using UnityEngine.Events;
@@ -19,19 +21,11 @@
         [SerializeField]
         private string currentValue = "";
         private NodeSetting setting;
-        private Text settingNameText;
-        private InputField input;
+        public TextMeshProUGUI settingNameText;
+        public InputField input;
 
         void Awake()
         {
-            foreach (Transform child in transform)
-            {
-                if (settingNameText == null)
-                    settingNameText = child.GetComponent<Text>();
-                else if (input == null)
-                    input = child.GetComponent<InputField>();
-            }
-
             DebugUtils.Assert(input != null);
 
             input.text = Value;

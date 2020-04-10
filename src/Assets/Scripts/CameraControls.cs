@@ -10,16 +10,23 @@ namespace AssemblyCSharp
 	public class CameraControls : MonoBehaviour
 	{
 		private const float zoomSpeed = 1.25f;
+		private const float pinchZoomSpeed = 0.035f;
 		private const int minZoomLevel = -12;
 		private const int maxZoomLevel = 10;
 		private float inverseZoom = 0.5f;
-		private int zoomLevel = 0;
+		private float zoomLevel = 0;
 		private Vector3 lastMousePosition;
 
 		private Camera cam;
 		private int screenHeight;
 
+		private bool isPinchPanZoomActive = false;
+		Vector2 lastPinchCenter = Vector2.zero;
+		private float lastPinchDistance = 0;
+		private int[] pinchFingerIds = new int[] {-1, -1};
+
 		public delegate void ZoomChangedEventHandler(float inverseZoom);
+
 		public event ZoomChangedEventHandler ZoomChanged = delegate { };
 
 		void Awake()
@@ -59,24 +66,72 @@ namespace AssemblyCSharp
 						else if (wheel < 0 && ZoomLevel <= minZoomLevel)
 							return;
 
-						//TODO: get sidebar widths?
-						const int leftBarWidth = 0;
-						const int rightBarWidth = 0;
-						Vector3 screenCenter = new Vector3((Screen.width + leftBarWidth - rightBarWidth) / 2f, Screen.height / 2f);
-						Vector3 translation = (Input.mousePosition - screenCenter) / (4f * zoomSpeed);
 						if (wheel > 0)
 						{
-							transform.position += translation * InverseZoom;
-							ZoomLevel++;
+							ZoomToPosition(Input.mousePosition, 1);
 						}
 						else
 						{
-							ZoomLevel--;
-							transform.position -= translation * InverseZoom;
+							ZoomToPosition(Input.mousePosition, -1);
 						}
 					}
 				}
 			}
+
+			// Pan/Zoom functionality for touchscreen devices
+			if (Input.touchCount > 1)
+			{
+				Touch touch0 = Input.GetTouch(0);
+				Touch touch1 = Input.GetTouch(1);
+				float pinchDistance = Vector2.Distance(touch0.position, touch1.position);
+				Vector2 pinchCenter = (touch0.position + touch1.position) / 2;
+
+				if (!isPinchPanZoomActive || pinchFingerIds[0] != touch0.fingerId ||
+				    pinchFingerIds[1] != touch1.fingerId)
+				{
+					isPinchPanZoomActive = true;
+					lastPinchCenter = pinchCenter;
+					lastPinchDistance = pinchDistance;
+					pinchFingerIds[0] = touch0.fingerId;
+					pinchFingerIds[1] = touch1.fingerId;
+					RRCSManager.Instance.selectionManager.SelectionEnabled = false;
+				}
+
+				Vector2 pinchCenterDiff = lastPinchCenter - pinchCenter;
+				transform.position +=
+					new Vector3(pinchCenterDiff.x, pinchCenterDiff.y) * InverseZoom;
+
+				float zoomDiff = (pinchDistance - lastPinchDistance) * pinchZoomSpeed;
+				float newZoom = ZoomLevel + zoomDiff;
+				if (newZoom <= maxZoomLevel && newZoom >= minZoomLevel)
+				{
+					ZoomToPosition(pinchCenter, zoomDiff);
+				}
+
+				lastPinchCenter = pinchCenter;
+				lastPinchDistance = pinchDistance;
+			}
+
+			else
+			{
+				if (isPinchPanZoomActive)
+				{
+					RRCSManager.Instance.selectionManager.SelectionEnabled = true;
+					isPinchPanZoomActive = false;
+				}
+			}
+		}
+
+		public void ZoomToPosition(Vector3 zoomCenter, float zoom)
+		{
+			Vector3 screenCenter = new Vector3(
+				Screen.width / 2f,
+				Screen.height / 2f
+			);
+
+			Vector3 translation = (zoomCenter - screenCenter) / (4f * zoomSpeed);
+			transform.position += zoom * translation * InverseZoom;
+			ZoomLevel += zoom;
 		}
 
 		public float InverseZoom
@@ -84,16 +139,17 @@ namespace AssemblyCSharp
 			get { return inverseZoom; }
 		}
 
-		public int ZoomLevel
+		public float ZoomLevel
 		{
 			get { return zoomLevel; }
+
 			set
 			{
-				int lvl = Math.Max(Math.Min(maxZoomLevel, value), minZoomLevel);
+				float lvl = Math.Max(Math.Min(maxZoomLevel, value), minZoomLevel);
 				if (lvl == zoomLevel)
 					return;
 				zoomLevel = lvl;
-				inverseZoom = (float)(0.5 * Math.Pow(zoomSpeed, -lvl));
+				inverseZoom = (float) (0.5 * Math.Pow(zoomSpeed, -lvl));
 				UpdateCameraZoom();
 				ZoomChanged(inverseZoom);
 			}

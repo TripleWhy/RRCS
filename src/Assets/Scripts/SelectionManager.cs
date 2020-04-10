@@ -1,4 +1,4 @@
-﻿namespace AssemblyCSharp
+namespace AssemblyCSharp
 {
 	using System.Collections.Generic;
 	using UnityEngine;
@@ -42,6 +42,11 @@
 			}
 			set
 			{
+				if (!value && box.gameObject.activeSelf)
+				{
+					box.ResetBoxRect();
+				}
+
 				box.gameObject.SetActive(value);
 			}
 		}

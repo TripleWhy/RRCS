@@ -127,7 +127,7 @@ namespace UnityEngine.UI.Extensions
 		//Set all of the relevant rectTransform properties to zero, 
 		//finally deactivates the boxRect gameobject since it doesn't
 		//need to be enabled when not in a selection action.
-		void ResetBoxRect(){
+		public void ResetBoxRect(){
 			
 			//Update the art and color on the off chance they've changed
 			Image image = boxRect.GetComponent<Image>();
