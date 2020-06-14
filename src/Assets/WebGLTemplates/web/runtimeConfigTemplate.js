@@ -2,5 +2,5 @@
 window.runtimeConfig = {
 	BLOB_URL: "%BLOB_URL%",
 	SHARE_URL_BASE: "%SHARE_URL_BASE%",
-	STATE_REPLACE_BASE: "/RRCS/?circuit="
+	STATE_REPLACE_BASE: "%STATE_REPLACE_BASE%"
 };
